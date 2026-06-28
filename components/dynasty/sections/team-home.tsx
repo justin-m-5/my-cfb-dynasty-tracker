@@ -85,9 +85,9 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
                 <h2 className="mb-3 text-lg font-bold text-text">
                     {dynasty.current_year} Season
                 </h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 grid-cols-4">
                     <GlanceCard
-                        icon={<Calendar className="h-5 w-5 text-blue-500" />}
+                        icon={<Calendar className="h-3 w-3 text-blue-500" />}
                         label="Week"
                         value={String(currentWeek)}
                     />
@@ -110,7 +110,7 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
             </div>
 
             {/* Season Details */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 grid-cols-3">
                 <DetailCard label="Points For" value={String(pointsFor)} />
                 <DetailCard label="Points Against" value={String(pointsAgainst)} />
                 <DetailCard
@@ -145,7 +145,7 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
             {/* Career Stats */}
             <div>
                 <h2 className="mb-3 text-lg font-bold text-text">Career</h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 grid-cols-4">
                     <GlanceCard
                         icon={null}
                         label="All-Time Record"
@@ -166,10 +166,10 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
 
 function GlanceCard({ icon = null, label, value }: { icon: React.ReactNode; label: string; value: string }) {
     return (
-        <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-background/70 p-4">
+        <div className="items-center gap-3 rounded-xl border border-primary/20 bg-background/70 p-2 text-center">
             {icon}
             <div>
-                <p className="text-2xl font-bold text-text">{value}</p>
+                <p className="text-sm font-bold text-text">{value}</p>
                 <p className="text-xs text-text/60">{label}</p>
             </div>
         </div>
@@ -178,8 +178,8 @@ function GlanceCard({ icon = null, label, value }: { icon: React.ReactNode; labe
 
 function DetailCard({ label, value, color }: { label: string; value: string; color?: string }) {
     return (
-        <div className="rounded-xl border border-primary/20 bg-background/70 p-4 text-center">
-            <p className="text-xl font-bold" style={color ? { color } : undefined}>{value}</p>
+        <div className="rounded-xl border border-primary/20 bg-background/70 p-2 text-center">
+            <p className="text-sm font-bold text-text" style={color ? { color } : undefined}>{value}</p>
             <p className="mt-1 text-xs text-text/60">{label}</p>
         </div>
     )

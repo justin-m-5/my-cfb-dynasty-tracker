@@ -177,7 +177,7 @@ export function Schedule({ dynastyId }: ScheduleProps) {
     return (
         <div className="space-y-6">
             {/* Record Summary */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="grid gap-4 grid-cols-5">
                 <RecordCard
                     label="Overall"
                     value={`${record.wins}-${record.losses}${record.ties > 0 ? `-${record.ties}` : ''}`}
@@ -302,8 +302,8 @@ export function Schedule({ dynastyId }: ScheduleProps) {
 
 function RecordCard({ label, value, color }: { label: string; value: string; color?: string }) {
     return (
-        <div className="rounded-xl border border-primary/20 bg-background/70 p-4 text-center">
-            <p className="text-2xl font-bold" style={color ? { color } : undefined}>
+        <div className="rounded-xl border border-primary/20 bg-background/70 p-2 text-center">
+            <p className="text-xs font-bold" style={color ? { color } : undefined}>
                 {value}
             </p>
             <p className="mt-1 text-xs text-text/60">{label}</p>
