@@ -8,63 +8,16 @@ import { useRouter } from 'next/navigation'
 
 import { DynastyService } from '@/dal/features/dynasty'
 import { fbsTeams, type FbsTeam } from '@/lib/fbs-teams'
+import { conferenceLogoByName, getSchoolLogoCandidates } from '@/lib/logos'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
+import { LogoImage } from '@/components/ui/logo-image'
 
-const conferenceLogoByName: Record<string, string> = {
-    SEC: '/logos/conferences/SEC_logo_300x300.png',
-    ACC: '/logos/conferences/ACC_logo_300x300.png',
-    MWC: '/logos/conferences/MWC_logo_300x300.png',
-    'Big 12': '/logos/conferences/Big_12_logo_300x300.png',
-    'Pac-12': '/logos/conferences/Pac-12_logo-300x300.png',
-    AAC: '/logos/conferences/AAC_logo_300x300.png',
-    MAC: '/logos/conferences/MAC_logo_300x300.png',
-    'Sun Belt': '/logos/conferences/Sun_Belt_logo_300x300.png',
-    'Big Ten': '/logos/conferences/Big_Ten_logo_300x300.png',
-    'C-USA': '/logos/conferences/CUSA_logo_300x300.png',
-    Independents: '/logos/conferences/Independents_logo_300x300.png',
-}
-
-function toLogoToken(value: string) {
-    return value.replace(/\(([^)]+)\)/g, '$1').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '')
-}
-
-function getSchoolLogoCandidates(team: FbsTeam): string[] {
-    const school = toLogoToken(team.name)
-    const nick = toLogoToken(team.nickName)
-
-    return [
-        `/logos/${school}_${nick}_logo_300x300.png`,
-        `/logos/${school}_${nick}_Logo_300x300.png`,
-        `/logos/${school}_${nick}_300x300.png`,
-    ]
-}
-
-function LogoImage({ candidates, alt }: { candidates: string[]; alt: string }) {
-    const [index, setIndex] = useState(0)
-
-    if (candidates.length === 0 || index >= candidates.length) {
-        return (
-            <div className="flex h-14 w-14 items-center justify-center rounded-md border bg-background text-xs text-text/70">
-                N/A
-            </div>
-        )
-    }
-
-    return (
-        <Image
-            src={candidates[index]}
-            alt={alt}
-            width={56}
-            height={56}
-            className="h-14 w-14 rounded-md border bg-background object-contain p-1"
-            onError={() => setIndex((prev) => prev + 1)}
-            unoptimized
-        />
-    )
+function getTeamLogoCandidates(team: FbsTeam): string[] {
+    return getSchoolLogoCandidates(team.name, team.nickName)
 }
 
 export function CreateDynastyForm() {
@@ -93,7 +46,7 @@ export function CreateDynastyForm() {
     )
 
     const conferenceLogo = conference ? conferenceLogoByName[conference] ?? null : null
-    const schoolLogoCandidates = selectedTeam ? getSchoolLogoCandidates(selectedTeam) : []
+    const schoolLogoCandidates = selectedTeam ? getTeamLogoCandidates(selectedTeam) : []
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -251,7 +204,7 @@ export function CreateDynastyForm() {
 
                             <div className="space-y-1 text-sm">
                                 <p className="text-text/70">School Logo</p>
-                                <LogoImage candidates={schoolLogoCandidates} alt={selectedTeam?.name ?? 'School logo'} />
+                                <LogoImage candidates={schoolLogoCandidates} alt={selectedTeam?.name ?? 'School logo'} size={56} />
                             </div>
 
                             {selectedTeam && (
