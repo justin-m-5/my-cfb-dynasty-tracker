@@ -26,9 +26,9 @@ interface PlayerStatsTabProps {
     onStatsChange: (stats: PlayerStat[]) => void
 }
 
-function blankStatFields(): Omit<PlayerStat, 'id' | 'player_id' | 'game_id' | 'category'> {
+function blankStatFields(): Omit<PlayerStat, 'id' | 'player_id' | 'game_id'> {
     return {
-        games_played: 0, attempts: 0, completions: 0, pass_yards: 0, pass_td: 0,
+        attempts: 0, completions: 0, pass_yards: 0, pass_td: 0,
         pass_int: 0, long: 0, carries: 0, rush_yards: 0, rush_td: 0, fumbles: 0,
         yac: 0, receptions: 0, rec_yards: 0, rec_td: 0, rac: 0, solo: 0, assists: 0,
         tackles: 0, tfl: 0, sacks: 0, def_int: 0, forced_fumbles: 0, def_td: 0,
@@ -36,6 +36,15 @@ function blankStatFields(): Omit<PlayerStat, 'id' | 'player_id' | 'game_id' | 'c
         punt_yards: 0, touchbacks: 0, kr_yards: 0, kr_td: 0, pr_yards: 0, pr_td: 0,
         kr_long: 0, pr_long: 0,
     }
+}
+
+// Check if a stat row has any non-zero values for a given category
+function hasStatsInCategory(stat: PlayerStat, category: StatCategory): boolean {
+    const fields = statCategories[category]
+    return fields.some(({ field }) => {
+        const val = (stat as unknown as Record<string, number>)[field]
+        return val !== 0 && val !== undefined && val !== null
+    })
 }
 
 export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerStatsTabProps) {
@@ -46,7 +55,8 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
     const [formFields, setFormFields] = useState<Record<string, number>>({})
     const [saving, setSaving] = useState(false)
 
-    const categoryStats = stats.filter(s => s.category === selectedCategory)
+    // Filter stats to only show rows that have non-zero values in the selected category
+    const categoryStats = stats.filter(s => hasStatsInCategory(s, selectedCategory))
     const columns = displayColumns[selectedCategory]
     const inputFields = statCategories[selectedCategory]
 
@@ -73,19 +83,24 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
         setSaving(true)
 
         try {
-            if (editingId) {
-                const updates: Partial<PlayerStat> = { category: selectedCategory }
+            // Check if this player already has a stat row for this game
+            const existing = stats.find(s => s.player_id === formPlayerId)
+
+            if (editingId || existing) {
+                // Update existing row with the category fields
+                const id = editingId || existing!.id
+                const updates: Partial<PlayerStat> = {}
                 for (const { field } of inputFields) {
-                    ;(updates as Record<string, number>)[field] = formFields[field] ?? 0
+                    ;(updates as unknown as Record<string, number>)[field] = formFields[field] ?? 0
                 }
-                await PlayerStatService.updateStat(editingId, updates)
-                onStatsChange(stats.map(s => s.id === editingId ? { ...s, ...updates } : s))
+                await PlayerStatService.updateStat(id, updates)
+                onStatsChange(stats.map(s => s.id === id ? { ...s, ...updates } : s))
             } else {
+                // Create new row with all fields
                 const newStat: Omit<PlayerStat, 'id'> = {
                     ...blankStatFields(),
                     player_id: formPlayerId,
                     game_id: gameId,
-                    category: selectedCategory,
                 }
                 for (const { field } of inputFields) {
                     ;(newStat as unknown as Record<string, number>)[field] = formFields[field] ?? 0
@@ -119,7 +134,7 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
 
     return (
         <div className="space-y-4">
-            {/* Category selector + Add button */}
+            {/* Category view selector + Add button */}
             <div className="flex items-center gap-3">
                 <Select
                     value={selectedCategory}

@@ -6,8 +6,6 @@ export interface PlayerStat {
     id: string
     player_id: string
     game_id: string
-    category: string
-    games_played: number
     attempts: number
     completions: number
     pass_yards: number
@@ -59,6 +57,45 @@ export const PlayerStatService = {
         }
 
         return (data ?? []) as PlayerStat[]
+    },
+
+    async getSeasonStats(dynastyId: string, yearRecordId: string): Promise<PlayerStat[]> {
+        // Get all game IDs for this season, then aggregate
+        const { data: games } = await supabase
+            .from('games')
+            .select('id')
+            .eq('dynasty_id', dynastyId)
+            .eq('year_record_id', yearRecordId)
+
+        if (!games || games.length === 0) return []
+
+        const gameIds = games.map(g => g.id)
+        const { data, error } = await supabase
+            .from('player_stats')
+            .select('*')
+            .in('game_id', gameIds)
+
+        if (error) {
+            console.error('Get season stats error:', error.message)
+            return []
+        }
+
+        return (data ?? []) as PlayerStat[]
+    },
+
+    async upsertStat(stat: Omit<PlayerStat, 'id'> & { id?: string }): Promise<PlayerStat | null> {
+        const { data, error } = await supabase
+            .from('player_stats')
+            .upsert(stat, { onConflict: 'player_id,game_id' })
+            .select()
+            .single()
+
+        if (error) {
+            console.error('Upsert player stat error:', error.message)
+            return null
+        }
+
+        return data as PlayerStat
     },
 
     async createStat(stat: Omit<PlayerStat, 'id'>): Promise<PlayerStat | null> {

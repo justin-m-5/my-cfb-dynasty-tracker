@@ -1,8 +1,8 @@
 // app/dashboard/create-dynasty/page.tsx
 
 import { CreateDynastyForm } from '@/components/forms/create-dynasty-form'
-import PageContainer from '@/components/ui/page-container'
-import { PageHeader } from '@/components/ui/page-header'
+import PageContainer from '@/components/layout/page-container'
+import { PageHeader } from '@/components/layout/page-header'
 
 export default function CreateDynastyPage() {
     return (

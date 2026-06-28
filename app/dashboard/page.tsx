@@ -1,8 +1,8 @@
 // app/dashboard/page.tsx
 
-import PageContainer from '@/components/ui/page-container'
+import PageContainer from '@/components/layout/page-container'
 import { DashboardClientWrapper } from '@/components/dashboard/dashboard-client-wrapper'
-import { PageHeader } from '@/components/ui/page-header'
+import { PageHeader } from '@/components/layout/page-header'
 
 export default function DashboardPage() {
     return (

@@ -99,7 +99,7 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
                     <GlanceCard
                         icon={null}
                         label="Ranking"
-                        value={yearRecord?.final_ranking || '—'}
+                        value={yearRecord?.final_ranking ? String(yearRecord.final_ranking) : '—'}
                     />
                     <GlanceCard
                         icon={<TrendingUp className="h-5 w-5 text-green-500" />}

@@ -1,4 +1,4 @@
-// components/ui/page-header.tsx
+// components/layout/page-header.tsx
 
 import Link from 'next/link'
 import { buttonStyles } from '@/components/ui/button'

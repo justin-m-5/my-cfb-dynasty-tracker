@@ -10,12 +10,12 @@ export interface YearRecord {
     conference_record: string
     bowl_game: string
     bowl_result: string
-    points_for: string
-    points_against: string
+    points_for: number
+    points_against: number
     nat_champ: string
     heisman: string
-    recruiting_class_placement: string
-    final_ranking: string
+    recruiting_class_placement: number | null
+    final_ranking: number | null
     conference_finish: string
     season_stats: Record<string, unknown> | null
 }

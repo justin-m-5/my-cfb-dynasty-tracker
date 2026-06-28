@@ -119,7 +119,7 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
                 <p className="text-sm text-red-500">Game not found.</p>
                 <Link
                     href={`/dashboard/dynasty/${dynastyId}/schedule`}
-                    {...buttonStyles({ size: 'sm', bg: 'var(--primary)', text: 'white' })}
+                    {...buttonStyles({ size: 'sm', bg: 'var(--orange-400)', text: 'white' })}
                 >
                     ← Back to Schedule
                 </Link>

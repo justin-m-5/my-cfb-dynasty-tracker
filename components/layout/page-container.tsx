@@ -1,4 +1,4 @@
-// components/ui/page-container.tsx
+// components/layout/page-container.tsx
 
 import { ReactNode } from "react";
 

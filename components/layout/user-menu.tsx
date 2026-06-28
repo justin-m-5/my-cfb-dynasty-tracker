@@ -9,6 +9,7 @@ import { LogOut, User, ChevronDown } from 'lucide-react'
 
 import { AuthContext } from '@/auth/auth-provider'
 import { supabase } from '@/supabase/client'
+import { Button } from '@/components/ui/button'
 
 export function UserMenu() {
     const { user, profile } = useContext(AuthContext)
@@ -72,13 +73,14 @@ export function UserMenu() {
                             <User className="h-4 w-4 text-text/60" />
                             Edit Profile
                         </Link>
-                        <button
+                        <Button
                             onClick={handleSignOut}
-                            className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-50"
+                            variant="ghost"
+                            className="h-auto w-full justify-start rounded-none px-4 py-2 text-sm text-red-500 hover:bg-red-50 hover:text-red-600"
                         >
                             <LogOut className="h-4 w-4" />
                             Sign Out
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}
