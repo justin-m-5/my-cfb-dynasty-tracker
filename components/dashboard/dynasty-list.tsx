@@ -77,6 +77,10 @@ export function DynastyList({ dynasties }: DynastyListProps) {
                                 <span>🏆 {dynasty.championships}</span>
                                 <span>Seasons: {dynasty.seasons_played}</span>
                             </div>
+
+                            <p className="mt-2 text-xs text-text/50">
+                                Coach {dynasty.coach_name}
+                            </p>
                         </Link>
                     )
                 })}
