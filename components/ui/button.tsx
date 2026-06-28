@@ -21,6 +21,7 @@ const buttonVariants = cva(
             "bg-secondary text-secondary-foreground hover:bg-secondary/80",
             ghost: "hover:bg-accent hover:text-accent-foreground",
             link: "text-primary underline-offset-4 hover:underline",
+            custom: "",
         },
         size: {
             default: "h-10 px-4 py-2",
@@ -36,14 +37,21 @@ const buttonVariants = cva(
     }
 )
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {}
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+    bg?: string
+    text?: string
+}
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant, size, ...props }, ref) => {
-        const Comp = "button"
+    ({ className, variant, size, bg, text, ...props }, ref) => {
         return (
-        <Comp
-            className={cn(buttonVariants({ variant, size, className }))}
+        <button
+            className={cn(
+                buttonVariants({ variant: bg || text ? 'custom' : variant, size }),
+                bg && `bg-${bg} hover:bg-${bg}/80`,
+                text && `text-${text}`,
+                className
+            )}
             ref={ref}
             {...props}
         />
@@ -52,4 +60,23 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = "Button"
 
-export { Button, buttonVariants }
+/**
+ * Generate button classes with custom bg/text colors.
+ * Use with Link or any element: className={buttonStyles({ size: 'sm', bg: 'primary', text: 'white' })}
+ */
+function buttonStyles({
+    variant,
+    size,
+    bg,
+    text,
+    className,
+}: VariantProps<typeof buttonVariants> & { bg?: string; text?: string; className?: string } = {}) {
+    return cn(
+        buttonVariants({ variant: bg || text ? 'custom' : variant, size }),
+        bg && `bg-${bg} hover:bg-${bg}/80`,
+        text && `text-${text}`,
+        className
+    )
+}
+
+export { Button, buttonVariants, buttonStyles }

@@ -18,7 +18,7 @@ export default function DashboardPage() {
                 </div>
                 <Link
                     href="/dashboard/profile"
-                    className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'shrink-0')}
+                    className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), 'shrink-0')}
                 >
                     Edit Profile
                 </Link>
