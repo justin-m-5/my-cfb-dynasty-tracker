@@ -86,7 +86,7 @@ export const AuthService = {
         if (error) throw error
 
         if (data.user) {
-            await ProfileService.updateProfile(data.user.id, {
+            await ProfileService.createProfile(data.user.id, {
                 display_name: displayName,
                 referred_by: referralCode,
                 avatar_url: '/images/default_avatar.jpg',

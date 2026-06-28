@@ -54,6 +54,11 @@ export const ProfileService = {
     if (error) throw error
   },
 
+  async createProfile(id: string, fields: Partial<DbProfile>) {
+    const { error } = await supabase.from('profiles').upsert({ id, ...fields })
+    if (error) throw error
+  },
+
   async uploadAvatar(userId: string, file: File) {
     const fileExt = file.name.split('.').pop()
     const filePath = `${userId}/avatar-${Date.now()}.${fileExt}`
