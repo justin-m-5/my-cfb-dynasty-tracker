@@ -18,7 +18,7 @@ export function DashboardEmptyState() {
             <CardContent className="pt-0" />
             <CardFooter className="justify-start">
                 <Link
-                    href="/dashboard/create"
+                    href="/dashboard/create-dynasty"
                     className={cn(buttonVariants({ variant: 'default' }), 'font-bold text-white')}
                 >
                     Create Dynasty

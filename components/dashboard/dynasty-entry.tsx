@@ -1,4 +1,4 @@
-// components/dashboard/dashboard-entry.tsx
+// components/dashboard/dynasty-entry.tsx
 
 'use client'
 
@@ -33,7 +33,7 @@ export function DashboardEntry() {
     }, [])
 
     if (isLoading) return <DashboardLoadingState />
-    if (dynasties.length === 0) return <DynastyEmptyState />
+    if (dynasties.length === 0) return <DashboardEmptyState />
 
-    return <DynastyEntries dynasties={dynasties} />
+    return <DynastyList dynasties={dynasties} />
 }
