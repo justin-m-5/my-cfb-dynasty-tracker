@@ -56,6 +56,10 @@ export function DynastyList({ dynasties }: DynastyListProps) {
                                 </div>
                             </div>
 
+                            <p className="mt-2 text-sm text-text/80">
+                                Coach {dynasty.coach_name}
+                            </p>
+
                             <div className="flex items-center gap-2 text-xs text-text/60">
                                 {conferenceLogo ? (
                                     <Image
@@ -73,14 +77,12 @@ export function DynastyList({ dynasties }: DynastyListProps) {
                             </div>
 
                             <div className="mt-3 flex flex-wrap gap-3 text-xs text-text/70">
-                                <span>{dynasty.total_wins}W – {dynasty.total_losses}L</span>
+                                <span>{dynasty.total_wins}W - {dynasty.total_losses}L</span>
                                 <span>🏆 {dynasty.championships}</span>
                                 <span>Seasons: {dynasty.seasons_played}</span>
                             </div>
 
-                            <p className="mt-2 text-xs text-text/50">
-                                Coach {dynasty.coach_name}
-                            </p>
+                            
                         </Link>
                     )
                 })}

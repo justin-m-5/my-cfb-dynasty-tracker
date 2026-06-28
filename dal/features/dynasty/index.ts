@@ -2,12 +2,15 @@
 
 import { createDynasty } from './create-dynasty'
 import { getDynasties } from './get-dynasties'
+import { getDynastyById } from './get-dynasty'
 import { switchTeams } from './switch-teams'
 
 export type { CreateDynastyInput, DynastySummary, SwitchTeamsInput } from './types'
+export type { Dynasty } from './get-dynasty'
 
 export const DynastyService = {
     createDynasty,
     getDynasties,
+    getDynastyById,
     switchTeams,
 }
