@@ -131,13 +131,15 @@ export function DynastyList({ dynasties, onDelete }: DynastyListProps) {
                                         </div>
                                     </div>
                                 ) : (
-                                    <button
+                                    <Button
+                                        variant="delete"
+                                        size="sm"
                                         onClick={() => setConfirmId(dynasty.id)}
-                                        className="ml-auto flex items-center gap-1 text-xs text-red-500 transition-colors hover:text-red-700"
+                                        className="ml-auto text-xs"
                                     >
                                         <Trash2 className="h-3.5 w-3.5" />
                                         Delete
-                                    </button>
+                                    </Button>
                                 )}
                             </div>
                         </div>
