@@ -12,7 +12,7 @@ export async function getDynasties(): Promise<DynastySummary[]> {
 
 	const { data, error } = await supabase
 		.from('dynasties')
-		.select('id, name, current_year, coach_name, school_name, school_nickname, conference, last_played')
+		.select('id, name, current_year, coach_name, school_name, school_nickname, school_abbrev, conference, primary_color, secondary_color, seasons_played, total_wins, total_losses, championships, last_played')
 		.eq('user_id', user.id)
 		.order('last_played', { ascending: false })
 

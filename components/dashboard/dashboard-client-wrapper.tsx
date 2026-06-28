@@ -1,4 +1,4 @@
-// components/dashboard/dynasty-entry.tsx
+// components/dashboard/dashboard-client-wrapper.tsx
 
 'use client'
 
@@ -11,7 +11,7 @@ import { DashboardEmptyState } from './dashboard-empty-state'
 import { DashboardLoadingState } from './dashboard-loading-state'
 import { DynastyList } from './dynasty-list'
 
-export function DashboardEntry() {
+export function DashboardClientWrapper() {
     const [dynasties, setDynasties] = useState<DynastySummary[]>([])
     const [isLoading, setIsLoading] = useState(true)
 

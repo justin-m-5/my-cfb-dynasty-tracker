@@ -32,6 +32,13 @@ export interface DynastySummary {
     coach_name: string
     school_name: string
     school_nickname: string | null
+    school_abbrev: string | null
     conference: string | null
+    primary_color: string | null
+    secondary_color: string | null
+    seasons_played: number
+    total_wins: number
+    total_losses: number
+    championships: number
     last_played: string | null
 }

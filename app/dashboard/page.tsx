@@ -1,29 +1,19 @@
 // app/dashboard/page.tsx
 
-import Link from 'next/link'
 import PageContainer from '@/components/ui/page-container'
-import { DashboardEntry } from '@/components/dashboard/dynasty-entry'
-import { buttonStyles } from '@/components/ui/button'
+import { DashboardHeader } from '@/components/dashboard/dashboard-header'
+import { DashboardClientWrapper } from '@/components/dashboard/dashboard-client-wrapper'
 
 export default function DashboardPage() {
     return (
         <PageContainer>
-            <header className="flex items-center justify-between gap-3">
-                <div className="space-y-2">
-                    <h1 className="text-3xl font-bold text-text">Dashboard</h1>
-                    <p className="text-sm text-text/80">
-                        Open an existing dynasty or create a new one to begin tracking your run.
-                    </p>
-                </div>
-                <Link
-                    href="/dashboard/profile"
-                    {...buttonStyles({ size: 'sm', bg: 'var(--secondary)', text: 'white' })}
-                >
-                    Edit Profile
-                </Link>
-            </header>
+            <DashboardHeader
+                title="Dashboard"
+                description="Open an existing dynasty or create a new one to begin tracking your run."
+                action={{ label: 'Edit Profile', href: '/dashboard/profile' }}
+            />
 
-            <DashboardEntry />
+            <DashboardClientWrapper />
         </PageContainer>
     )
 }
