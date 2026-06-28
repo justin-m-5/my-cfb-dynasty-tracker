@@ -1,7 +1,7 @@
 // app/dashboard/profile/page.tsx
 
 import PageContainer from '@/components/ui/page-container'
-import { EditProfileForm } from '@/components/dashboard/edit-profile-form'
+import { EditProfileForm } from '@/components/forms/edit-profile-form'
 
 export default function ProfilePage() {
     return (

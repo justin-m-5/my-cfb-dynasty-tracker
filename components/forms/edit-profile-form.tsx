@@ -1,4 +1,4 @@
-// components/dashboard/edit-profile-form.tsx
+// components/forms/edit-profile-form.tsx
 
 'use client'
 
@@ -64,16 +64,14 @@ export function EditProfileForm() {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                    {avatarPreview && (
-                        <Image
-                            src={avatarPreview}
-                            alt="Avatar preview"
-                            width={80}
-                            height={80}
-                            className="rounded-full border border-primary/20 object-cover"
-                            unoptimized={avatarPreview.startsWith('blob:')}
-                        />
-                    )}
+                    <Image
+                        src={avatarPreview || '/images/default_avatar.jpg'}
+                        alt="Avatar preview"
+                        width={80}
+                        height={80}
+                        className="rounded-full border border-primary/20 object-cover"
+                        unoptimized={avatarPreview?.startsWith('blob:') ?? false}
+                    />
 
                     <div>
                         <Label htmlFor="avatar">Avatar</Label>
