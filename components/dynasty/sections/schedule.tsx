@@ -100,6 +100,25 @@ export function Schedule({ dynastyId }: ScheduleProps) {
         setGames(prev => prev.map(g => g.id === gameId ? { ...g, [field]: value } : g))
     }, [])
 
+    const handleAddGame = async () => {
+        if (!yearRecordId) return
+        const nextWeek = games.length > 0 ? Math.max(...games.map(g => g.week)) + 1 : 1
+        const newGame = await GameService.createGame({
+            dynasty_id: dynastyId,
+            year_record_id: yearRecordId,
+            week: nextWeek,
+            location: 'home',
+            opponent: '',
+            result: 'N/A',
+            score: null,
+            score_by_quarter: null,
+            team_stats: null,
+            recap: null,
+            is_user_controlled: false,
+        })
+        if (newGame) setGames(prev => [...prev, newGame])
+    }
+
     const handleSave = async () => {
         setSaving(true)
         try {
@@ -167,16 +186,27 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                 <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                         <CardTitle className="text-lg">Games</CardTitle>
-                        <Button
-                            bg="var(--green-600)"
-                            text="white"
-                            size="sm"
-                            onClick={handleSave}
-                            disabled={saving}
-                            className="font-semibold"
-                        >
-                            {saving ? 'Saving...' : 'Save Schedule'}
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                bg="var(--primary)"
+                                text="white"
+                                size="sm"
+                                onClick={handleAddGame}
+                                className="font-semibold"
+                            >
+                                Add Game
+                            </Button>
+                            <Button
+                                bg="var(--green-600)"
+                                text="white"
+                                size="sm"
+                                onClick={handleSave}
+                                disabled={saving}
+                                className="font-semibold"
+                            >
+                                {saving ? 'Saving...' : 'Save Schedule'}
+                            </Button>
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent>
