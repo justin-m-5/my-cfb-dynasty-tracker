@@ -8,6 +8,9 @@ import { ArrowLeft, Save } from 'lucide-react'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { GameService, type Game, type QuarterScore } from '@/dal/features/games'
+import { PlayerService, type Player } from '@/dal/features/players'
+import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
+import { PlayerStatsTab } from '@/components/dynasty/sections/game/player-stats-tab'
 import { LogoImage } from '@/components/ui/logo-image'
 import { getSchoolLogoCandidates } from '@/lib/logos'
 import { fbsTeams } from '@/lib/fbs-teams'
@@ -17,7 +20,7 @@ import { Select } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 
-const tabItems = ['Box Score', 'Team Stats', 'Recap'] as const
+const tabItems = ['Box Score', 'Team Stats', 'Player Stats', 'Recap'] as const
 type TabKey = (typeof tabItems)[number]
 
 interface GameDetailProps {
@@ -32,6 +35,8 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
     const [saving, setSaving] = useState(false)
     const [isDirty, setIsDirty] = useState(false)
     const [activeTab, setActiveTab] = useState<TabKey>('Box Score')
+    const [roster, setRoster] = useState<Player[]>([])
+    const [playerStats, setPlayerStats] = useState<PlayerStat[]>([])
 
     useEffect(() => {
         const load = async () => {
@@ -51,6 +56,14 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
                             { home: 0, away: 0 },
                         ],
                     })
+
+                    // Load roster and player stats
+                    const [rosterData, statsData] = await Promise.all([
+                        d ? PlayerService.getRoster(dynastyId, g.year_record_id) : Promise.resolve([]),
+                        PlayerStatService.getStatsForGame(g.id),
+                    ])
+                    setRoster(rosterData)
+                    setPlayerStats(statsData)
                 }
             } catch (err) {
                 console.error('Failed to load game:', err)
@@ -198,6 +211,14 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
             )}
             {activeTab === 'Team Stats' && (
                 <TeamStatsTab game={game} updateGame={updateGame} />
+            )}
+            {activeTab === 'Player Stats' && (
+                <PlayerStatsTab
+                    gameId={game.id}
+                    roster={roster}
+                    stats={playerStats}
+                    onStatsChange={setPlayerStats}
+                />
             )}
             {activeTab === 'Recap' && (
                 <RecapTab game={game} updateGame={updateGame} />
