@@ -112,8 +112,7 @@ export function DynastyList({ dynasties, onDelete }: DynastyListProps) {
                                         <div className="flex gap-2">
                                             <Button
                                                 size="sm"
-                                                bg="var(--red-600)"
-                                                text="white"
+                                                variant="delete"
                                                 className="text-xs font-semibold"
                                                 disabled={isDeleting}
                                                 onClick={() => handleDelete(dynasty.id)}
@@ -134,7 +133,7 @@ export function DynastyList({ dynasties, onDelete }: DynastyListProps) {
                                 ) : (
                                     <button
                                         onClick={() => setConfirmId(dynasty.id)}
-                                        className="flex items-center gap-1 text-xs text-text/40 transition-colors hover:text-red-500"
+                                        className="ml-auto flex items-center gap-1 text-xs text-red-500 transition-colors hover:text-red-700"
                                     >
                                         <Trash2 className="h-3.5 w-3.5" />
                                         Delete
