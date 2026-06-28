@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { ArrowLeft, Save } from 'lucide-react'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
-import { GameService, type Game } from '@/dal/features/games'
+import { GameService, type Game, type QuarterScore } from '@/dal/features/games'
 import { LogoImage } from '@/components/ui/logo-image'
 import { getSchoolLogoCandidates } from '@/lib/logos'
 import { fbsTeams } from '@/lib/fbs-teams'
@@ -16,8 +16,6 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-
-type QuarterScore = { home: number; away: number }
 
 const tabItems = ['Box Score', 'Team Stats', 'Recap'] as const
 type TabKey = (typeof tabItems)[number]
@@ -44,15 +42,15 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
                 ])
                 setDynasty(d)
                 if (g) {
-                    if (!g.score_by_quarter) {
-                        g.score_by_quarter = [
+                    setGame({
+                        ...g,
+                        score_by_quarter: g.score_by_quarter ?? [
                             { home: 0, away: 0 },
                             { home: 0, away: 0 },
                             { home: 0, away: 0 },
                             { home: 0, away: 0 },
-                        ]
-                    }
-                    setGame(g)
+                        ],
+                    })
                 }
             } catch (err) {
                 console.error('Failed to load game:', err)
@@ -278,7 +276,7 @@ function QuickEditRow({ game, updateGame }: { game: Game; updateGame: (f: keyof 
 
     return (
         <div className="flex flex-wrap items-end gap-3">
-            <div className="min-w-[180px] flex-1">
+            <div className="min-w-45 flex-1">
                 <Label className="text-xs">Opponent</Label>
                 <Select
                     value={game.opponent}
@@ -363,19 +361,7 @@ function BoxScoreTab({
         const updated = [...quarters]
         updated[qi] = { ...updated[qi], [side]: Number(val) || 0 }
         updateGame('score_by_quarter', updated)
-
-        // Auto-sync total score
-        const homeTotal = updated.reduce((s, q) => s + (q.home || 0), 0)
-        const awayTotal = updated.reduce((s, q) => s + (q.away || 0), 0)
-        if (game.location === 'away') {
-            updateGame('score', `${awayTotal}-${homeTotal}`)
-        } else {
-            updateGame('score', `${homeTotal}-${awayTotal}`)
-        }
     }
-
-    const homeTotal = quarters.reduce((s, q) => s + (q.home || 0), 0)
-    const awayTotal = quarters.reduce((s, q) => s + (q.away || 0), 0)
 
     const homeName = game.location === 'away' ? (game.opponent || 'Opponent') : (dynasty.school_abbrev ?? dynasty.school_name)
     const awayName = game.location === 'away' ? (dynasty.school_abbrev ?? dynasty.school_name) : (game.opponent || 'Opponent')
@@ -390,7 +376,6 @@ function BoxScoreTab({
                             <tr className="border-b border-primary/20 text-xs text-text/60">
                                 <th className="py-2 pr-4 text-left font-medium">Team</th>
                                 {labels.map(l => <th key={l} className="px-3 py-2 text-center font-medium">{l}</th>)}
-                                <th className="px-3 py-2 text-center font-semibold">Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -406,7 +391,6 @@ function BoxScoreTab({
                                         />
                                     </td>
                                 ))}
-                                <td className="px-3 py-2 text-center font-bold text-text">{awayTotal}</td>
                             </tr>
                             <tr>
                                 <td className="py-2 pr-4 font-medium text-text">{homeName}</td>
@@ -420,7 +404,6 @@ function BoxScoreTab({
                                         />
                                     </td>
                                 ))}
-                                <td className="px-3 py-2 text-center font-bold text-text">{homeTotal}</td>
                             </tr>
                         </tbody>
                     </table>

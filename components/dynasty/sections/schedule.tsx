@@ -12,7 +12,7 @@ import { GameService, type Game } from '@/dal/features/games'
 import { fbsTeams } from '@/lib/fbs-teams'
 import { LogoImage } from '@/components/ui/logo-image'
 import { getSchoolLogoCandidates } from '@/lib/logos'
-import { Button } from '@/components/ui/button'
+import { Button, buttonStyles } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -30,10 +30,14 @@ function getWeekDisplayName(week: number): string {
 
 function getResultColor(result: string): string {
     switch (result) {
-        case 'W': return 'bg-green-100 text-green-900'
-        case 'L': return 'bg-red-100 text-red-900'
-        case 'Bye': return 'bg-gray-100 text-gray-600'
-        default: return ''
+        case 'W':
+            return 'bg-green-100/80 text-green-900'
+        case 'L':
+            return 'bg-red-100/80 text-red-900'
+        case 'Bye':
+            return 'bg-slate-100/80 text-slate-700'
+        default:
+            return 'bg-background/70 text-text'
     }
 }
 
@@ -47,15 +51,15 @@ function ResultIcon({ result }: { result: string }) {
     }
 }
 
-function getResultLabel(result: string): string {
-    switch (result) {
-        case 'W': return 'Win'
-        case 'L': return 'Loss'
-        case 'T': return 'Tie'
-        case 'Bye': return 'Bye'
-        case 'N/A': return '—'
-        default: return result
-    }
+function getScoreParts(score: string | null): { team: string; opponent: string } {
+    if (!score) return { team: '', opponent: '' }
+    const [team = '', opponent = ''] = score.split('-')
+    return { team, opponent }
+}
+
+function buildScore(team: string, opponent: string): string | null {
+    if (!team.trim() && !opponent.trim()) return null
+    return `${team.trim()}-${opponent.trim()}`
 }
 
 interface ScheduleProps {
@@ -201,9 +205,9 @@ export function Schedule({ dynastyId }: ScheduleProps) {
             {/* Games Table */}
             <Card>
                 <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <CardTitle className="text-lg">Games</CardTitle>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                             {isDirty && (
                                 <span className="text-xs font-medium text-amber-500">Unsaved changes</span>
                             )}
@@ -235,6 +239,7 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                     ) : (
                         <div className="space-y-2">
                             {games.map((game) => {
+                                const scoreParts = getScoreParts(game.score)
                                 const oppTeam = fbsTeams.find(t => t.name === game.opponent)
                                 const oppLogos = game.opponent && game.opponent !== 'BYE'
                                     ? getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null)
@@ -243,92 +248,101 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                                 return (
                                     <div
                                         key={game.id}
-                                        className={`flex flex-wrap items-center gap-3 rounded-lg border border-primary/10 p-3 ${getResultColor(game.result)}`}
+                                        className={`rounded-lg border border-primary/15 p-3 ${getResultColor(game.result)}`}
                                     >
-                                        {/* Week */}
-                                        <div className="w-20 shrink-0 text-sm font-semibold text-text/80">
-                                            {getWeekDisplayName(game.week)}
-                                        </div>
+                                        <div className="flex items-center justify-between gap-3">
+                                            <div className="text-sm font-semibold text-text/85">
+                                                {getWeekDisplayName(game.week)}
+                                            </div>
 
-                                        {/* Location */}
-                                        <Select
-                                            value={game.location}
-                                            onChange={(e) => handleUpdateGame(game.id, 'location', e.target.value)}
-                                            className="h-8 w-24 text-xs"
-                                        >
-                                            <option value="home">Home</option>
-                                            <option value="away">Away</option>
-                                            <option value="neutral">Neutral</option>
-                                            <option value="none">None</option>
-                                        </Select>
-
-                                        {/* Opponent */}
-                                        <div className="flex min-w-0 flex-1 items-center gap-2">
-                                            {oppLogos.length > 0 && (
-                                                <LogoImage candidates={oppLogos} alt={game.opponent} size={28} />
-                                            )}
-                                            <Select
-                                                value={game.opponent || ''}
-                                                onChange={(e) => handleUpdateGame(game.id, 'opponent', e.target.value)}
-                                                className="h-8 min-w-[180px] flex-1 text-xs"
+                                            {/* View Game */}
+                                            <Link
+                                                href={`/dashboard/dynasty/${dynastyId}/game/${game.id}`}
+                                                {...buttonStyles({ bg: 'var(--primary)', text: 'white', className: 'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold' })}
                                             >
-                                                <option value="">Select Opponent</option>
-                                                <option value="BYE">BYE</option>
-                                                {opponentTeams.map((t) => (
-                                                    <option key={t.name} value={t.name}>
-                                                        {t.name} ({t.conference})
-                                                    </option>
-                                                ))}
-                                            </Select>
+                                                <Eye className="h-3.5 w-3.5" />
+                                                View
+                                            </Link>
                                         </div>
 
-                                        {/* Result */}
-                                        <div className="flex items-center gap-1">
-                                            <ResultIcon result={game.result} />
-                                            <Select
-                                                value={game.result}
-                                                onChange={(e) => handleUpdateGame(game.id, 'result', e.target.value)}
-                                                className="h-8 w-20 text-xs"
-                                            >
-                                                <option value="N/A">—</option>
-                                                <option value="W">Win</option>
-                                                <option value="L">Loss</option>
-                                                <option value="T">Tie</option>
-                                                <option value="Bye">Bye</option>
-                                            </Select>
-                                        </div>
+                                        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-12 lg:items-end">
+                                            <div className="space-y-1 lg:col-span-2">
+                                                <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Location</p>
+                                                <Select
+                                                    value={game.location}
+                                                    onChange={(e) => handleUpdateGame(game.id, 'location', e.target.value)}
+                                                    className="h-9 min-w-0 text-xs"
+                                                >
+                                                    <option value="home">Home</option>
+                                                    <option value="away">Away</option>
+                                                    <option value="neutral">Neutral</option>
+                                                    <option value="none">None</option>
+                                                </Select>
+                                            </div>
 
-                                        {/* Score */}
-                                        <div className="flex items-center gap-1">
-                                            <Input
-                                                value={game.score?.split('-')[0] ?? ''}
-                                                onChange={(e) => {
-                                                    const opp = game.score?.split('-')[1] ?? ''
-                                                    handleUpdateGame(game.id, 'score', `${e.target.value}-${opp}`)
-                                                }}
-                                                placeholder="You"
-                                                className="h-8 w-14 text-center text-xs"
-                                            />
-                                            <span className="text-xs text-text/50">-</span>
-                                            <Input
-                                                value={game.score?.split('-')[1] ?? ''}
-                                                onChange={(e) => {
-                                                    const you = game.score?.split('-')[0] ?? ''
-                                                    handleUpdateGame(game.id, 'score', `${you}-${e.target.value}`)
-                                                }}
-                                                placeholder="Opp"
-                                                className="h-8 w-14 text-center text-xs"
-                                            />
-                                        </div>
+                                            <div className="space-y-1 lg:col-span-5">
+                                                <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Opponent</p>
+                                                <div className="flex min-w-0 items-center gap-2">
+                                                    {oppLogos.length > 0 && (
+                                                        <LogoImage candidates={oppLogos} alt={game.opponent} size={28} />
+                                                    )}
+                                                    <Select
+                                                        value={game.opponent || ''}
+                                                        onChange={(e) => handleUpdateGame(game.id, 'opponent', e.target.value)}
+                                                        className="h-9 min-w-0 flex-1 text-xs"
+                                                    >
+                                                        <option value="">Select Opponent</option>
+                                                        <option value="BYE">BYE</option>
+                                                        {opponentTeams.map((t) => (
+                                                            <option key={t.name} value={t.name}>
+                                                                {t.name} ({t.conference})
+                                                            </option>
+                                                        ))}
+                                                    </Select>
+                                                </div>
+                                            </div>
 
-                                        {/* View Game */}
-                                        <Link
-                                            href={`/dashboard/dynasty/${dynastyId}/game/${game.id}`}
-                                            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10"
-                                        >
-                                            <Eye className="h-3.5 w-3.5" />
-                                            View
-                                        </Link>
+                                            <div className="space-y-1 lg:col-span-2">
+                                                <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Result</p>
+                                                <div className="flex items-center gap-1">
+                                                    <ResultIcon result={game.result} />
+                                                    <Select
+                                                        value={game.result}
+                                                        onChange={(e) => handleUpdateGame(game.id, 'result', e.target.value)}
+                                                        className="h-9 min-w-0 text-xs"
+                                                    >
+                                                        <option value="N/A">—</option>
+                                                        <option value="W">Win</option>
+                                                        <option value="L">Loss</option>
+                                                        <option value="T">Tie</option>
+                                                        <option value="Bye">Bye</option>
+                                                    </Select>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-1 lg:col-span-3">
+                                                <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Score</p>
+                                                <div className="flex items-center gap-1">
+                                                    <Input
+                                                        value={scoreParts.team}
+                                                        onChange={(e) => {
+                                                            handleUpdateGame(game.id, 'score', buildScore(e.target.value, scoreParts.opponent))
+                                                        }}
+                                                        placeholder="You"
+                                                        className="h-9 w-16 text-center text-xs"
+                                                    />
+                                                    <span className="text-xs text-text/50">-</span>
+                                                    <Input
+                                                        value={scoreParts.opponent}
+                                                        onChange={(e) => {
+                                                            handleUpdateGame(game.id, 'score', buildScore(scoreParts.team, e.target.value))
+                                                        }}
+                                                        placeholder="Opp"
+                                                        className="h-9 w-16 text-center text-xs"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 )
                             })}

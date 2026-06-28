@@ -2,6 +2,11 @@
 
 import { supabase } from '@/supabase/client'
 
+export interface QuarterScore {
+    home: number
+    away: number
+}
+
 export interface Game {
     id: string
     dynasty_id: string
@@ -11,7 +16,7 @@ export interface Game {
     opponent: string
     result: 'W' | 'L' | 'T' | 'Bye' | 'N/A'
     score: string | null
-    score_by_quarter: Record<string, unknown> | null
+    score_by_quarter: QuarterScore[] | null
     team_stats: Record<string, unknown> | null
     recap: string | null
     is_user_controlled: boolean
