@@ -29,8 +29,7 @@ export function SignInForm() {
             const nextPath = searchParams.get('next')
             const destination = nextPath && nextPath.startsWith('/') ? nextPath : '/dashboard'
 
-            router.refresh()
-            router.push(destination)
+            window.location.href = destination
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message)
