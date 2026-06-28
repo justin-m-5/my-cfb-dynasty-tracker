@@ -1,4 +1,4 @@
-// app/dashboard/create/page.tsx
+// app/dashboard/create-dynasty/page.tsx
 
 import { CreateDynastyForm } from '@/components/dashboard/create-dynasty-form'
 import PageContainer from '@/components/ui/page-container'

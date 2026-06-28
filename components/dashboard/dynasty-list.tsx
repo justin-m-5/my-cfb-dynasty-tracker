@@ -18,7 +18,7 @@ export function DynastyList({ dynasties }: DynastyListProps) {
                 <div className="flex items-center justify-between gap-3">
                     <CardTitle className="text-xl">Your Dynasties</CardTitle>
                 <Link
-                    href="/dashboard/create"
+                    href="/dashboard/create-dynasty"
                     className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), 'font-semibold')}
                 >
                     New Dynasty

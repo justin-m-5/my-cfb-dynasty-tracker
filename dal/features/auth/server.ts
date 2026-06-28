@@ -35,13 +35,12 @@ export async function getServerAuthSession() {
     })
 
     const {
-        data: { session },
-    } = await supabase.auth.getSession()
+        data: { user },
+    } = await supabase.auth.getUser()
 
-    if (!session) return { session: null, user: null, profile: null }
+    if (!user) return { user: null, profile: null }
 
-    const user = session.user
     const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
 
-    return { session, user, profile: (profile as Profile) ?? null }
+    return { user, profile: (profile as Profile) ?? null }
 }

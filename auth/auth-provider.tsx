@@ -27,13 +27,15 @@ interface AuthProviderProps {
     serverSession: {
         user: User | null;
         profile: Profile | null;
-        session: Session | null;
     };
 }
 
 export const AuthProvider = ({ children, serverSession }: AuthProviderProps) => {
-    const [sessionState, setSessionState] = useState(serverSession);
-    const [loading, setLoading] = useState(!serverSession.session);
+    const [sessionState, setSessionState] = useState<Omit<AuthContextType, 'loading'>>({
+        ...serverSession,
+        session: null,
+    });
+    const [loading, setLoading] = useState(!serverSession.user);
 
     useEffect(() => {
         let isMounted = true;
