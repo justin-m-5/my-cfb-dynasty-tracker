@@ -47,7 +47,7 @@ export function DashboardClientWrapper() {
                     href="/dashboard/profile"
                     {...buttonStyles({
                         className:
-                            'h-28 w-full max-w-xs flex-col items-center justify-center gap-1.5 rounded-xl border border-primary/20 bg-(--primary5) px-3 py-2 text-left hover:border-primary/40 hover:bg-primary/10',
+                            'h-28 w-36 shrink-0 flex-col items-center justify-center gap-1.5 rounded-xl border border-primary/20 bg-(--primary5) px-3 py-2 text-center hover:border-primary/40 hover:bg-primary/10',
                     })}
                 >
                     <UserCog className="h-8 w-8 text-primary" />

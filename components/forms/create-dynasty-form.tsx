@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 
 import { DynastyService } from '@/dal/features/dynasty'
 import { fbsTeams, type FbsTeam } from '@/lib/fbs-teams'
+import { pipelines } from '@/lib/pipelines'
 import { conferenceLogoByName, getSchoolLogoCandidates } from '@/lib/logos'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
@@ -27,6 +28,8 @@ export function CreateDynastyForm() {
     const [currentYear, setCurrentYear] = useState(2026)
     const [conference, setConference] = useState('')
     const [teamId, setTeamId] = useState('')
+    const [almaMater, setAlmaMater] = useState('')
+    const [pipeline, setPipeline] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -73,6 +76,8 @@ export function CreateDynastyForm() {
                 schoolNickName: selectedTeam.nickName,
                 schoolAbbrev: selectedTeam.abbrev,
                 conference: selectedTeam.conference,
+                almaMater: almaMater || null,
+                pipeline: pipeline || null,
                 primaryColor: selectedTeam.colors.primary,
                 secondaryColor: selectedTeam.colors.secondary,
                 accentColor: selectedTeam.colors.accent ?? null,
@@ -177,6 +182,39 @@ export function CreateDynastyForm() {
                                 {team.name} ({team.abbrev})
                             </option>
                         ))}
+                    </Select>
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="pipeline">Pipeline</Label>
+                    <Select
+                        id="pipeline"
+                        value={pipeline}
+                        onChange={(event) => setPipeline(event.target.value)}
+                    >
+                        <option value="">None</option>
+                        {pipelines.map((p) => (
+                            <option key={p} value={p}>{p}</option>
+                        ))}
+                    </Select>
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="almaMater">Alma Mater</Label>
+                    <Select
+                        id="almaMater"
+                        value={almaMater}
+                        onChange={(event) => setAlmaMater(event.target.value)}
+                    >
+                        <option value="">None</option>
+                        {fbsTeams
+                            .slice()
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map((team) => (
+                                <option key={team.id} value={team.name}>
+                                    {team.name} {team.nickName}
+                                </option>
+                            ))}
                     </Select>
                 </div>
             </div>
