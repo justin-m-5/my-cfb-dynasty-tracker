@@ -18,6 +18,21 @@ export interface Game {
 }
 
 export const GameService = {
+    async getGameById(id: string): Promise<Game | null> {
+        const { data, error } = await supabase
+            .from('games')
+            .select('*')
+            .eq('id', id)
+            .single()
+
+        if (error) {
+            console.error('Get game error:', error.message)
+            return null
+        }
+
+        return data as Game
+    },
+
     async getGames(dynastyId: string, yearRecordId: string): Promise<Game[]> {
         const { data, error } = await supabase
             .from('games')

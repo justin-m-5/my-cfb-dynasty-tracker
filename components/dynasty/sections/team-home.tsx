@@ -92,12 +92,12 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
                         value={String(currentWeek)}
                     />
                     <GlanceCard
-                        icon={<Trophy className="h-5 w-5 text-amber-500" />}
+                        icon={null}
                         label="Record"
                         value={`${wins}-${losses}`}
                     />
                     <GlanceCard
-                        icon={<Star className="h-5 w-5 text-purple-500" />}
+                        icon={null}
                         label="Ranking"
                         value={yearRecord?.final_ranking || '—'}
                     />
@@ -181,7 +181,7 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
     )
 }
 
-function GlanceCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function GlanceCard({ icon = null, label, value }: { icon: React.ReactNode; label: string; value: string }) {
     return (
         <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-background/70 p-4">
             {icon}

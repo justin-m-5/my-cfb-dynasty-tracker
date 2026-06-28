@@ -3,7 +3,8 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Trophy, TrendingDown, Minus, Calendar } from 'lucide-react'
+import Link from 'next/link'
+import { Trophy, TrendingDown, Minus, Calendar, Eye } from 'lucide-react'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
@@ -319,6 +320,15 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                                                 className="h-8 w-14 text-center text-xs"
                                             />
                                         </div>
+
+                                        {/* View Game */}
+                                        <Link
+                                            href={`/dashboard/dynasty/${dynastyId}/game/${game.id}`}
+                                            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10"
+                                        >
+                                            <Eye className="h-3.5 w-3.5" />
+                                            View
+                                        </Link>
                                     </div>
                                 )
                             })}
