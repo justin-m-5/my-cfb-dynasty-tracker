@@ -2,7 +2,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import type { DynastySummary } from '@/dal/features/dynasty'
 import { DynastyService } from '@/dal/features/dynasty'
@@ -32,8 +32,13 @@ export function DashboardClientWrapper() {
         }
     }, [])
 
+    const handleDelete = useCallback(async (id: string) => {
+        await DynastyService.deleteDynasty(id)
+        setDynasties(prev => prev.filter(d => d.id !== id))
+    }, [])
+
     if (isLoading) return <DashboardLoadingState />
     if (dynasties.length === 0) return <DashboardEmptyState />
 
-    return <DynastyList dynasties={dynasties} />
+    return <DynastyList dynasties={dynasties} onDelete={handleDelete} />
 }
