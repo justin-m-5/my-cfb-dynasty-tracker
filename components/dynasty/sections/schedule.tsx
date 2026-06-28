@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Trophy, TrendingDown, Minus, Calendar, Eye } from 'lucide-react'
+import { Trophy, TrendingDown, Minus, Calendar, Pencil, Plus, Save, X } from 'lucide-react'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
@@ -62,6 +62,13 @@ function buildScore(team: string, opponent: string): string | null {
     return `${team.trim()}-${opponent.trim()}`
 }
 
+interface NewGameDraft {
+    id: string
+    week: number
+    location: string
+    opponent: string
+}
+
 interface ScheduleProps {
     dynastyId: string
 }
@@ -72,17 +79,9 @@ export function Schedule({ dynastyId }: ScheduleProps) {
     const [yearRecordId, setYearRecordId] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
-    const [isDirty, setIsDirty] = useState(false)
 
-    // Warn on browser navigation / tab close with unsaved changes
-    useEffect(() => {
-        if (!isDirty) return
-        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            e.preventDefault()
-        }
-        window.addEventListener('beforeunload', handleBeforeUnload)
-        return () => window.removeEventListener('beforeunload', handleBeforeUnload)
-    }, [isDirty])
+    // New game row being added (editable until saved)
+    const [newGame, setNewGame] = useState<NewGameDraft | null>(null)
 
     useEffect(() => {
         const load = async () => {
@@ -112,48 +111,44 @@ export function Schedule({ dynastyId }: ScheduleProps) {
         []
     )
 
-    const handleUpdateGame = useCallback((gameId: string, field: keyof Game, value: unknown) => {
-        setGames(prev => prev.map(g => g.id === gameId ? { ...g, [field]: value } : g))
-        setIsDirty(true)
-    }, [])
-
-    const handleAddGame = async () => {
-        if (!yearRecordId) return
+    const handleStartAddGame = () => {
+        if (newGame) return // already adding
         const nextWeek = games.length > 0 ? Math.max(...games.map(g => g.week)) + 1 : 1
-        const newGame = await GameService.createGame({
-            dynasty_id: dynastyId,
-            year_record_id: yearRecordId,
+        setNewGame({
+            id: crypto.randomUUID(),
             week: nextWeek,
             location: 'home',
             opponent: '',
-            result: 'N/A',
-            score: null,
-            score_by_quarter: null,
-            team_stats: null,
-            recap: null,
-            is_user_controlled: false,
         })
-        if (newGame) {
-            setGames(prev => [...prev, newGame])
-            setIsDirty(true)
-        }
     }
 
-    const handleSave = async () => {
+    const handleCancelNewGame = () => {
+        setNewGame(null)
+    }
+
+    const handleSaveNewGame = async () => {
+        if (!yearRecordId || !newGame) return
         setSaving(true)
         try {
-            for (const g of games) {
-                await GameService.updateGame(g.id, {
-                    location: g.location,
-                    opponent: g.opponent,
-                    result: g.result,
-                    score: g.score,
-                    recap: g.recap,
-                })
+            const created = await GameService.createGame({
+                dynasty_id: dynastyId,
+                year_record_id: yearRecordId,
+                week: newGame.week,
+                location: newGame.location,
+                opponent: newGame.opponent,
+                result: newGame.opponent === 'BYE' ? 'Bye' : 'N/A',
+                score: null,
+                score_by_quarter: null,
+                team_stats: null,
+                recap: null,
+                is_user_controlled: false,
+            })
+            if (created) {
+                setGames(prev => [...prev, created])
             }
-            setIsDirty(false)
+            setNewGame(null)
         } catch (err) {
-            console.error('Failed to save schedule:', err)
+            console.error('Failed to save game:', err)
         } finally {
             setSaving(false)
         }
@@ -207,37 +202,25 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                 <CardHeader className="pb-3">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <CardTitle className="text-lg">Games</CardTitle>
-                        <div className="flex flex-wrap items-center gap-2">
-                            {isDirty && (
-                                <span className="text-xs font-medium text-amber-500">Unsaved changes</span>
-                            )}
-                            <Button
-                                bg="var(--primary)"
-                                text="white"
-                                size="sm"
-                                onClick={handleAddGame}
-                                className="font-semibold"
-                            >
-                                Add Game
-                            </Button>
-                            <Button
-                                bg="var(--green-600)"
-                                text="white"
-                                size="sm"
-                                onClick={handleSave}
-                                disabled={saving}
-                                className="font-semibold"
-                            >
-                                {saving ? 'Saving...' : 'Save Schedule'}
-                            </Button>
-                        </div>
+                        <Button
+                            bg="var(--primary)"
+                            text="white"
+                            size="sm"
+                            onClick={handleStartAddGame}
+                            disabled={!!newGame}
+                            className="flex items-center gap-1 font-semibold"
+                        >
+                            <Plus className="h-3.5 w-3.5" />
+                            Add Game
+                        </Button>
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {games.length === 0 ? (
+                    {games.length === 0 && !newGame ? (
                         <p className="text-sm text-text/60">No games yet. Add games to start tracking your season.</p>
                     ) : (
                         <div className="space-y-2">
+                            {/* Saved games (read-only rows) */}
                             {games.map((game) => {
                                 const scoreParts = getScoreParts(game.score)
                                 const oppTeam = fbsTeams.find(t => t.name === game.opponent)
@@ -250,102 +233,112 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                                         key={game.id}
                                         className={`rounded-lg border border-primary/15 p-3 ${getResultColor(game.result)}`}
                                     >
-                                        <div className="flex items-center justify-between gap-3">
-                                            <div className="text-sm font-semibold text-text/85">
+                                        <div className="flex items-center gap-3">
+                                            {/* Week */}
+                                            <span className="text-sm font-semibold text-text/85 w-24 shrink-0">
                                                 {getWeekDisplayName(game.week)}
+                                            </span>
+
+                                            {/* Opponent with logo */}
+                                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                                                {oppLogos.length > 0 && (
+                                                    <LogoImage candidates={oppLogos} alt={game.opponent} size={24} />
+                                                )}
+                                                <span className="text-sm font-medium truncate">
+                                                    {game.location === 'away' && '@ '}
+                                                    {game.location === 'neutral' && '⚡ '}
+                                                    {game.opponent || <span className="text-text/40 italic">No opponent</span>}
+                                                </span>
                                             </div>
 
-                                            {/* View Game */}
+                                            {/* Result + Score */}
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <ResultIcon result={game.result} />
+                                                {game.score && (
+                                                    <span className="text-sm font-bold tabular-nums">
+                                                        {scoreParts.team}-{scoreParts.opponent}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* Edit Game button */}
                                             <Link
                                                 href={`/dashboard/dynasty/${dynastyId}/game/${game.id}`}
-                                                {...buttonStyles({ bg: 'var(--primary)', text: 'white', className: 'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold' })}
+                                                {...buttonStyles({ bg: 'var(--primary)', text: 'white', className: 'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold shrink-0' })}
                                             >
-                                                <Eye className="h-3.5 w-3.5" />
-                                                View
+                                                <Pencil className="h-3.5 w-3.5" />
+                                                Edit Game
                                             </Link>
-                                        </div>
-
-                                        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-12 lg:items-end">
-                                            <div className="space-y-1 lg:col-span-2">
-                                                <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Location</p>
-                                                <Select
-                                                    value={game.location}
-                                                    onChange={(e) => handleUpdateGame(game.id, 'location', e.target.value)}
-                                                    className="h-9 min-w-0 text-xs"
-                                                >
-                                                    <option value="home">Home</option>
-                                                    <option value="away">Away</option>
-                                                    <option value="neutral">Neutral</option>
-                                                    <option value="none">None</option>
-                                                </Select>
-                                            </div>
-
-                                            <div className="space-y-1 lg:col-span-5">
-                                                <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Opponent</p>
-                                                <div className="flex min-w-0 items-center gap-2">
-                                                    {oppLogos.length > 0 && (
-                                                        <LogoImage candidates={oppLogos} alt={game.opponent} size={28} />
-                                                    )}
-                                                    <Select
-                                                        value={game.opponent || ''}
-                                                        onChange={(e) => handleUpdateGame(game.id, 'opponent', e.target.value)}
-                                                        className="h-9 min-w-0 flex-1 text-xs"
-                                                    >
-                                                        <option value="">Select Opponent</option>
-                                                        <option value="BYE">BYE</option>
-                                                        {opponentTeams.map((t) => (
-                                                            <option key={t.name} value={t.name}>
-                                                                {t.name} ({t.conference})
-                                                            </option>
-                                                        ))}
-                                                    </Select>
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-1 lg:col-span-2">
-                                                <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Result</p>
-                                                <div className="flex items-center gap-1">
-                                                    <ResultIcon result={game.result} />
-                                                    <Select
-                                                        value={game.result}
-                                                        onChange={(e) => handleUpdateGame(game.id, 'result', e.target.value)}
-                                                        className="h-9 min-w-0 text-xs"
-                                                    >
-                                                        <option value="N/A">—</option>
-                                                        <option value="W">Win</option>
-                                                        <option value="L">Loss</option>
-                                                        <option value="T">Tie</option>
-                                                        <option value="Bye">Bye</option>
-                                                    </Select>
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-1 lg:col-span-3">
-                                                <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Score</p>
-                                                <div className="flex items-center gap-1">
-                                                    <Input
-                                                        value={scoreParts.team}
-                                                        onChange={(e) => {
-                                                            handleUpdateGame(game.id, 'score', buildScore(e.target.value, scoreParts.opponent))
-                                                        }}
-                                                        placeholder="You"
-                                                        className="h-9 w-16 text-center text-xs"
-                                                    />
-                                                    <span className="text-xs text-text/50">-</span>
-                                                    <Input
-                                                        value={scoreParts.opponent}
-                                                        onChange={(e) => {
-                                                            handleUpdateGame(game.id, 'score', buildScore(scoreParts.team, e.target.value))
-                                                        }}
-                                                        placeholder="Opp"
-                                                        className="h-9 w-16 text-center text-xs"
-                                                    />
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 )
                             })}
+
+                            {/* New game row (editable) */}
+                            {newGame && (
+                                <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-sm font-semibold text-text/85">
+                                            {getWeekDisplayName(newGame.week)}
+                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <Button
+                                                bg="var(--green-600)"
+                                                text="white"
+                                                size="sm"
+                                                onClick={handleSaveNewGame}
+                                                disabled={saving || !newGame.opponent}
+                                                className="flex items-center gap-1 text-xs font-semibold"
+                                            >
+                                                <Save className="h-3.5 w-3.5" />
+                                                {saving ? 'Saving...' : 'Save'}
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={handleCancelNewGame}
+                                                className="flex items-center gap-1 text-xs"
+                                            >
+                                                <X className="h-3.5 w-3.5" />
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid gap-3 sm:grid-cols-2">
+                                        <div className="space-y-1">
+                                            <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Location</p>
+                                            <Select
+                                                value={newGame.location}
+                                                onChange={(e) => setNewGame(prev => prev ? { ...prev, location: e.target.value } : null)}
+                                                className="h-9 text-xs"
+                                            >
+                                                <option value="home">Home</option>
+                                                <option value="away">Away</option>
+                                                <option value="neutral">Neutral</option>
+                                                <option value="none">None</option>
+                                            </Select>
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Opponent</p>
+                                            <Select
+                                                value={newGame.opponent}
+                                                onChange={(e) => setNewGame(prev => prev ? { ...prev, opponent: e.target.value } : null)}
+                                                className="h-9 text-xs"
+                                            >
+                                                <option value="">Select Opponent</option>
+                                                <option value="BYE">BYE</option>
+                                                {opponentTeams.map((t) => (
+                                                    <option key={t.name} value={t.name}>
+                                                        {t.name} ({t.conference})
+                                                    </option>
+                                                ))}
+                                            </Select>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </CardContent>
