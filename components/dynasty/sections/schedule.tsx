@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Trophy, TrendingDown, Minus, Calendar, Pencil, Plus, Save, X } from 'lucide-react'
+import { Trophy, TrendingDown, Minus, Calendar, Pencil, Plus } from 'lucide-react'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
@@ -13,8 +13,6 @@ import { fbsTeams } from '@/lib/fbs-teams'
 import { LogoImage } from '@/components/ui/logo-image'
 import { getSchoolLogoCandidates } from '@/lib/logos'
 import { Button, buttonStyles } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 function getWeekDisplayName(week: number): string {
@@ -57,18 +55,6 @@ function getScoreParts(score: string | null): { team: string; opponent: string }
     return { team, opponent }
 }
 
-function buildScore(team: string, opponent: string): string | null {
-    if (!team.trim() && !opponent.trim()) return null
-    return `${team.trim()}-${opponent.trim()}`
-}
-
-interface NewGameDraft {
-    id: string
-    week: number
-    location: "home" | "away" | "neutral" | "none"
-    opponent: string
-}
-
 interface ScheduleProps {
     dynastyId: string
 }
@@ -78,10 +64,7 @@ export function Schedule({ dynastyId }: ScheduleProps) {
     const [games, setGames] = useState<Game[]>([])
     const [yearRecordId, setYearRecordId] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
-    const [saving, setSaving] = useState(false)
-
-    // New game row being added (editable until saved)
-    const [newGame, setNewGame] = useState<NewGameDraft | null>(null)
+    const [adding, setAdding] = useState(false)
 
     useEffect(() => {
         const load = async () => {
@@ -106,37 +89,18 @@ export function Schedule({ dynastyId }: ScheduleProps) {
         load()
     }, [dynastyId])
 
-    const opponentTeams = useMemo(
-        () => fbsTeams.map(t => ({ name: t.name, conference: t.conference })).sort((a, b) => a.name.localeCompare(b.name)),
-        []
-    )
-
-    const handleStartAddGame = () => {
-        if (newGame) return // already adding
-        const nextWeek = games.length > 0 ? Math.max(...games.map(g => g.week)) + 1 : 1
-        setNewGame({
-            id: crypto.randomUUID(),
-            week: nextWeek,
-            location: 'home',
-            opponent: '',
-        })
-    }
-
-    const handleCancelNewGame = () => {
-        setNewGame(null)
-    }
-
-    const handleSaveNewGame = async () => {
-        if (!yearRecordId || !newGame) return
-        setSaving(true)
+    const handleAddGame = async () => {
+        if (!yearRecordId || adding) return
+        setAdding(true)
         try {
+            const nextWeek = games.length > 0 ? Math.max(...games.map(g => g.week)) + 1 : 1
             const created = await GameService.createGame({
                 dynasty_id: dynastyId,
                 year_record_id: yearRecordId,
-                week: newGame.week,
-                location: newGame.location,
-                opponent: newGame.opponent,
-                result: newGame.opponent === 'BYE' ? 'Bye' : 'N/A',
+                week: nextWeek,
+                location: 'home',
+                opponent: '',
+                result: 'N/A',
                 score: null,
                 score_by_quarter: null,
                 team_stats: null,
@@ -146,11 +110,10 @@ export function Schedule({ dynastyId }: ScheduleProps) {
             if (created) {
                 setGames(prev => [...prev, created])
             }
-            setNewGame(null)
         } catch (err) {
-            console.error('Failed to save game:', err)
+            console.error('Failed to add game:', err)
         } finally {
-            setSaving(false)
+            setAdding(false)
         }
     }
 
@@ -206,21 +169,20 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                             bg="var(--primary)"
                             text="white"
                             size="sm"
-                            onClick={handleStartAddGame}
-                            disabled={!!newGame}
+                            onClick={handleAddGame}
+                            disabled={adding}
                             className="flex items-center gap-1 font-semibold"
                         >
                             <Plus className="h-3.5 w-3.5" />
-                            Add Game
+                            {adding ? 'Adding...' : 'Add Game'}
                         </Button>
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {games.length === 0 && !newGame ? (
+                    {games.length === 0 ? (
                         <p className="text-sm text-text/60">No games yet. Add games to start tracking your season.</p>
                     ) : (
                         <div className="space-y-2">
-                            {/* Saved games (read-only rows) */}
                             {games.map((game) => {
                                 const scoreParts = getScoreParts(game.score)
                                 const oppTeam = fbsTeams.find(t => t.name === game.opponent)
@@ -247,7 +209,7 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                                                 <span className="text-sm font-medium truncate">
                                                     {game.location === 'away' && '@ '}
                                                     {game.location === 'neutral' && '⚡ '}
-                                                    {game.opponent || <span className="text-text/40 italic">No opponent</span>}
+                                                    {game.opponent || <span className="text-text/40 italic">TBD</span>}
                                                 </span>
                                             </div>
 
@@ -273,72 +235,6 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                                     </div>
                                 )
                             })}
-
-                            {/* New game row (editable) */}
-                            {newGame && (
-                                <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-3">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <span className="text-sm font-semibold text-text/85">
-                                            {getWeekDisplayName(newGame.week)}
-                                        </span>
-                                        <div className="flex items-center gap-2">
-                                            <Button
-                                                bg="var(--green-600)"
-                                                text="white"
-                                                size="sm"
-                                                onClick={handleSaveNewGame}
-                                                disabled={saving || !newGame.opponent}
-                                                className="flex items-center gap-1 text-xs font-semibold"
-                                            >
-                                                <Save className="h-3.5 w-3.5" />
-                                                {saving ? 'Saving...' : 'Save'}
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={handleCancelNewGame}
-                                                className="flex items-center gap-1 text-xs"
-                                            >
-                                                <X className="h-3.5 w-3.5" />
-                                                Cancel
-                                            </Button>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid gap-3 sm:grid-cols-2">
-                                        <div className="space-y-1">
-                                            <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Location</p>
-                                            <Select
-                                                value={newGame.location}
-                                                onChange={(e) => setNewGame(prev => prev ? { ...prev, location: e.target.value } : null)}
-                                                className="h-9 text-xs"
-                                            >
-                                                <option value="home">Home</option>
-                                                <option value="away">Away</option>
-                                                <option value="neutral">Neutral</option>
-                                                <option value="none">None</option>
-                                            </Select>
-                                        </div>
-
-                                        <div className="space-y-1">
-                                            <p className="text-[11px] font-medium uppercase tracking-wide text-text/60">Opponent</p>
-                                            <Select
-                                                value={newGame.opponent}
-                                                onChange={(e) => setNewGame(prev => prev ? { ...prev, opponent: e.target.value } : null)}
-                                                className="h-9 text-xs"
-                                            >
-                                                <option value="">Select Opponent</option>
-                                                <option value="BYE">BYE</option>
-                                                {opponentTeams.map((t) => (
-                                                    <option key={t.name} value={t.name}>
-                                                        {t.name} ({t.conference})
-                                                    </option>
-                                                ))}
-                                            </Select>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     )}
                 </CardContent>
