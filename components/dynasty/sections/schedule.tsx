@@ -67,6 +67,17 @@ export function Schedule({ dynastyId }: ScheduleProps) {
     const [yearRecordId, setYearRecordId] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [isDirty, setIsDirty] = useState(false)
+
+    // Warn on browser navigation / tab close with unsaved changes
+    useEffect(() => {
+        if (!isDirty) return
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault()
+        }
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+    }, [isDirty])
 
     useEffect(() => {
         const load = async () => {
@@ -98,6 +109,7 @@ export function Schedule({ dynastyId }: ScheduleProps) {
 
     const handleUpdateGame = useCallback((gameId: string, field: keyof Game, value: unknown) => {
         setGames(prev => prev.map(g => g.id === gameId ? { ...g, [field]: value } : g))
+        setIsDirty(true)
     }, [])
 
     const handleAddGame = async () => {
@@ -116,7 +128,10 @@ export function Schedule({ dynastyId }: ScheduleProps) {
             recap: null,
             is_user_controlled: false,
         })
-        if (newGame) setGames(prev => [...prev, newGame])
+        if (newGame) {
+            setGames(prev => [...prev, newGame])
+            setIsDirty(true)
+        }
     }
 
     const handleSave = async () => {
@@ -131,6 +146,7 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                     recap: g.recap,
                 })
             }
+            setIsDirty(false)
         } catch (err) {
             console.error('Failed to save schedule:', err)
         } finally {
@@ -187,6 +203,9 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                     <div className="flex items-center justify-between">
                         <CardTitle className="text-lg">Games</CardTitle>
                         <div className="flex items-center gap-2">
+                            {isDirty && (
+                                <span className="text-xs font-medium text-amber-500">Unsaved changes</span>
+                            )}
                             <Button
                                 bg="var(--primary)"
                                 text="white"
