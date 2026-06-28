@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./tailwind-palette.css";
 
 @theme {
   /* Semantic tokens used across components */
