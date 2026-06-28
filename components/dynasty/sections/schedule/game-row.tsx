@@ -4,30 +4,11 @@ import Link from 'next/link'
 import { Trophy, TrendingDown, Minus, Calendar, Pencil, Gamepad2 } from 'lucide-react'
 
 import { fbsTeams } from '@/lib/fbs-teams'
+import { getWeekDisplayName, getResultColor, parseScore } from '@/lib/game-utils'
 import { LogoImage } from '@/components/ui/logo-image'
 import { getSchoolLogoCandidates } from '@/lib/logos'
 import { buttonStyles } from '@/components/ui/button'
 import type { Game } from '@/dal/features/games'
-
-function getWeekDisplayName(week: number): string {
-    if (week <= 0) return `Pre ${week}`
-    if (week <= 14) return `Week ${week}`
-    if (week === 15) return 'Conf Champ'
-    if (week === 16) return 'Bowl Game'
-    if (week === 17) return 'Playoff QF'
-    if (week === 18) return 'Playoff SF'
-    if (week === 19) return 'Natty'
-    return `Week ${week}`
-}
-
-function getResultColor(result: string): string {
-    switch (result) {
-        case 'W': return 'bg-green-100/80 text-green-900 dark:bg-green-950/40 dark:text-green-200'
-        case 'L': return 'bg-red-100/80 text-red-900 dark:bg-red-950/40 dark:text-red-200'
-        case 'Bye': return 'bg-slate-100/80 text-slate-700 dark:bg-slate-800/40 dark:text-slate-300'
-        default: return 'bg-background/70 text-text'
-    }
-}
 
 function ResultIcon({ result }: { result: string }) {
     switch (result) {
@@ -62,17 +43,18 @@ interface GameRowProps {
 
 export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
     const oppTeam = fbsTeams.find(t => t.name === game.opponent)
-    const oppLogos = game.opponent && game.opponent !== 'BYE' ? getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null) : []
+    const oppLogos = game.opponent && game.opponent !== 'BYE'
+        ? getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null)
+        : []
     const isConf = oppTeam?.conference === dynastyConference
-    const scoreParts = game.score ? game.score.split('-') : null
+    const { user, opp } = parseScore(game.score)
 
     return (
         <div className={`rounded-lg border border-primary/15 p-2.5 ${getResultColor(game.result)}`}>
-            {/* Mobile: stacked layout / Desktop: single row */}
             <div className="flex items-center gap-2">
                 {/* Week + Location */}
                 <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-xs font-semibold text-text/80 w-18">
+                    <span className="text-xs font-semibold text-text/80 w-[4.5rem]">
                         {getWeekDisplayName(game.week)}
                     </span>
                     <LocationBadge location={game.location} />
@@ -102,9 +84,9 @@ export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
                 {/* Result + Score */}
                 <div className="flex items-center gap-1 shrink-0">
                     <ResultIcon result={game.result} />
-                    {scoreParts && (
+                    {game.score && (
                         <span className="text-xs font-bold tabular-nums">
-                            {scoreParts[0]}-{scoreParts[1]}
+                            {user}-{opp}
                         </span>
                     )}
                 </div>
@@ -115,7 +97,7 @@ export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
                     {...buttonStyles({ bg: 'var(--primary)', text: 'white', className: 'rounded px-2 py-1 text-[11px] font-semibold shrink-0' })}
                 >
                     <Pencil className="h-3 w-3 sm:hidden" />
-                    <span className="hidden sm:inline items-center gap-1">
+                    <span className="hidden sm:inline">
                         <Pencil className="h-3 w-3 inline" /> Edit
                     </span>
                 </Link>
