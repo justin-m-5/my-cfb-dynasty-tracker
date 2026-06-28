@@ -3,8 +3,7 @@
 import Link from 'next/link'
 import PageContainer from '@/components/ui/page-container'
 import { DashboardEntry } from '@/components/dashboard/dynasty-entry'
-import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { buttonStyles } from '@/components/ui/button'
 
 export default function DashboardPage() {
     return (
@@ -18,7 +17,7 @@ export default function DashboardPage() {
                 </div>
                 <Link
                     href="/dashboard/profile"
-                    className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), 'shrink-0')}
+                    className={buttonStyles({ size: 'sm', bg: 'secondary', text: 'white' })}
                 >
                     Edit Profile
                 </Link>

@@ -282,13 +282,13 @@ export function CreateDynastyForm() {
                     {error && <p className="text-sm text-red-500">{error}</p>}
                 </CardContent>
 
-                <CardFooter className="justify-start">
-                    <Button type="submit" disabled={isSubmitting} className="font-bold text-white">
+                <CardFooter className="justify-start gap-3">
+                    <Button type="submit" disabled={isSubmitting} bg="primary" text="white" className="font-bold">
                         {isSubmitting ? 'Creating...' : 'Create Dynasty'}
                     </Button>
                     <Button
                         type="button"
-                        variant="cancel"
+                        bg="secondary" text="white"
                         onClick={() => router.push('/dashboard')}
                     >
                         Cancel

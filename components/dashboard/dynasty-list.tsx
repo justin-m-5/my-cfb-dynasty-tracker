@@ -2,10 +2,9 @@
 
 import Link from 'next/link'
 
-import { buttonVariants } from '@/components/ui/button'
+import { buttonStyles } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { DynastySummary } from '@/dal/features/dynasty'
-import { cn } from '@/lib/utils'
 
 interface DynastyListProps {
     dynasties: DynastySummary[]
@@ -19,7 +18,7 @@ export function DynastyList({ dynasties }: DynastyListProps) {
                     <CardTitle className="text-xl">Your Dynasties</CardTitle>
                 <Link
                     href="/dashboard/create-dynasty"
-                    className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), 'font-semibold')}
+                    className={buttonStyles({ size: 'sm', bg: 'primary', text: 'white', className: 'font-semibold' })}
                 >
                     New Dynasty
                 </Link>
@@ -42,7 +41,7 @@ export function DynastyList({ dynasties }: DynastyListProps) {
                                 </div>
                                 <Link
                                     href={`/dashboard/dynasty/${dynasty.id}`}
-                                    className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+                                    className={buttonStyles({ size: 'sm', bg: 'accent', text: 'white' })}
                                 >
                                     Open
                                 </Link>

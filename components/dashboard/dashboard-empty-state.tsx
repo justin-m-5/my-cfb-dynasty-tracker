@@ -2,9 +2,8 @@
 
 import Link from 'next/link'
 
-import { buttonVariants } from '@/components/ui/button'
+import { buttonStyles } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
 
 export function DashboardEmptyState() {
     return (
@@ -19,7 +18,7 @@ export function DashboardEmptyState() {
             <CardFooter className="justify-start">
                 <Link
                     href="/dashboard/create-dynasty"
-                    className={cn(buttonVariants({ variant: 'default' }), 'font-bold text-white')}
+                    className={buttonStyles({ bg: 'primary', text: 'white', className: 'font-bold' })}
                 >
                     Create Dynasty
                 </Link>
