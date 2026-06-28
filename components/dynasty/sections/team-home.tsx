@@ -36,10 +36,10 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
             <div>
                 <h2 className="mb-3 text-lg font-bold text-text">Current Season</h2>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <StatCard label="Ranking" value="—" />
-                    <StatCard label="Record" value="0 - 0" />
                     <StatCard label="Year" value={String(dynasty.current_year)} />
                     <StatCard label="Week" value="1" />
+                    <StatCard label="Ranking" value="—" />
+                    <StatCard label="Record" value="0 - 0" />
                 </div>
             </div>
 
