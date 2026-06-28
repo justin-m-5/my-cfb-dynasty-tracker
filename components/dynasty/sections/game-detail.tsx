@@ -4,7 +4,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Save } from 'lucide-react'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { GameService, type Game, type QuarterScore } from '@/dal/features/games'
@@ -20,6 +19,7 @@ import { Select } from '@/components/ui/select'
 import { TextArea } from '@/components/ui/text-area'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { Save } from 'lucide-react'
 
 const tabItems = ['Box Score', 'Team Stats', 'Player Stats', 'Recap'] as const
 type TabKey = (typeof tabItems)[number]
@@ -134,7 +134,7 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
                 <p className="text-sm text-text/60">No game scheduled this week.</p>
                 <Link
                     href={`/dashboard/dynasty/${dynastyId}/schedule`}
-                    {...buttonStyles({ size: 'sm', bg: 'var(--primary)', text: 'white' })}
+                    {...buttonStyles({ size: 'sm', bg: 'var(--orange-400)', text: 'white' })}
                 >
                     ← Back to Schedule
                 </Link>
@@ -155,10 +155,9 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
             <div className="flex items-center justify-between">
                 <Link
                     href={`/dashboard/dynasty/${dynastyId}/schedule`}
-                    className="flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                    {...buttonStyles({ size: 'sm', bg: 'var(--orange-400)', text: 'white' })}
                 >
-                    <ArrowLeft className="h-4 w-4" />
-                    Schedule
+                    ← Back to Schedule
                 </Link>
                 <div className="flex items-center gap-2">
                     {isDirty && <span className="text-xs font-medium text-amber-500">Unsaved</span>}

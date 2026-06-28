@@ -65,7 +65,7 @@ function buildScore(team: string, opponent: string): string | null {
 interface NewGameDraft {
     id: string
     week: number
-    location: string
+    location: "home" | "away" | "neutral" | "none"
     opponent: string
 }
 
