@@ -18,7 +18,7 @@ export function DashboardEmptyState() {
             <CardFooter className="justify-start">
                 <Link
                     href="/dashboard/create-dynasty"
-                    className={buttonStyles({ bg: 'primary', text: 'white', className: 'font-bold' })}
+                    {...buttonStyles({ bg: 'var(--primary)', text: 'white', className: 'font-bold' })}
                 >
                     Create Dynasty
                 </Link>

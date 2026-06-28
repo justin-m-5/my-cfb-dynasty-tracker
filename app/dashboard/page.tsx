@@ -17,7 +17,7 @@ export default function DashboardPage() {
                 </div>
                 <Link
                     href="/dashboard/profile"
-                    className={buttonStyles({ size: 'sm', bg: 'secondary', text: 'white' })}
+                    {...buttonStyles({ size: 'sm', bg: 'var(--secondary)', text: 'white' })}
                 >
                     Edit Profile
                 </Link>

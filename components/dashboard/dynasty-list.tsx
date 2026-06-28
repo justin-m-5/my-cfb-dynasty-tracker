@@ -18,7 +18,7 @@ export function DynastyList({ dynasties }: DynastyListProps) {
                     <CardTitle className="text-xl">Your Dynasties</CardTitle>
                 <Link
                     href="/dashboard/create-dynasty"
-                    className={buttonStyles({ size: 'sm', bg: 'primary', text: 'white', className: 'font-semibold' })}
+                    {...buttonStyles({ size: 'sm', bg: 'var(--primary)', text: 'white', className: 'font-semibold' })}
                 >
                     New Dynasty
                 </Link>
@@ -41,7 +41,7 @@ export function DynastyList({ dynasties }: DynastyListProps) {
                                 </div>
                                 <Link
                                     href={`/dashboard/dynasty/${dynasty.id}`}
-                                    className={buttonStyles({ size: 'sm', bg: 'accent', text: 'white' })}
+                                    {...buttonStyles({ size: 'sm', bg: 'var(--accent)', text: 'white' })}
                                 >
                                     Open
                                 </Link>

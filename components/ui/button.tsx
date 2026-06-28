@@ -42,16 +42,24 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     text?: string
 }
 
+function buildColorStyle(bg?: string, text?: string): React.CSSProperties | undefined {
+    if (!bg && !text) return undefined
+    const style: React.CSSProperties = {}
+    if (bg) style.backgroundColor = bg
+    if (text) style.color = text
+    return style
+}
+
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant, size, bg, text, ...props }, ref) => {
+    ({ className, variant, size, bg, text, style, ...props }, ref) => {
         return (
         <button
             className={cn(
                 buttonVariants({ variant: bg || text ? 'custom' : variant, size }),
-                bg && `bg-${bg} hover:bg-${bg}/80`,
-                text && `text-${text}`,
+                (bg || text) && 'hover:opacity-80',
                 className
             )}
+            style={{ ...buildColorStyle(bg, text), ...style }}
             ref={ref}
             {...props}
         />
@@ -61,8 +69,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button"
 
 /**
- * Generate button classes with custom bg/text colors.
- * Use with Link or any element: className={buttonStyles({ size: 'sm', bg: 'primary', text: 'white' })}
+ * Generate button props (className + style) with custom bg/text colors.
+ * Use with Link: <Link className={buttonStyles(...).className} style={buttonStyles(...).style}>
  */
 function buttonStyles({
     variant,
@@ -71,12 +79,14 @@ function buttonStyles({
     text,
     className,
 }: VariantProps<typeof buttonVariants> & { bg?: string; text?: string; className?: string } = {}) {
-    return cn(
-        buttonVariants({ variant: bg || text ? 'custom' : variant, size }),
-        bg && `bg-${bg} hover:bg-${bg}/80`,
-        text && `text-${text}`,
-        className
-    )
+    return {
+        className: cn(
+            buttonVariants({ variant: bg || text ? 'custom' : variant, size }),
+            (bg || text) && 'hover:opacity-80',
+            className
+        ),
+        style: buildColorStyle(bg, text),
+    }
 }
 
 export { Button, buttonVariants, buttonStyles }
