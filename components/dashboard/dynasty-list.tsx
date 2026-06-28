@@ -105,7 +105,7 @@ export function DynastyList({ dynasties, onDelete }: DynastyListProps) {
                             </Link>
 
                             {/* Delete area */}
-                            <div className="border-t border-primary/10 px-5 py-3">
+                            <div className="flex justify-end border-t border-primary/10 px-5 py-3">
                                 {isConfirming ? (
                                     <div className="flex items-center justify-between gap-2">
                                         <span className="text-xs text-red-500 font-medium">Delete this dynasty?</span>
