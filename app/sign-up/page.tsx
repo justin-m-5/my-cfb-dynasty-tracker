@@ -1,10 +1,10 @@
-// app/page.tsx
+// app/sign-up/page.tsx
 
-import { SignInForm } from '@/components/forms/sign-in-form'
+import { SignUpForm } from '@/components/forms/sign-up-form'
 import { redirect } from 'next/navigation'
 import { getServerAuthSession } from '@/dal/features/auth/server'
 
-export default async function HomePage() {
+export default async function SignUpPage() {
     const { session } = await getServerAuthSession()
 
     if (session) {
@@ -14,7 +14,7 @@ export default async function HomePage() {
     return (
         <div className="flex min-h-full items-center justify-center p-4">
             <div className="w-full max-w-xl">
-                <SignInForm />
+                <SignUpForm />
             </div>
         </div>
     )
