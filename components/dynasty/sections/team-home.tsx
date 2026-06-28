@@ -55,8 +55,8 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
         <div className="space-y-6">
             <SeasonGlance dynasty={dynasty} yearRecord={yearRecord} games={games} />
             <SeasonDetails yearRecord={yearRecord} games={games} />
-            <NextGameCard games={games} />
             <CareerStats dynasty={dynasty} />
+            <NextGameCard games={games} />
         </div>
     )
 }

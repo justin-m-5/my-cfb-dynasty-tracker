@@ -36,7 +36,7 @@ export function SeasonGlance({ dynasty, yearRecord, games }: SeasonGlanceProps) 
             <h2 className="mb-3 text-lg font-bold text-text">
                 {dynasty.current_year} Season
             </h2>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-4 gap-3">
                 <GlanceCard
                     icon={<Calendar className="h-4 w-4 text-blue-500" />}
                     label="Week"
