@@ -341,6 +341,8 @@ function QuickEditRow({ game, updateGame }: { game: Game; updateGame: (f: keyof 
             <div>
                 <Label className="text-xs">Your Score</Label>
                 <Input
+                    type="number"
+                    min={0}
                     value={game.score?.split('-')[0] ?? ''}
                     onChange={(e) => {
                         const opp = game.score?.split('-')[1] ?? '0'
@@ -352,6 +354,8 @@ function QuickEditRow({ game, updateGame }: { game: Game; updateGame: (f: keyof 
             <div>
                 <Label className="text-xs">Opp Score</Label>
                 <Input
+                    type="number"
+                    min={0}
                     value={game.score?.split('-')[1] ?? ''}
                     onChange={(e) => {
                         const you = game.score?.split('-')[0] ?? '0'
@@ -406,6 +410,7 @@ function BoxScoreTab({
                                     <td key={i} className="px-1 py-2 text-center">
                                         <Input
                                             type="number"
+                                            min={0}
                                             value={q.away}
                                             onChange={(e) => updateQuarter(i, 'away', e.target.value)}
                                             className="h-8 w-14 text-center text-sm mx-auto"
@@ -419,6 +424,7 @@ function BoxScoreTab({
                                     <td key={i} className="px-1 py-2 text-center">
                                         <Input
                                             type="number"
+                                            min={0}
                                             value={q.home}
                                             onChange={(e) => updateQuarter(i, 'home', e.target.value)}
                                             className="h-8 w-14 text-center text-sm mx-auto"
