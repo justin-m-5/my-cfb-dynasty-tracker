@@ -70,7 +70,7 @@ export function EditProfileForm() {
                         width={80}
                         height={80}
                         className="rounded-full border border-primary/20 object-cover"
-                        unoptimized={avatarPreview?.startsWith('blob:') ?? false}
+                        unoptimized
                     />
 
                     <div>
