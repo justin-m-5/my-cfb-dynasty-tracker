@@ -99,7 +99,7 @@ export function EditProfileForm() {
                 </CardContent>
 
                 <CardFooter className="flex gap-3">
-                    <Button type="submit" disabled={isSubmitting} bg="#16a34a" text="white" className="font-bold">
+                    <Button type="submit" disabled={isSubmitting} bg="var(--green-600)" text="white" className="font-bold">
                         {isSubmitting ? 'Saving...' : 'Save Changes'}
                     </Button>
                     <Button

@@ -82,14 +82,16 @@ export function SignInForm() {
                 <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full font-bold text-white hover:bg-accent focus-visible:ring-primary"
+                    bg="var(--primary)"
+                    text="white"
+                    className="w-full font-bold"
                 >
                     {isSubmitting ? 'Processing...' : 'Sign In'}
                 </Button>
 
                 <p className="text-center text-sm text-text">
                     Don&apos;t have an account?{' '}
-                    <Link href="/sign-up" className="font-medium text-primary hover:underline">
+                    <Link href="/sign-up" className="font-semibold text-primary hover:underline">
                         Sign Up
                     </Link>
                 </p>
