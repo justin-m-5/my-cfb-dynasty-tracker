@@ -33,7 +33,7 @@ export function DynastyHeader({ dynastyId }: DynastyHeaderProps) {
     const schoolLogos = getSchoolLogoCandidates(dynasty.school_name, dynasty.school_nickname)
 
     return (
-        <Card>
+        <Card className="mb-4">
             <CardContent className="space-y-4 py-4">
                 <div className="flex items-center gap-3">
                     <LogoImage candidates={schoolLogos} alt={dynasty.school_name} size={52} />
