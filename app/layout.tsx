@@ -22,8 +22,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     >
       <body className="min-h-full flex flex-col font-sans bg-background">
         <AuthProvider serverSession={serverSession}>
-          {/* <Navbar /> */}
-          <main className="flex-1 bg-background py-8 text-foreground max-w-7xl mx-auto px-4 w-full">
+          <main className="flex-1 bg-background text-foreground">
             {children}
           </main>
         </AuthProvider>
