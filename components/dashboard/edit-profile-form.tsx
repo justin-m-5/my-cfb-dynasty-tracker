@@ -2,7 +2,8 @@
 
 'use client'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { AuthContext } from '@/auth/auth-provider'
 import { ProfileService } from '@/auth/profile'
@@ -15,19 +16,12 @@ export function EditProfileForm() {
     const { user, profile } = useContext(AuthContext)
     const router = useRouter()
 
-    const [displayName, setDisplayName] = useState('')
+    const [displayName, setDisplayName] = useState(profile?.display_name ?? '')
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
-    const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(profile?.avatar_url ?? null)
     const [error, setError] = useState<string | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [success, setSuccess] = useState(false)
-
-    useEffect(() => {
-        if (profile) {
-            setDisplayName(profile.display_name ?? '')
-            setAvatarPreview(profile.avatar_url)
-        }
-    }, [profile])
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -71,10 +65,13 @@ export function EditProfileForm() {
 
                 <CardContent className="space-y-4">
                     {avatarPreview && (
-                        <img
+                        <Image
                             src={avatarPreview}
                             alt="Avatar preview"
-                            className="h-20 w-20 rounded-full border border-primary/20 object-cover"
+                            width={80}
+                            height={80}
+                            className="rounded-full border border-primary/20 object-cover"
+                            unoptimized={avatarPreview.startsWith('blob:')}
                         />
                     )}
 
