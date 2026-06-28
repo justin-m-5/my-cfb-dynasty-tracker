@@ -17,6 +17,7 @@ import { fbsTeams } from '@/lib/fbs-teams'
 import { Button, buttonStyles } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
+import { TextArea } from '@/components/ui/text-area'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 
@@ -506,12 +507,11 @@ function RecapTab({ game, updateGame }: { game: Game; updateGame: (f: keyof Game
         <Card>
             <CardHeader><CardTitle className="text-base">Game Recap</CardTitle></CardHeader>
             <CardContent>
-                <textarea
+                <TextArea
                     value={game.recap ?? ''}
                     onChange={(e) => updateGame('recap', e.target.value)}
                     rows={8}
                     placeholder="Write a summary of the game..."
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-text ring-offset-background placeholder:text-text/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
             </CardContent>
         </Card>

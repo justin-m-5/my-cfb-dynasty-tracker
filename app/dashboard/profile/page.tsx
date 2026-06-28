@@ -2,16 +2,15 @@
 
 import PageContainer from '@/components/ui/page-container'
 import { EditProfileForm } from '@/components/forms/edit-profile-form'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default function ProfilePage() {
     return (
         <PageContainer>
-            <header className="space-y-2">
-                <h1 className="text-3xl font-bold text-text">Edit Profile</h1>
-                <p className="text-sm text-text/80">
-                    Update your display name or avatar.
-                </p>
-            </header>
+            <PageHeader
+                title="Edit Profile"
+                description="Update your display name or avatar."
+            />
 
             <EditProfileForm />
         </PageContainer>

@@ -3,7 +3,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Calendar, Trophy, TrendingUp, Star } from 'lucide-react'
+import { Calendar, Trophy, TrendingUp } from 'lucide-react'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService, type YearRecord } from '@/dal/features/year-records'
@@ -147,12 +147,12 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
                 <h2 className="mb-3 text-lg font-bold text-text">Career</h2>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <GlanceCard
-                        icon={<Trophy className="h-5 w-5 text-amber-500" />}
+                        icon={null}
                         label="All-Time Record"
                         value={`${dynasty.total_wins}-${dynasty.total_losses}`}
                     />
                     <GlanceCard
-                        icon={<Star className="h-5 w-5 text-yellow-500" />}
+                        icon={<Trophy className="h-5 w-5 text-amber-500" />}
                         label="Championships"
                         value={String(dynasty.championships)}
                     />
