@@ -2,16 +2,8 @@
 
 import PageContainer from '@/components/ui/page-container'
 import { DashboardEntry } from '@/components/dashboard/dashboard-entry'
-import { redirect } from 'next/navigation'
-import { getServerAuthSession } from '@/dal/features/auth/server'
 
-export default async function DashboardPage() {
-    const { session } = await getServerAuthSession()
-
-    if (!session) {
-        redirect('/')
-    }
-
+export default function DashboardPage() {
     return (
         <PageContainer>
             <header className="space-y-2">

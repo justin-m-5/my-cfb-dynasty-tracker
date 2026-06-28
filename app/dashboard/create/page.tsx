@@ -2,16 +2,8 @@
 
 import { CreateDynastyForm } from '@/components/dashboard/create-dynasty-form'
 import PageContainer from '@/components/ui/page-container'
-import { redirect } from 'next/navigation'
-import { getServerAuthSession } from '@/dal/features/auth/server'
 
-export default async function CreateDynastyPage() {
-    const { session } = await getServerAuthSession()
-
-    if (!session) {
-        redirect('/')
-    }
-
+export default function CreateDynastyPage() {
     return (
         <PageContainer>
             <header className="space-y-2">
