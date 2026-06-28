@@ -62,9 +62,7 @@ interface GameRowProps {
 
 export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
     const oppTeam = fbsTeams.find(t => t.name === game.opponent)
-    const oppLogos = game.opponent && game.opponent !== 'BYE'
-        ? getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null)
-        : []
+    const oppLogos = game.opponent && game.opponent !== 'BYE' ? getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null) : []
     const isConf = oppTeam?.conference === dynastyConference
     const scoreParts = game.score ? game.score.split('-') : null
 
@@ -74,7 +72,7 @@ export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
             <div className="flex items-center gap-2">
                 {/* Week + Location */}
                 <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-xs font-semibold text-text/80 w-[4.5rem]">
+                    <span className="text-xs font-semibold text-text/80 w-18">
                         {getWeekDisplayName(game.week)}
                     </span>
                     <LocationBadge location={game.location} />
@@ -117,7 +115,7 @@ export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
                     {...buttonStyles({ bg: 'var(--primary)', text: 'white', className: 'rounded px-2 py-1 text-[11px] font-semibold shrink-0' })}
                 >
                     <Pencil className="h-3 w-3 sm:hidden" />
-                    <span className="hidden sm:inline flex items-center gap-1">
+                    <span className="hidden sm:inline items-center gap-1">
                         <Pencil className="h-3 w-3 inline" /> Edit
                     </span>
                 </Link>

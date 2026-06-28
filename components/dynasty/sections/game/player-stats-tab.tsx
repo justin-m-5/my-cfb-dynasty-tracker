@@ -165,13 +165,13 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-primary/20 bg-background/50">
-                                    <th className="px-3 py-2 text-left text-xs font-semibold text-text/60">Player</th>
+                                    <th className="px-3 py-2 text-left text-xs font-semibold text-text/60 whitespace-nowrap">Player</th>
                                     {columns.map(col => (
-                                        <th key={col.field} className="px-2 py-2 text-center text-xs font-semibold text-text/60">
+                                        <th key={col.field} className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">
                                             {col.label}
                                         </th>
                                     ))}
-                                    <th className="px-2 py-2 text-center text-xs font-semibold text-text/60">Actions</th>
+                                    <th className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

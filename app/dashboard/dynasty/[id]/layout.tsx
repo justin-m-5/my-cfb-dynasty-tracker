@@ -3,8 +3,6 @@
 import { ReactNode } from 'react'
 import Link from 'next/link'
 import { buttonStyles } from '@/components/ui/button'
-import { DynastyHeader } from '@/components/dynasty/dynasty-header'
-import { DynastyNavShell } from '@/components/dynasty/dynasty-nav-shell'
 
 interface DynastyLayoutProps {
     children: ReactNode
@@ -24,10 +22,7 @@ export default async function DynastyLayout({ children, params }: DynastyLayoutP
                     ← Dashboard
                 </Link>
             </div>
-
-            <DynastyHeader dynastyId={id} />
-            <DynastyNavShell dynastyId={id} />
-            <main className="flex-1 py-6">
+            <main className="flex flex-1 flex-col gap-4">
                 {children}
             </main>
         </div>

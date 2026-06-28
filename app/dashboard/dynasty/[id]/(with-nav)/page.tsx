@@ -1,5 +1,6 @@
-// app/dashboard/dynasty/[id]/page.tsx
+// app/dashboard/dynasty/[id]/(with-nav)/page.tsx
 
+import { DynastyHeader } from '@/components/dynasty/dynasty-header'
 import { TeamHome } from '@/components/dynasty/sections/team-home'
 
 interface DynastyPageProps {
@@ -9,5 +10,10 @@ interface DynastyPageProps {
 export default async function DynastyPage({ params }: DynastyPageProps) {
     const { id } = await params
 
-    return <TeamHome dynastyId={id} />
+    return (
+        <>
+            <DynastyHeader dynastyId={id} />
+            <TeamHome dynastyId={id} />
+        </>
+    )
 }
