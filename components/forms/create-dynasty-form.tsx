@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 
 import { DynastyService } from '@/dal/features/dynasty'
 import { fbsTeams, type FbsTeam } from '@/lib/fbs-teams'
-import { pipelines } from '@/lib/pipelines'
+import { pipelinesByRegion } from '@/lib/pipelines'
 import { conferenceLogoByName, getSchoolLogoCandidates } from '@/lib/logos'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
@@ -51,7 +51,7 @@ export function CreateDynastyForm() {
     const conferenceLogo = conference ? conferenceLogoByName[conference] ?? null : null
     const schoolLogoCandidates = selectedTeam ? getTeamLogoCandidates(selectedTeam) : []
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault()
 
         if (!selectedTeam) {
@@ -193,8 +193,12 @@ export function CreateDynastyForm() {
                         onChange={(event) => setPipeline(event.target.value)}
                     >
                         <option value="">None</option>
-                        {pipelines.map((p) => (
-                            <option key={p} value={p}>{p}</option>
+                        {pipelinesByRegion.map((group) => (
+                            <optgroup key={group.region} label={group.region}>
+                                {group.pipelines.map((p) => (
+                                    <option key={p} value={p}>{p}</option>
+                                ))}
+                            </optgroup>
                         ))}
                     </Select>
                 </div>
@@ -207,14 +211,18 @@ export function CreateDynastyForm() {
                         onChange={(event) => setAlmaMater(event.target.value)}
                     >
                         <option value="">None</option>
-                        {fbsTeams
-                            .slice()
-                            .sort((a, b) => a.name.localeCompare(b.name))
-                            .map((team) => (
-                                <option key={team.id} value={team.name}>
-                                    {team.name} {team.nickName}
-                                </option>
-                            ))}
+                        {[...new Set(fbsTeams.map(t => t.conference))].sort().map((conf) => (
+                            <optgroup key={conf} label={conf}>
+                                {fbsTeams
+                                    .filter(t => t.conference === conf)
+                                    .sort((a, b) => a.name.localeCompare(b.name))
+                                    .map((team) => (
+                                        <option key={team.id} value={team.name}>
+                                            {team.name} {team.nickName}
+                                        </option>
+                                    ))}
+                            </optgroup>
+                        ))}
                     </Select>
                 </div>
             </div>
