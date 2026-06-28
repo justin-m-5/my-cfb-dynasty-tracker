@@ -33,7 +33,7 @@ export function DashboardEntry() {
     }, [])
 
     if (isLoading) return <DashboardLoadingState />
-    if (dynasties.length === 0) return <DashboardEmptyState />
+    if (dynasties.length === 0) return <DynastyEmptyState />
 
-    return <DynastyList dynasties={dynasties} />
+    return <DynastyEntries dynasties={dynasties} />
 }
