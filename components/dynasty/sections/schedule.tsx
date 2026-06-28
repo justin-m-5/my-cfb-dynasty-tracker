@@ -234,8 +234,9 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                     ) : (
                         <div className="space-y-2">
                             {games.map((game) => {
+                                const oppTeam = fbsTeams.find(t => t.name === game.opponent)
                                 const oppLogos = game.opponent && game.opponent !== 'BYE'
-                                    ? getSchoolLogoCandidates(game.opponent, null)
+                                    ? getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null)
                                     : []
 
                                 return (
