@@ -55,7 +55,7 @@ export const ProfileService = {
   },
 
   async createProfile(id: string, fields: Partial<DbProfile>) {
-    const { error } = await supabase.from('profiles').upsert({ id, ...fields })
+    const { error } = await supabase.from('profiles').insert({ id, ...fields })
     if (error) throw error
   },
 
