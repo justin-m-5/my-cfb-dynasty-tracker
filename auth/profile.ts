@@ -19,20 +19,12 @@ export interface DbProfile {
 export const ProfileService = {
 
   async getProfile(id: string): Promise<DbProfile | null> {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle()
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', id).maybeSingle()
 
     if (error) {
       // PGRST116 indicates multiple rows or failed object coercion for maybeSingle.
       if (error.code === 'PGRST116') {
-        const { data: rows, error: rowsError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', id)
-          .limit(1)
+        const { data: rows, error: rowsError } = await supabase.from('profiles').select('*').eq('id', id).limit(1)
 
         if (rowsError) {
           console.error('Profile fetch error:', rowsError.message)

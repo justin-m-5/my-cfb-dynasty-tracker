@@ -1,0 +1,106 @@
+// components/dashboard/dynasty.tsx
+
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Trash2 } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import { LogoImage } from '@/components/ui/logo-image'
+import { conferenceLogoByName, getSchoolLogoCandidates } from '@/lib/logos'
+import type { DynastySummary } from '@/dal/features/dynasty'
+
+interface DynastyProps {
+    dynasty: DynastySummary
+    onDelete: (id: string) => Promise<void>
+}
+
+export function Dynasty({ dynasty, onDelete }: DynastyProps) {
+    const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
+
+    const handleDelete = async () => {
+        setIsDeleting(true)
+        try {
+            await onDelete(dynasty.id)
+        } finally {
+            setIsDeleting(false)
+            setIsConfirmingDelete(false)
+        }
+    }
+
+    const conferenceLogo = dynasty.conference ? conferenceLogoByName[dynasty.conference] ?? null : null
+    const schoolLogos = getSchoolLogoCandidates(dynasty.school_name, dynasty.school_nickname)
+
+    return (
+        <div className="group relative rounded-xl border border-primary/20 bg-background/70 transition-all hover:border-primary/40 hover:shadow-md">
+            <Link href={`/dashboard/dynasty/${dynasty.id}`} className="block p-5">
+                <div className="mb-3 flex items-center gap-3">
+                    <LogoImage candidates={schoolLogos} alt={dynasty.school_name} size={40} />
+                    <div className="min-w-0 flex-1">
+                        <p className="truncate font-bold text-text group-hover:text-primary">{dynasty.name}</p>
+                        <p className="truncate text-sm text-text/80">
+                            {dynasty.school_name}
+                            {dynasty.school_nickname ? ` ${dynasty.school_nickname}` : ''}
+                        </p>
+                    </div>
+                </div>
+
+                <p className="mt-2 text-sm text-text/80">Coach {dynasty.coach_name}</p>
+
+                <div className="flex items-center gap-2 text-xs text-text/60">
+                    {conferenceLogo ? (
+                        <Image
+                            src={conferenceLogo}
+                            alt={dynasty.conference ?? ''}
+                            width={20}
+                            height={20}
+                            className="rounded object-contain"
+                            unoptimized
+                        />
+                    ) : null}
+                    <span>{dynasty.conference ?? 'Independent'}</span>
+                    <span>•</span>
+                    <span>Year {dynasty.current_year}</span>
+                </div>
+
+                <div className="mt-3 flex flex-wrap gap-3 text-xs text-text/70">
+                    <span>
+                        {dynasty.total_wins}W - {dynasty.total_losses}L
+                    </span>
+                    <span>🏆 {dynasty.championships}</span>
+                    <span>Seasons: {dynasty.seasons_played}</span>
+                </div>
+            </Link>
+
+            <div className="flex justify-end border-t border-primary/10 px-5 py-3">
+                {isConfirmingDelete ? (
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-medium text-red-500">Delete this dynasty?</span>
+                        <div className="flex gap-2">
+                            <Button size="sm" variant="delete" className="text-xs font-semibold" disabled={isDeleting} onClick={handleDelete}>
+                                {isDeleting ? 'Deleting...' : 'Confirm'}
+                            </Button>
+                            <Button
+                                size="sm"
+                                bg="var(--secondary)"
+                                text="white"
+                                className="text-xs"
+                                onClick={() => setIsConfirmingDelete(false)}
+                            >
+                                Cancel
+                            </Button>
+                        </div>
+                    </div>
+                ) : (
+                    <Button variant="delete" size="sm" onClick={() => setIsConfirmingDelete(true)} className="ml-auto text-xs">
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete
+                    </Button>
+                )}
+            </div>
+        </div>
+    )
+}

@@ -160,23 +160,6 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
                     <DetailCard label="Coach Level" value={String(dynasty.coach_level)} />
                 </div>
             </div>
-
-            {/* Team Info */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Team Info</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <dl className="grid gap-3 text-sm sm:grid-cols-2">
-                        <InfoRow label="School" value={`${dynasty.school_name}${dynasty.school_nickname ? ` ${dynasty.school_nickname}` : ''}`} />
-                        <InfoRow label="Conference" value={dynasty.conference ?? 'Independent'} />
-                        <InfoRow label="Coach" value={dynasty.coach_name} />
-                        <InfoRow label="Current Year" value={String(dynasty.current_year)} />
-                        {dynasty.alma_mater && <InfoRow label="Alma Mater" value={dynasty.alma_mater} />}
-                        {dynasty.pipeline && <InfoRow label="Pipeline" value={dynasty.pipeline} />}
-                    </dl>
-                </CardContent>
-            </Card>
         </div>
     )
 }
@@ -198,15 +181,6 @@ function DetailCard({ label, value, color }: { label: string; value: string; col
         <div className="rounded-xl border border-primary/20 bg-background/70 p-4 text-center">
             <p className="text-xl font-bold" style={color ? { color } : undefined}>{value}</p>
             <p className="mt-1 text-xs text-text/60">{label}</p>
-        </div>
-    )
-}
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-    return (
-        <div>
-            <dt className="font-medium text-text/60">{label}</dt>
-            <dd className="text-text">{value}</dd>
         </div>
     )
 }
