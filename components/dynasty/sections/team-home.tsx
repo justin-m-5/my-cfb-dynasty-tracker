@@ -32,11 +32,26 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
 
     return (
         <div className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <StatCard label="Record" value={`${dynasty.total_wins} - ${dynasty.total_losses}`} />
-                <StatCard label="Championships" value={String(dynasty.championships)} />
-                <StatCard label="Seasons Played" value={String(dynasty.seasons_played)} />
-                <StatCard label="Coach Level" value={String(dynasty.coach_level)} />
+            {/* Current Season At A Glance */}
+            <div>
+                <h2 className="mb-3 text-lg font-bold text-text">Current Season</h2>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <StatCard label="Ranking" value="—" />
+                    <StatCard label="Record" value="0 - 0" />
+                    <StatCard label="Year" value={String(dynasty.current_year)} />
+                    <StatCard label="Week" value="1" />
+                </div>
+            </div>
+
+            {/* Career Stats */}
+            <div>
+                <h2 className="mb-3 text-lg font-bold text-text">Career</h2>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <StatCard label="All-Time Record" value={`${dynasty.total_wins} - ${dynasty.total_losses}`} />
+                    <StatCard label="Championships" value={String(dynasty.championships)} />
+                    <StatCard label="Seasons Played" value={String(dynasty.seasons_played)} />
+                    <StatCard label="Coach Level" value={String(dynasty.coach_level)} />
+                </div>
             </div>
 
             <Card>
