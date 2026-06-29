@@ -4,7 +4,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
 import { buttonStyles } from '@/components/ui/button'
 
 interface DashboardBackButtonProps {
@@ -19,13 +18,11 @@ export function DashboardBackButton({ dynastyId }: DashboardBackButtonProps) {
     if (!isHomePath) return null
 
     return (
-        <div>
-            <Link
-                href="/dashboard"
-                {...buttonStyles({ bg: 'var(--orange-400)', text: 'white', className: 'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold' })}
-            >
-                ← Dashboard
-            </Link>
-        </div>
+        <Link
+            href="/dashboard"
+            {...buttonStyles({ bg: 'var(--orange-400)', text: 'white', className: 'flex items-center gap-1 rounded-md px-2 py-1.5 text-xs font-semibold' })}
+        >
+            ← Dashboard
+        </Link>
     )
 }
