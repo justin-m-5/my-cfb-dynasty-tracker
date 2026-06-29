@@ -23,7 +23,7 @@ export function AwardList({ awards, onEdit, onDelete }: AwardListProps) {
                 <span className="flex-1">Player</span>
                 <span className="flex-1">Award</span>
                 <span className="w-20 text-center hidden sm:block">Team</span>
-                <span className="w-[56px] shrink-0" />
+                <span className="w-14 shrink-0" />
             </div>
             {awards.map(award => (
                 <AwardRow

@@ -113,7 +113,7 @@ export function PlayerAwards({ dynastyId }: PlayerAwardsProps) {
                     <div className="flex items-center justify-between">
                         <CardTitle className="text-base">Player Awards</CardTitle>
                         {!showForm && (
-                            <Button size="sm" onClick={() => setShowForm(true)}>
+                            <Button size="sm"  bg="var(--primary)" text="white" onClick={() => setShowForm(true)}>
                                 <Plus className="h-3.5 w-3.5 mr-1" />
                                 Add Award
                             </Button>
@@ -124,6 +124,7 @@ export function PlayerAwards({ dynastyId }: PlayerAwardsProps) {
                     {showForm && (
                         <div className="mb-4 p-3 rounded-lg border border-primary/15 bg-primary/5">
                             <AwardForm
+                                key={editing?.id ?? 'new'}
                                 players={players}
                                 editing={editing}
                                 saving={saving}

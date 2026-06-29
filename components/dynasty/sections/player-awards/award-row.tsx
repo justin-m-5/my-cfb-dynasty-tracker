@@ -17,7 +17,7 @@ export function AwardRow({ award, onEdit, onDelete }: AwardRowProps) {
             <span className="flex-1 text-xs font-medium text-text truncate">{award.player_name}</span>
             <span className="flex-1 text-xs text-text/80 truncate">{award.award_name}</span>
             <span className="w-20 text-center text-[10px] text-text/60 hidden sm:block">{award.team || '—'}</span>
-            <div className="w-[56px] shrink-0 flex items-center justify-end gap-0.5">
+            <div className="w-14 shrink-0 flex items-center justify-end gap-0.5">
                 <button
                     onClick={() => onEdit(award)}
                     className="p-1 rounded hover:bg-primary/10 text-text/50 hover:text-text transition-colors"

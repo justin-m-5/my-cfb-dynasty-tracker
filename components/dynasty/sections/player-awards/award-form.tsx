@@ -2,7 +2,7 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type { Player } from '@/dal/features/players'
 import type { Award } from '@/dal/features/awards'
 import { predefinedAwards, teamAwards, teamDesignations } from '@/lib/award-config'
@@ -18,21 +18,9 @@ interface AwardFormProps {
 }
 
 export function AwardForm({ players, editing, saving, onSave, onCancel }: AwardFormProps) {
-    const [playerId, setPlayerId] = useState('')
-    const [awardName, setAwardName] = useState('')
-    const [team, setTeam] = useState('')
-
-    useEffect(() => {
-        if (editing) {
-            setPlayerId(editing.player_id)
-            setAwardName(editing.award_name)
-            setTeam(editing.team || '')
-        } else {
-            setPlayerId('')
-            setAwardName('')
-            setTeam('')
-        }
-    }, [editing])
+    const [playerId, setPlayerId] = useState(editing?.player_id ?? '')
+    const [awardName, setAwardName] = useState(editing?.award_name ?? '')
+    const [team, setTeam] = useState(editing?.team ?? '')
 
     const showTeamSelect = teamAwards.includes(awardName)
 
