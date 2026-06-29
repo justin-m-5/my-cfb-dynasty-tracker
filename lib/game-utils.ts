@@ -8,7 +8,7 @@ export function getWeekDisplayName(week: number): string {
     if (week === 16) return 'CFP R1 / Bowls'
     if (week === 17) return 'CFP QF'
     if (week === 18) return 'CFP SF'
-    if (week === 19) return 'Natty'
+    if (week === 19) return 'N. Championship'
     return `Week ${week}`
 }
 

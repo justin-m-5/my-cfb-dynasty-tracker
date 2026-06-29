@@ -1,0 +1,36 @@
+// components/dynasty/sections/player-awards/award-row.tsx
+
+'use client'
+
+import { Pencil, Trash2 } from 'lucide-react'
+import type { Award } from '@/dal/features/awards'
+
+interface AwardRowProps {
+    award: Award
+    onEdit: (award: Award) => void
+    onDelete: (id: string) => void
+}
+
+export function AwardRow({ award, onEdit, onDelete }: AwardRowProps) {
+    return (
+        <div className="flex items-center gap-2 px-2 py-1.5 border-b border-primary/10 last:border-b-0 hover:bg-primary/5 transition-colors">
+            <span className="flex-1 text-xs font-medium text-text truncate">{award.player_name}</span>
+            <span className="flex-1 text-xs text-text/80 truncate">{award.award_name}</span>
+            <span className="w-20 text-center text-[10px] text-text/60 hidden sm:block">{award.team || '—'}</span>
+            <div className="w-[56px] shrink-0 flex items-center justify-end gap-0.5">
+                <button
+                    onClick={() => onEdit(award)}
+                    className="p-1 rounded hover:bg-primary/10 text-text/50 hover:text-text transition-colors"
+                >
+                    <Pencil className="h-3 w-3" />
+                </button>
+                <button
+                    onClick={() => onDelete(award.id)}
+                    className="p-1 rounded hover:bg-red-500/10 text-text/50 hover:text-red-500 transition-colors"
+                >
+                    <Trash2 className="h-3 w-3" />
+                </button>
+            </div>
+        </div>
+    )
+}
