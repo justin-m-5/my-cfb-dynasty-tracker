@@ -3,7 +3,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { FastForward } from 'lucide-react'
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { Button } from '@/components/ui/button'
@@ -14,16 +14,22 @@ interface AdvanceSeasonButtonProps {
 
 export function AdvanceSeasonButton({ dynastyId }: AdvanceSeasonButtonProps) {
     const router = useRouter()
+    const pathname = usePathname()
     const [dynasty, setDynasty] = useState<Dynasty | null>(null)
     const [confirming, setConfirming] = useState(false)
     const [advancing, setAdvancing] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    useEffect(() => {
-        DynastyService.getDynastyById(dynastyId).then(setDynasty)
-    }, [dynastyId])
+    const homePath = `/dashboard/dynasty/${dynastyId}`
+    const isHomePath = pathname === homePath || pathname === `${homePath}/`
 
-    if (!dynasty) return null
+    useEffect(() => {
+        if (isHomePath) {
+            DynastyService.getDynastyById(dynastyId).then(setDynasty)
+        }
+    }, [dynastyId, isHomePath])
+
+    if (!isHomePath || !dynasty) return null
 
     const handleAdvance = async () => {
         setAdvancing(true)
