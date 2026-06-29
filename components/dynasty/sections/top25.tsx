@@ -167,7 +167,7 @@ export function Top25({ dynastyId }: Top25Props) {
                     {loading ? (
                         <div className="text-sm text-text/60 py-4 text-center">Loading...</div>
                     ) : (
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             {/* 1-10 */}
                             <div className="rounded-lg border border-primary/15 p-2">
                                 {rankings.slice(0, 10).map((team, i) => (
