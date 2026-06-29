@@ -7,13 +7,11 @@ import { Plus } from 'lucide-react'
 
 import { YearRecordService } from '@/dal/features/year-records'
 import { PlayerService, type Player } from '@/dal/features/players'
-import { positions } from '@/lib/player-config'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { PlayerRow } from './roster/player-row'
-import { PlayerForm } from './roster/player-form'
+import { RosterFilters } from './roster/roster-filters'
+import { RosterList } from './roster/roster-list'
+import { PlayerForm } from '../../forms/player-form'
 
 interface RosterProps {
     dynastyId: string
@@ -24,12 +22,8 @@ export function Roster({ dynastyId }: RosterProps) {
     const [yearRecordId, setYearRecordId] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
-
-    // Form state
     const [showForm, setShowForm] = useState(false)
     const [editing, setEditing] = useState<Player | null>(null)
-
-    // Filters
     const [search, setSearch] = useState('')
     const [posFilter, setPosFilter] = useState('ALL')
 
@@ -76,6 +70,8 @@ export function Roster({ dynastyId }: RosterProps) {
                     rating: form.rating ?? null,
                     jersey_number: form.jersey_number ?? null,
                     dev_trait: form.dev_trait ?? 'Normal',
+                    height: form.height ?? null,
+                    weight: form.weight ?? null,
                     notes: form.notes ?? null,
                     is_redshirted: form.is_redshirted ?? false,
                 })
@@ -125,7 +121,6 @@ export function Roster({ dynastyId }: RosterProps) {
 
     return (
         <div className="space-y-4">
-            {/* Add/Edit form */}
             {showForm && (
                 <PlayerForm
                     initial={editing ?? undefined}
@@ -135,7 +130,6 @@ export function Roster({ dynastyId }: RosterProps) {
                 />
             )}
 
-            {/* Roster list */}
             <Card>
                 <CardHeader className="pb-2">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -155,51 +149,23 @@ export function Roster({ dynastyId }: RosterProps) {
                             </Button>
                         )}
                     </div>
-
-                    {/* Filters */}
-                    <div className="mt-2 flex gap-2">
-                        <Input
-                            placeholder="Search name..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="h-8 flex-1 text-xs"
+                    <div className="mt-2">
+                        <RosterFilters
+                            search={search}
+                            onSearchChange={setSearch}
+                            posFilter={posFilter}
+                            onPosFilterChange={setPosFilter}
                         />
-                        <Select
-                            value={posFilter}
-                            onChange={(e) => setPosFilter(e.target.value)}
-                            className="h-8 w-24 text-xs"
-                        >
-                            <option value="ALL">All</option>
-                            {positions.map(p => <option key={p} value={p}>{p}</option>)}
-                        </Select>
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {filtered.length === 0 ? (
-                        <p className="text-sm text-text/60 py-4 text-center">
-                            {players.length === 0 ? 'No players yet. Add your first player.' : 'No players match your filter.'}
-                        </p>
-                    ) : (
-                        <div>
-                            {/* Header */}
-                            <div className="flex items-center gap-2 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-text/50 border-b border-primary/15">
-                                <span className="w-7 text-center">#</span>
-                                <span className="flex-1">Player</span>
-                                <span className="w-14 text-center hidden sm:block">Year</span>
-                                <span className="w-8 text-center">OVR</span>
-                                <span className="w-20 shrink-0" />
-                            </div>
-                            {filtered.map(player => (
-                                <PlayerRow
-                                    key={player.id}
-                                    player={player}
-                                    onEdit={handleEdit}
-                                    onDelete={handleDelete}
-                                    onToggleRedshirt={handleToggleRedshirt}
-                                />
-                            ))}
-                        </div>
-                    )}
+                    <RosterList
+                        players={filtered}
+                        totalCount={players.length}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        onToggleRedshirt={handleToggleRedshirt}
+                    />
                 </CardContent>
             </Card>
         </div>

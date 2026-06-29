@@ -12,14 +12,12 @@ interface PlayerRowProps {
 }
 
 export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: PlayerRowProps) {
-    const traitColor = player.dev_trait
-        ? devTraitColors[player.dev_trait as DevTrait] ?? ''
-        : ''
+    const traitColor = player.dev_trait ? devTraitColors[player.dev_trait as DevTrait] ?? '' : ''
 
     return (
-        <div className="flex items-center gap-2 rounded px-2 py-1.5 border-b border-primary/10 last:border-b-0 hover:bg-primary/5 transition-colors">
+        <div className="flex items-center gap-1.5 px-2 py-1.5 border-b border-primary/10 last:border-b-0 hover:bg-primary/5 transition-colors">
             {/* Jersey # */}
-            <span className="w-7 text-center text-xs font-bold text-text/60">
+            <span className="w-6 text-center text-xs font-bold text-text/60">
                 {player.jersey_number ?? '—'}
             </span>
 
@@ -30,24 +28,22 @@ export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: Player
             </div>
 
             {/* Year */}
-            <span className="text-[10px] text-text/60 w-14 text-center hidden sm:block">
+            <span className="text-[10px] text-text/60 w-12 text-center hidden sm:block">
                 {player.year ?? '—'}
             </span>
 
             {/* Rating */}
-            <span className="text-xs font-bold text-text w-8 text-center">
+            <span className="text-xs font-bold text-text w-7 text-center">
                 {player.rating ?? '—'}
             </span>
 
-            {/* Dev Trait */}
-            {player.dev_trait && player.dev_trait !== 'Normal' && (
-                <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${traitColor} hidden sm:inline`}>
-                    {player.dev_trait}
-                </span>
-            )}
+            {/* Dev Trait — always occupies space on sm+ for alignment */}
+            <span className={`w-12 text-center rounded-full px-1 py-0.5 text-[10px] font-semibold hidden sm:block ${player.dev_trait && player.dev_trait !== 'Normal' ? traitColor : 'text-transparent'}`}>
+                {player.dev_trait && player.dev_trait !== 'Normal' ? player.dev_trait : '—'}
+            </span>
 
             {/* Actions */}
-            <div className="flex items-center gap-0.5 shrink-0">
+            <div className="flex items-center gap-0.5 w-18 shrink-0 justify-end">
                 <button
                     onClick={() => onToggleRedshirt(player)}
                     className="p-1 rounded hover:bg-primary/10 transition-colors"

@@ -8,6 +8,7 @@ import { Plus } from 'lucide-react'
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
 import { GameService, type Game } from '@/dal/features/games'
+import { MAX_SCHEDULE_WEEK } from '@/lib/game-utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -50,9 +51,10 @@ export function Schedule({ dynastyId }: ScheduleProps) {
 
     const handleAddGame = async () => {
         if (!yearRecordId || adding) return
+        const nextWeek = games.length > 0 ? Math.max(...games.map(g => g.week)) + 1 : 1
+        if (nextWeek > MAX_SCHEDULE_WEEK) return
         setAdding(true)
         try {
-            const nextWeek = games.length > 0 ? Math.max(...games.map(g => g.week)) + 1 : 1
             const created = await GameService.createGame({
                 dynasty_id: dynastyId,
                 year_record_id: yearRecordId,
@@ -97,7 +99,7 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                             text="white"
                             size="sm"
                             onClick={handleAddGame}
-                            disabled={adding}
+                            disabled={adding || (games.length > 0 && Math.max(...games.map(g => g.week)) >= MAX_SCHEDULE_WEEK)}
                             className="flex items-center gap-1 text-xs font-semibold"
                         >
                             <Plus className="h-3.5 w-3.5" />

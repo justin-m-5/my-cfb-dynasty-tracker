@@ -73,6 +73,32 @@ export const PlayerStatService = {
         return (data ?? []) as PlayerStat[]
     },
 
+    async getSeasonTotalsWithNames(dynastyId: string, yearRecordId: string): Promise<(PlayerStat & { player_name: string; position: string })[]> {
+        const { data: games } = await supabase.from('games').select('id').eq('dynasty_id', dynastyId).eq('year_record_id', yearRecordId)
+
+        if (!games || games.length === 0) return []
+
+        const gameIds = games.map(g => g.id)
+        const { data, error } = await supabase
+            .from('player_stats')
+            .select('*, players!inner(name, position)')
+            .in('game_id', gameIds)
+
+        if (error) {
+            console.error('Get season totals error:', error.message)
+            return []
+        }
+
+        return (data ?? []).map((row: Record<string, unknown>) => {
+            const players = row.players as { name: string; position: string } | undefined
+            return {
+                ...row,
+                player_name: players?.name ?? 'Unknown',
+                position: players?.position ?? '',
+            }
+        }) as (PlayerStat & { player_name: string; position: string })[]
+    },
+
     async upsertStat(stat: Omit<PlayerStat, 'id'> & { id?: string }): Promise<PlayerStat | null> {
         const { data, error } = await supabase.from('player_stats').upsert(stat, { onConflict: 'player_id,game_id' }).select().single()
 

@@ -12,6 +12,8 @@ export interface Player {
     rating: number | null
     jersey_number: number | null
     dev_trait: string | null
+    height: string | null
+    weight: number | null
     notes: string | null
     is_redshirted: boolean
 }

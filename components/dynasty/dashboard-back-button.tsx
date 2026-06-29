@@ -20,7 +20,7 @@ export function DashboardBackButton({ dynastyId }: DashboardBackButtonProps) {
     return (
         <Link
             href="/dashboard"
-            {...buttonStyles({ bg: 'var(--orange-400)', text: 'white', className: 'flex items-center gap-1 rounded-md px-2 py-1.5 text-xs font-semibold' })}
+            {...buttonStyles({ bg: 'var(--orange-400)', text: 'white', size: 'sm', className: 'flex items-center gap-1.5 text-xs font-semibold' })}
         >
             ← Dashboard
         </Link>

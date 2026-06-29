@@ -9,7 +9,7 @@ import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
 import { Top25Service, type RankedTeam } from '@/dal/features/top25'
 import { fbsTeams } from '@/lib/fbs-teams'
-import { getWeekDisplayName } from '@/lib/game-utils'
+import { getWeekDisplayName, MAX_RANKINGS_WEEK } from '@/lib/game-utils'
 import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -114,15 +114,12 @@ export function Top25({ dynastyId }: Top25Props) {
     // Teams not currently ranked (for dropdowns)
     const unrankedTeams = useMemo(() => {
         const rankedNames = new Set(rankings.map(t => t.name).filter(Boolean))
-        return fbsTeams
-            .filter(t => !rankedNames.has(t.name))
-            .map(t => ({ name: t.name, conference: t.conference }))
-            .sort((a, b) => a.name.localeCompare(b.name))
+        return fbsTeams.filter(t => !rankedNames.has(t.name)).map(t => ({ name: t.name, conference: t.conference })).sort((a, b) => a.name.localeCompare(b.name))
     }, [rankings])
 
-    // Week options (preseason through week 19)
+    // Week options: 0 (preseason) through 19 (natty)
     const weekOptions = useMemo(() =>
-        Array.from({ length: 21 }, (_, i) => ({ value: i, label: getWeekDisplayName(i) })),
+        Array.from({ length: MAX_RANKINGS_WEEK + 1 }, (_, i) => ({ value: i, label: getWeekDisplayName(i) })),
         []
     )
 

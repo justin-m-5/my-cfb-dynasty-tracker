@@ -1,4 +1,4 @@
-// components/dynasty/sections/roster/player-form.tsx
+// components/form/player-form.tsx
 
 'use client'
 
@@ -26,6 +26,8 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
         rating: initial?.rating ?? null,
         jersey_number: initial?.jersey_number ?? null,
         dev_trait: initial?.dev_trait ?? 'Normal',
+        height: initial?.height ?? null,
+        weight: initial?.weight ?? null,
         notes: initial?.notes ?? '',
         is_redshirted: initial?.is_redshirted ?? false,
     })
@@ -102,6 +104,27 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                             {devTraits.map(t => <option key={t} value={t}>{t}</option>)}
                         </Select>
                     </div>
+                    <div>
+                        <Label className="text-xs">Height</Label>
+                        <Input
+                            value={form.height ?? ''}
+                            onChange={(e) => update('height', e.target.value || null)}
+                            placeholder={`6'2"`}
+                            className="mt-1 h-8 text-sm"
+                        />
+                    </div>
+                    <div>
+                        <Label className="text-xs">Weight</Label>
+                        <Input
+                            type="number"
+                            min={100}
+                            max={400}
+                            value={form.weight ?? ''}
+                            onChange={(e) => update('weight', e.target.value ? Number(e.target.value) : null)}
+                            placeholder="lbs"
+                            className="mt-1 h-8 text-sm"
+                        />
+                    </div>
                     <div className="col-span-2 sm:col-span-3">
                         <Label className="text-xs">Notes</Label>
                         <Input
@@ -123,7 +146,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                     >
                         {saving ? 'Saving...' : initial?.id ? 'Save Changes' : 'Add Player'}
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={onCancel} className="text-xs">
+                    <Button bg="var(--orange-400)" text="white" size="sm" onClick={onCancel} className="text-xs">
                         Cancel
                     </Button>
                 </div>
