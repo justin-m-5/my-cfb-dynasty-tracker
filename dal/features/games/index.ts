@@ -24,11 +24,7 @@ export interface Game {
 
 export const GameService = {
     async getGameById(id: string): Promise<Game | null> {
-        const { data, error } = await supabase
-            .from('games')
-            .select('*')
-            .eq('id', id)
-            .single()
+        const { data, error } = await supabase.from('games').select('*').eq('id', id).single()
 
         if (error) {
             console.error('Get game error:', error.message)
@@ -39,12 +35,7 @@ export const GameService = {
     },
 
     async getGames(dynastyId: string, yearRecordId: string): Promise<Game[]> {
-        const { data, error } = await supabase
-            .from('games')
-            .select('*')
-            .eq('dynasty_id', dynastyId)
-            .eq('year_record_id', yearRecordId)
-            .order('week', { ascending: true })
+        const { data, error } = await supabase.from('games').select('*').eq('dynasty_id', dynastyId).eq('year_record_id', yearRecordId).order('week', { ascending: true })
 
         if (error) {
             console.error('Get games error:', error.message)
@@ -55,20 +46,13 @@ export const GameService = {
     },
 
     async updateGame(id: string, updates: Partial<Game>): Promise<void> {
-        const { error } = await supabase
-            .from('games')
-            .update(updates)
-            .eq('id', id)
+        const { error } = await supabase.from('games').update(updates).eq('id', id)
 
         if (error) throw error
     },
 
     async createGame(game: Omit<Game, 'id'>): Promise<Game | null> {
-        const { data, error } = await supabase
-            .from('games')
-            .insert(game)
-            .select()
-            .single()
+        const { data, error } = await supabase.from('games').insert(game).select().single()
 
         if (error) {
             console.error('Create game error:', error.message)

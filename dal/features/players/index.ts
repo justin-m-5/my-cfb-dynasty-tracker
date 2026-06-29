@@ -18,13 +18,7 @@ export interface Player {
 
 export const PlayerService = {
     async getRoster(dynastyId: string, yearRecordId: string): Promise<Player[]> {
-        const { data, error } = await supabase
-            .from('players')
-            .select('*')
-            .eq('dynasty_id', dynastyId)
-            .eq('year_record_id', yearRecordId)
-            .order('position')
-            .order('name')
+        const { data, error } = await supabase.from('players').select('*').eq('dynasty_id', dynastyId).eq('year_record_id', yearRecordId).order('position').order('name')
 
         if (error) {
             console.error('Get roster error:', error.message)
@@ -35,11 +29,7 @@ export const PlayerService = {
     },
 
     async createPlayer(player: Omit<Player, 'id'>): Promise<Player | null> {
-        const { data, error } = await supabase
-            .from('players')
-            .insert(player)
-            .select()
-            .single()
+        const { data, error } = await supabase.from('players').insert(player).select().single()
 
         if (error) {
             console.error('Create player error:', error.message)
@@ -50,19 +40,13 @@ export const PlayerService = {
     },
 
     async updatePlayer(id: string, updates: Partial<Player>): Promise<void> {
-        const { error } = await supabase
-            .from('players')
-            .update(updates)
-            .eq('id', id)
+        const { error } = await supabase.from('players').update(updates).eq('id', id)
 
         if (error) throw error
     },
 
     async deletePlayer(id: string): Promise<void> {
-        const { error } = await supabase
-            .from('players')
-            .delete()
-            .eq('id', id)
+        const { error } = await supabase.from('players').delete().eq('id', id)
 
         if (error) throw error
     },

@@ -27,11 +27,7 @@ export interface Dynasty {
 }
 
 export async function getDynastyById(id: string): Promise<Dynasty | null> {
-    const { data, error } = await supabase
-        .from('dynasties')
-        .select('*')
-        .eq('id', id)
-        .single()
+    const { data, error } = await supabase.from('dynasties').select('*').eq('id', id).single()
 
     if (error) {
         console.error('Get dynasty error:', error.message)

@@ -22,20 +22,11 @@ export interface YearRecord {
 
 export const YearRecordService = {
     async getCurrentYearRecord(dynastyId: string): Promise<YearRecord | null> {
-        const { data: dynasty } = await supabase
-            .from('dynasties')
-            .select('current_year')
-            .eq('id', dynastyId)
-            .single()
+        const { data: dynasty } = await supabase.from('dynasties').select('current_year').eq('id', dynastyId).single()
 
         if (!dynasty) return null
 
-        const { data, error } = await supabase
-            .from('year_records')
-            .select('*')
-            .eq('dynasty_id', dynastyId)
-            .eq('year', dynasty.current_year)
-            .maybeSingle()
+        const { data, error } = await supabase.from('year_records').select('*').eq('dynasty_id', dynastyId).eq('year', dynasty.current_year).maybeSingle()
 
         if (error) {
             console.error('Get year record error:', error.message)
@@ -46,11 +37,7 @@ export const YearRecordService = {
     },
 
     async getYearRecords(dynastyId: string): Promise<YearRecord[]> {
-        const { data, error } = await supabase
-            .from('year_records')
-            .select('*')
-            .eq('dynasty_id', dynastyId)
-            .order('year', { ascending: false })
+        const { data, error } = await supabase.from('year_records').select('*').eq('dynasty_id', dynastyId).order('year', { ascending: false })
 
         if (error) {
             console.error('Get year records error:', error.message)
@@ -61,11 +48,7 @@ export const YearRecordService = {
     },
 
     async createYearRecord(dynastyId: string, year: number): Promise<YearRecord | null> {
-        const { data, error } = await supabase
-            .from('year_records')
-            .insert({ dynasty_id: dynastyId, year })
-            .select()
-            .single()
+        const { data, error } = await supabase.from('year_records').insert({ dynasty_id: dynastyId, year }).select().single()
 
         if (error) {
             console.error('Create year record error:', error.message)

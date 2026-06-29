@@ -3,6 +3,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService, type YearRecord } from '@/dal/features/year-records'
@@ -12,12 +13,14 @@ import { SeasonGlance } from './home/season-glance'
 import { SeasonDetails } from './home/season-details'
 import { NextGameCard } from './home/next-game-card'
 import { CareerStats } from './home/career-stats'
+import { AdvanceSeason } from './home/advance-season'
 
 interface TeamHomeProps {
     dynastyId: string
 }
 
 export function TeamHome({ dynastyId }: TeamHomeProps) {
+    const router = useRouter()
     const [dynasty, setDynasty] = useState<Dynasty | null>(null)
     const [yearRecord, setYearRecord] = useState<YearRecord | null>(null)
     const [games, setGames] = useState<Game[]>([])
@@ -43,6 +46,31 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
         load()
     }, [dynastyId])
 
+    const handleAdvanced = () => {
+        router.refresh()
+        // Reload data
+        setIsLoading(true)
+        DynastyService.getDynastyById(dynastyId).then(d => {
+            setDynasty(d)
+            if (d) {
+                YearRecordService.getCurrentYearRecord(dynastyId).then(yr => {
+                    setYearRecord(yr)
+                    if (yr) {
+                        GameService.getGames(dynastyId, yr.id).then(g => {
+                            setGames(g)
+                            setIsLoading(false)
+                        })
+                    } else {
+                        setGames([])
+                        setIsLoading(false)
+                    }
+                })
+            } else {
+                setIsLoading(false)
+            }
+        })
+    }
+
     if (isLoading) {
         return <div className="text-sm text-text/60">Loading team data...</div>
     }
@@ -55,8 +83,9 @@ export function TeamHome({ dynastyId }: TeamHomeProps) {
         <div className="space-y-6">
             <SeasonGlance dynasty={dynasty} yearRecord={yearRecord} games={games} />
             <SeasonDetails yearRecord={yearRecord} games={games} />
-            <CareerStats dynasty={dynasty} />
             <NextGameCard games={games} />
+            <CareerStats dynasty={dynasty} />
+            <AdvanceSeason dynasty={dynasty} onAdvanced={handleAdvanced} />
         </div>
     )
 }

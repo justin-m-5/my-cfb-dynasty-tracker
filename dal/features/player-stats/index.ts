@@ -46,10 +46,7 @@ export interface PlayerStat {
 
 export const PlayerStatService = {
     async getStatsForGame(gameId: string): Promise<PlayerStat[]> {
-        const { data, error } = await supabase
-            .from('player_stats')
-            .select('*')
-            .eq('game_id', gameId)
+        const { data, error } = await supabase.from('player_stats').select('*').eq('game_id', gameId)
 
         if (error) {
             console.error('Get player stats error:', error.message)
@@ -61,19 +58,12 @@ export const PlayerStatService = {
 
     async getSeasonStats(dynastyId: string, yearRecordId: string): Promise<PlayerStat[]> {
         // Get all game IDs for this season, then aggregate
-        const { data: games } = await supabase
-            .from('games')
-            .select('id')
-            .eq('dynasty_id', dynastyId)
-            .eq('year_record_id', yearRecordId)
+        const { data: games } = await supabase.from('games').select('id').eq('dynasty_id', dynastyId).eq('year_record_id', yearRecordId)
 
         if (!games || games.length === 0) return []
 
         const gameIds = games.map(g => g.id)
-        const { data, error } = await supabase
-            .from('player_stats')
-            .select('*')
-            .in('game_id', gameIds)
+        const { data, error } = await supabase.from('player_stats').select('*').in('game_id', gameIds)
 
         if (error) {
             console.error('Get season stats error:', error.message)
@@ -84,11 +74,7 @@ export const PlayerStatService = {
     },
 
     async upsertStat(stat: Omit<PlayerStat, 'id'> & { id?: string }): Promise<PlayerStat | null> {
-        const { data, error } = await supabase
-            .from('player_stats')
-            .upsert(stat, { onConflict: 'player_id,game_id' })
-            .select()
-            .single()
+        const { data, error } = await supabase.from('player_stats').upsert(stat, { onConflict: 'player_id,game_id' }).select().single()
 
         if (error) {
             console.error('Upsert player stat error:', error.message)
@@ -99,11 +85,7 @@ export const PlayerStatService = {
     },
 
     async createStat(stat: Omit<PlayerStat, 'id'>): Promise<PlayerStat | null> {
-        const { data, error } = await supabase
-            .from('player_stats')
-            .insert(stat)
-            .select()
-            .single()
+        const { data, error } = await supabase.from('player_stats').insert(stat).select().single()
 
         if (error) {
             console.error('Create player stat error:', error.message)
@@ -114,19 +96,13 @@ export const PlayerStatService = {
     },
 
     async updateStat(id: string, updates: Partial<PlayerStat>): Promise<void> {
-        const { error } = await supabase
-            .from('player_stats')
-            .update(updates)
-            .eq('id', id)
+        const { error } = await supabase.from('player_stats').update(updates).eq('id', id)
 
         if (error) throw error
     },
 
     async deleteStat(id: string): Promise<void> {
-        const { error } = await supabase
-            .from('player_stats')
-            .delete()
-            .eq('id', id)
+        const { error } = await supabase.from('player_stats').delete().eq('id', id)
 
         if (error) throw error
     },

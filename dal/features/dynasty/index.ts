@@ -1,5 +1,6 @@
 // dal/features/dynasty/index.ts
 
+import { advanceSeason } from './advance-season'
 import { createDynasty } from './create-dynasty'
 import { deleteDynasty } from './delete-dynasty'
 import { getDynasties } from './get-dynasties'
@@ -10,6 +11,7 @@ export type { CreateDynastyInput, DynastySummary, SwitchTeamsInput } from './typ
 export type { Dynasty } from './get-dynasty'
 
 export const DynastyService = {
+    advanceSeason,
     createDynasty,
     deleteDynasty,
     getDynasties,

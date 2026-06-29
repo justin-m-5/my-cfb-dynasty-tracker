@@ -86,11 +86,8 @@ export function CreateDynastyForm() {
             router.push('/dashboard')
             router.refresh()
         } catch (submitError: unknown) {
-            const msg = submitError instanceof Error
-                ? submitError.message
-                : typeof submitError === 'object' && submitError !== null && 'message' in submitError
-                    ? String((submitError as { message: unknown }).message)
-                    : JSON.stringify(submitError)
+            const msg = submitError instanceof Error ? submitError.message : typeof submitError === 'object' && submitError !== null && 'message' in submitError
+            ? String((submitError as { message: unknown }).message) : JSON.stringify(submitError)
             console.error('Create dynasty error:', submitError)
             setError(msg)
         } finally {
