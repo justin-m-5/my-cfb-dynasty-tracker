@@ -42,9 +42,7 @@ export function DynastyNavShell({ dynastyId }: DynastyNavShellProps) {
                     <div className="flex min-w-max gap-1">
                         {navItems.map((item) => {
                             const isActive = activeSegment === item.segment
-                            const href = item.segment
-                                ? `${basePath}/${item.segment}`
-                                : basePath
+                            const href = item.segment ? `${basePath}/${item.segment}` : basePath
 
                             return (
                                 <Fragment key={item.segment}>

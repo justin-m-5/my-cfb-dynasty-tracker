@@ -4,6 +4,7 @@
 
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { LogoImage } from '@/components/ui/logo-image'
 import type { Dynasty } from '@/dal/features/dynasty'
 import type { Game, QuarterScore } from '@/dal/features/games'
 
@@ -11,9 +12,11 @@ interface BoxScoreTabProps {
     game: Game
     dynasty: Dynasty
     updateGame: (field: keyof Game, value: unknown) => void
+    userLogos: string[]
+    oppLogos: string[]
 }
 
-export function BoxScoreTab({ game, dynasty, updateGame }: BoxScoreTabProps) {
+export function BoxScoreTab({ game, dynasty, updateGame, userLogos, oppLogos }: BoxScoreTabProps) {
     const quarters = (game.score_by_quarter ?? []) as QuarterScore[]
     const labels = ['Q1', 'Q2', 'Q3', 'Q4']
 
@@ -25,6 +28,8 @@ export function BoxScoreTab({ game, dynasty, updateGame }: BoxScoreTabProps) {
 
     const homeName = game.location === 'away' ? (game.opponent || 'Opponent') : (dynasty.school_abbrev ?? dynasty.school_name)
     const awayName = game.location === 'away' ? (dynasty.school_abbrev ?? dynasty.school_name) : (game.opponent || 'Opponent')
+    const homeLogos = game.location === 'away' ? oppLogos : userLogos
+    const awayLogos = game.location === 'away' ? userLogos : oppLogos
 
     return (
         <Card>
@@ -40,7 +45,11 @@ export function BoxScoreTab({ game, dynasty, updateGame }: BoxScoreTabProps) {
                         </thead>
                         <tbody>
                             <tr className="border-b border-primary/10">
-                                <td className="py-2 pr-4 text-xs font-medium text-text sm:text-sm">{awayName}</td>
+                                <td className="py-2">
+                                    <div className="flex items-center gap-2">
+                                        <LogoImage candidates={awayLogos} alt={awayName} size={32} />
+                                    </div>
+                                </td>
                                 {quarters.map((q, i) => (
                                     <td key={i} className="px-1 py-2 text-center">
                                         <Input
@@ -48,13 +57,17 @@ export function BoxScoreTab({ game, dynasty, updateGame }: BoxScoreTabProps) {
                                             min={0}
                                             value={q.away}
                                             onChange={(e) => updateQuarter(i, 'away', e.target.value)}
-                                            className="h-8 w-12 text-center text-sm mx-auto sm:w-14"
+                                            className="mx-auto h-10 w-16 min-w-16 text-center text-base tabular-nums sm:h-8 sm:w-14 sm:min-w-14 sm:text-sm"
                                         />
                                     </td>
                                 ))}
                             </tr>
                             <tr>
-                                <td className="py-2 pr-4 text-xs font-medium text-text sm:text-sm">{homeName}</td>
+                                <td className="py-2 pr-4">
+                                    <div className="flex items-center gap-2">
+                                        <LogoImage candidates={homeLogos} alt={homeName} size={32} />
+                                    </div>
+                                </td>
                                 {quarters.map((q, i) => (
                                     <td key={i} className="px-1 py-2 text-center">
                                         <Input
@@ -62,7 +75,7 @@ export function BoxScoreTab({ game, dynasty, updateGame }: BoxScoreTabProps) {
                                             min={0}
                                             value={q.home}
                                             onChange={(e) => updateQuarter(i, 'home', e.target.value)}
-                                            className="h-8 w-12 text-center text-sm mx-auto sm:w-14"
+                                            className="mx-auto h-10 w-16 min-w-16 text-center text-base tabular-nums sm:h-8 sm:w-14 sm:min-w-14 sm:text-sm"
                                         />
                                     </td>
                                 ))}

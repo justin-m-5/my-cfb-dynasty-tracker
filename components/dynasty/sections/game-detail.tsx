@@ -3,6 +3,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { GameService, type Game } from '@/dal/features/games'
@@ -10,7 +11,7 @@ import { PlayerService, type Player } from '@/dal/features/players'
 import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
 import { getSchoolLogoCandidates } from '@/lib/logos'
 import { fbsTeams } from '@/lib/fbs-teams'
-import { Button } from '@/components/ui/button'
+import { Button, buttonStyles } from '@/components/ui/button'
 import { Save } from 'lucide-react'
 
 import { GameHeader } from './game/game-header'
@@ -130,19 +131,30 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
     return (
         <div className="space-y-5">
             {/* Save bar */}
-            <div className="flex items-center justify-end gap-2">
-                {isDirty && <span className="text-xs font-medium text-amber-500">Unsaved</span>}
-                <Button
-                    bg="var(--green-600)"
-                    text="white"
-                    size="sm"
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="flex items-center gap-1 font-semibold"
-                >
-                    <Save className="h-3.5 w-3.5" />
-                    {saving ? 'Saving...' : 'Save'}
-                </Button>
+            <div className="flex items-center justify-between gap-2">
+                <div>
+                    <Link
+                        href={`/dashboard/dynasty/${dynastyId}/schedule`}
+                        {...buttonStyles({ bg: 'var(--orange-400)', text: 'white', className: 'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold' })}
+                    >
+                        ← Schedule
+                    </Link>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    {isDirty && <span className="text-xs font-medium text-amber-500">Unsaved</span>}
+                    <Button
+                        bg="var(--green-600)"
+                        text="white"
+                        size="sm"
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="flex items-center gap-1 font-semibold"
+                    >
+                        <Save className="h-3.5 w-3.5" />
+                        {saving ? 'Saving...' : 'Save'}
+                    </Button>
+                </div>
             </div>
 
             <GameHeader dynasty={dynasty} game={game} userLogos={userLogos} oppLogos={oppLogos} />
@@ -165,7 +177,7 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
                 ))}
             </div>
 
-            {activeTab === 'Box Score' && <BoxScoreTab game={game} dynasty={dynasty} updateGame={updateGame} />}
+            {activeTab === 'Box Score' && <BoxScoreTab game={game} dynasty={dynasty} updateGame={updateGame} userLogos={userLogos} oppLogos={oppLogos} />}
             {activeTab === 'Team Stats' && <TeamStatsTab game={game} updateGame={updateGame} />}
             {activeTab === 'Player Stats' && (
                 <PlayerStatsTab gameId={game.id} roster={roster} stats={playerStats} onStatsChange={setPlayerStats} />

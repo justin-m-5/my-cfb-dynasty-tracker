@@ -43,9 +43,7 @@ interface GameRowProps {
 
 export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
     const oppTeam = fbsTeams.find(t => t.name === game.opponent)
-    const oppLogos = game.opponent && game.opponent !== 'BYE'
-        ? getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null)
-        : []
+    const oppLogos = game.opponent && game.opponent !== 'BYE' ? getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null) : []
     const isConf = oppTeam?.conference === dynastyConference
     const { user, opp } = parseScore(game.score)
 
@@ -54,7 +52,7 @@ export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
             <div className="flex items-center gap-2">
                 {/* Week + Location */}
                 <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-xs font-semibold text-text/80 w-[4.5rem]">
+                    <span className="text-xs font-semibold text-text/80 w-18">
                         {getWeekDisplayName(game.week)}
                     </span>
                     <LocationBadge location={game.location} />
