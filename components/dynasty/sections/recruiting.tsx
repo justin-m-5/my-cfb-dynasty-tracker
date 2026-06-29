@@ -10,7 +10,7 @@ import { RecruitService, type Recruit } from '@/dal/features/recruits'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RecruitList } from './recruiting/recruit-list'
-import { RecruitForm } from './recruiting/recruit-form'
+import { RecruitForm } from '../../forms/recruit-form'
 
 interface RecruitingProps {
     dynastyId: string

@@ -1,4 +1,4 @@
-// components/dynasty/sections/transfers/transfer-form.tsx
+// components/forms/transfer-form.tsx
 
 'use client'
 

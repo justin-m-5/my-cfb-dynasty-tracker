@@ -1,4 +1,4 @@
-// components/dynasty/sections/player-awards/award-form.tsx
+// components/forms/player-awards/award-form.tsx
 
 'use client'
 
@@ -77,11 +77,11 @@ export function AwardForm({ players, editing, saving, onSave, onCancel }: AwardF
             )}
 
             <div className="flex gap-2">
-                <Button size="sm" onClick={handleSubmit} disabled={saving || !playerId || !awardName}>
+                <Button size="sm" bg="var(--primary)" text="white" onClick={handleSubmit} disabled={saving || !playerId || !awardName}>
                     {editing ? 'Save' : 'Add'}
                 </Button>
                 {editing && (
-                    <Button size="sm" variant="outline" onClick={onCancel}>
+                    <Button size="sm" bg="var(--orange-500)" text="white" variant="outline" onClick={onCancel}>
                         Cancel
                     </Button>
                 )}

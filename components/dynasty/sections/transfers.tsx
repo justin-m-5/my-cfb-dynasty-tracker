@@ -10,7 +10,7 @@ import { TransferService, type Transfer } from '@/dal/features/transfers'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { TransferList } from './transfers/transfer-list'
-import { TransferForm } from './transfers/transfer-form'
+import { TransferForm } from '../../forms/transfer-form'
 
 interface TransfersProps {
     dynastyId: string

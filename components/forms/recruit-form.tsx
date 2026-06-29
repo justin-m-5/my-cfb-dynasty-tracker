@@ -1,4 +1,4 @@
-// components/dynasty/sections/recruiting/recruit-form.tsx
+// components/forms/recruit-form.tsx
 
 'use client'
 

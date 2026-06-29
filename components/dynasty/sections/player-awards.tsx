@@ -10,7 +10,7 @@ import { PlayerService, type Player } from '@/dal/features/players'
 import { AwardService, type Award } from '@/dal/features/awards'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { AwardForm } from './player-awards/award-form'
+import { AwardForm } from '../../forms/award-form'
 import { AwardList } from './player-awards/award-list'
 
 interface PlayerAwardsProps {
@@ -113,7 +113,7 @@ export function PlayerAwards({ dynastyId }: PlayerAwardsProps) {
                     <div className="flex items-center justify-between">
                         <CardTitle className="text-base">Player Awards</CardTitle>
                         {!showForm && (
-                            <Button size="sm"  bg="var(--primary)" text="white" onClick={() => setShowForm(true)}>
+                            <Button size="sm" bg="var(--primary)" text="white" onClick={() => setShowForm(true)}>
                                 <Plus className="h-3.5 w-3.5 mr-1" />
                                 Add Award
                             </Button>
