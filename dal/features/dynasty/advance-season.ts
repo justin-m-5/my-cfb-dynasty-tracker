@@ -63,9 +63,21 @@ export async function advanceSeason(dynastyId: string): Promise<{ newYear: numbe
 
     if (dynErr) throw new Error('Failed to advance dynasty year')
 
-    // 6. Create new year_record for next season
-    const newYr = await YearRecordService.createYearRecord(dynastyId, newYear)
-    if (!newYr) throw new Error('Failed to create new year record')
+    // 6. Create new year_record for next season with team snapshot
+    const { error: newYrErr } = await supabase
+        .from('year_records')
+        .insert({
+            dynasty_id: dynastyId,
+            year: newYear,
+            school_name: dynasty.school_name,
+            school_nickname: dynasty.school_nickname,
+            school_abbrev: dynasty.school_abbrev,
+            conference: dynasty.conference,
+            primary_color: dynasty.primary_color,
+            secondary_color: dynasty.secondary_color,
+        })
+
+    if (newYrErr) throw new Error('Failed to create new year record')
 
     return { newYear }
 }

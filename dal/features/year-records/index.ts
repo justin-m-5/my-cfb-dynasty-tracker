@@ -18,6 +18,13 @@ export interface YearRecord {
     final_ranking: number | null
     conference_finish: string
     season_stats: Record<string, unknown> | null
+    // Team snapshot for this season
+    school_name: string
+    school_nickname: string | null
+    school_abbrev: string | null
+    conference: string | null
+    primary_color: string | null
+    secondary_color: string | null
 }
 
 export const YearRecordService = {

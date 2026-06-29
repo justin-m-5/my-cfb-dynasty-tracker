@@ -15,6 +15,7 @@ export default async function NavLayout({ children, params }: NavLayoutProps) {
     return (
         <>
             <DashboardBackButton dynastyId={id} />
+            {/* advance season button here */}
             <DynastyNavShell dynastyId={id} />
             <div className="flex-1">{children}</div>
         </>
