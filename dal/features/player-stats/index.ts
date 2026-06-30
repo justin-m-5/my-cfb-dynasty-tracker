@@ -79,10 +79,7 @@ export const PlayerStatService = {
         if (!games || games.length === 0) return []
 
         const gameIds = games.map(g => g.id)
-        const { data, error } = await supabase
-            .from('player_stats')
-            .select('*, players!inner(name, position)')
-            .in('game_id', gameIds)
+        const { data, error } = await supabase.from('player_stats').select('*, players!inner(name, position)').in('game_id', gameIds)
 
         if (error) {
             console.error('Get season totals error:', error.message)

@@ -57,12 +57,7 @@ export interface CreatePlayerSeasonInput {
 export const PlayerService = {
     // Get full roster for a season (player identity + season snapshot)
     async getRoster(dynastyId: string, yearRecordId: string): Promise<RosterPlayer[]> {
-        const { data, error } = await supabase
-            .from('player_seasons')
-            .select('*, players!inner(*)')
-            .eq('dynasty_id', dynastyId)
-            .eq('year_record_id', yearRecordId)
-            .order('player_id')
+        const { data, error } = await supabase.from('player_seasons').select('*, players!inner(*)').eq('dynasty_id', dynastyId).eq('year_record_id', yearRecordId).order('player_id')
 
         if (error) {
             console.error('Get roster error:', error.message)
@@ -91,18 +86,14 @@ export const PlayerService = {
     // Create a new player identity + their first season entry
     async createPlayer(input: CreatePlayerInput, seasonInput: Omit<CreatePlayerSeasonInput, 'player_id'>): Promise<RosterPlayer | null> {
         // Insert player identity
-        const { data: player, error: pErr } = await supabase
-            .from('players')
-            .insert({
-                dynasty_id: input.dynasty_id,
-                name: input.name,
-                position: input.position,
-                height: input.height ?? null,
-                weight: input.weight ?? null,
-                avatar_url: input.avatar_url ?? null,
-            })
-            .select()
-            .single()
+        const { data: player, error: pErr } = await supabase.from('players').insert({
+            dynasty_id: input.dynasty_id,
+            name: input.name,
+            position: input.position,
+            height: input.height ?? null,
+            weight: input.weight ?? null,
+            avatar_url: input.avatar_url ?? null,
+        }).select().single()
 
         if (pErr || !player) {
             console.error('Create player error:', pErr?.message)
@@ -110,21 +101,17 @@ export const PlayerService = {
         }
 
         // Insert season entry
-        const { data: season, error: sErr } = await supabase
-            .from('player_seasons')
-            .insert({
-                player_id: player.id,
-                year_record_id: seasonInput.year_record_id,
-                dynasty_id: seasonInput.dynasty_id,
-                year: seasonInput.year ?? null,
-                rating: seasonInput.rating ?? null,
-                jersey_number: seasonInput.jersey_number ?? null,
-                is_redshirted: seasonInput.is_redshirted ?? false,
-                notes: seasonInput.notes ?? null,
-                dev_trait: seasonInput.dev_trait ?? null,
-            })
-            .select()
-            .single()
+        const { data: season, error: sErr } = await supabase.from('player_seasons').insert({
+            player_id: player.id,
+            year_record_id: seasonInput.year_record_id,
+            dynasty_id: seasonInput.dynasty_id,
+            year: seasonInput.year ?? null,
+            rating: seasonInput.rating ?? null,
+            jersey_number: seasonInput.jersey_number ?? null,
+            is_redshirted: seasonInput.is_redshirted ?? false,
+            notes: seasonInput.notes ?? null,
+            dev_trait: seasonInput.dev_trait ?? null,
+        }).select().single()
 
         if (sErr || !season) {
             console.error('Create player season error:', sErr?.message)
@@ -154,11 +141,7 @@ export const PlayerService = {
 
     // Get a player's career (all seasons)
     async getPlayerCareer(playerId: string): Promise<PlayerSeason[]> {
-        const { data, error } = await supabase
-            .from('player_seasons')
-            .select('*, year_records!inner(year)')
-            .eq('player_id', playerId)
-            .order('year_record_id')
+        const { data, error } = await supabase.from('player_seasons').select('*, year_records!inner(year)').eq('player_id', playerId).order('year_record_id')
 
         if (error) {
             console.error('Get player career error:', error.message)

@@ -13,10 +13,10 @@ export default async function NavLayout({ children, params }: NavLayoutProps) {
     const { id } = await params
 
     return (
-        <div className="pt-12">
+        <>
             <DynastyActionBar dynastyId={id} />
             <DynastyNavShell dynastyId={id} />
             <div className="flex-1">{children}</div>
-        </div>
+        </>
     )
 }

@@ -15,12 +15,7 @@ export interface DraftedPlayer {
 
 export const DraftedPlayerService = {
     async getDraftedPlayers(dynastyId: string, yearRecordId: string): Promise<DraftedPlayer[]> {
-        const { data, error } = await supabase
-            .from('drafted_players')
-            .select('*')
-            .eq('dynasty_id', dynastyId)
-            .eq('year_record_id', yearRecordId)
-            .order('player_name', { ascending: true })
+        const { data, error } = await supabase.from('drafted_players').select('*').eq('dynasty_id', dynastyId).eq('year_record_id', yearRecordId).order('player_name', { ascending: true })
 
         if (error) {
             console.error('Get drafted players error:', error.message)
@@ -31,11 +26,7 @@ export const DraftedPlayerService = {
     },
 
     async createDraftedPlayer(player: Omit<DraftedPlayer, 'id'>): Promise<DraftedPlayer | null> {
-        const { data, error } = await supabase
-            .from('drafted_players')
-            .insert(player)
-            .select()
-            .single()
+        const { data, error } = await supabase.from('drafted_players').insert(player).select().single()
 
         if (error) {
             console.error('Create drafted player error:', error.message)
@@ -46,10 +37,7 @@ export const DraftedPlayerService = {
     },
 
     async deleteDraftedPlayer(id: string): Promise<void> {
-        const { error } = await supabase
-            .from('drafted_players')
-            .delete()
-            .eq('id', id)
+        const { error } = await supabase.from('drafted_players').delete().eq('id', id)
 
         if (error) throw error
     },
