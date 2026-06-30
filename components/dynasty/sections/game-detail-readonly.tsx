@@ -15,8 +15,8 @@ import { getWeekFullName, parseScore } from '@/lib/game-utils'
 import { buttonStyles } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LogoImage } from '@/components/ui/logo-image'
+import { MiniTabNav } from '@/components/ui/mini-tab-nav'
 import { Select } from '@/components/ui/select'
-import { SidebarNav } from '@/components/ui/sidebar-nav'
 import {
     type StatCategory,
     statCategories,
@@ -142,12 +142,8 @@ export function GameDetailReadOnly({ dynastyId, gameId }: GameDetailReadOnlyProp
                 </CardContent>
             </Card>
 
-            {/* Tabs (hamburger on mobile) */}
-            <SidebarNav
-                items={tabs.map(tab => ({ name: tab, key: tab }))}
-                active={activeTab}
-                onChange={(key) => setActiveTab(key as typeof activeTab)}
-            />
+            {/* Tab picker — hamburger on mobile, inline tabs on desktop */}
+            <MiniTabNav tabs={tabs} active={activeTab} onChange={(t) => setActiveTab(t as typeof activeTab)} />
 
             {/* Box Score */}
             {activeTab === 'Box Score' && game.score_by_quarter && (
