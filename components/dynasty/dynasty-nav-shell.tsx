@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { SidebarNav, type SidebarNavItem } from '@/components/ui/sidebar-nav'
 
 const segments = [
+    // yearly things
     { name: 'Team Home', segment: '' },
     { name: 'Schedule', segment: 'schedule' },
     { name: 'Top 25', segment: 'top-25' },
@@ -14,8 +15,11 @@ const segments = [
     { name: 'Transfers', segment: 'transfers' },
     { name: 'Player Stats', segment: 'player-stats' },
     { name: 'Player Awards', segment: 'player-awards' },
+    // career things (over all stats for every year, or a single year, with the team.. if coach switched teams, by school or all schools coached)
     { name: 'Season History', segment: 'season-history' },
+    // filter trophy case options by year, or by all years, or by school, or by all schools coached
     { name: 'Trophy Case', segment: 'trophy-case' },
+    //dont know about these yet
     { name: 'Social Media', segment: 'social-media' },
     { name: 'Tools', segment: 'tools' },
 ]

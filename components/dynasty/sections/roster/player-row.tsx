@@ -1,6 +1,6 @@
 // components/dynasty/sections/roster/player-row.tsx
 
-import { Pencil, Trash2, Shirt } from 'lucide-react'
+import { Pencil, Trash2, Shirt, User } from 'lucide-react'
 import { devTraitColors, type DevTrait } from '@/lib/player-config'
 import type { RosterPlayer } from '@/dal/features/players'
 
@@ -16,6 +16,15 @@ export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: Player
 
     return (
         <div className="flex items-center gap-1.5 px-2 py-1.5 border-b border-primary/10 last:border-b-0 hover:bg-primary/5 transition-colors">
+            {/* Avatar */}
+            <div className="h-7 w-7 shrink-0 rounded-full border border-primary/15 bg-primary/5 flex items-center justify-center overflow-hidden">
+                {player.avatar_url ? (
+                    <img src={player.avatar_url} alt={player.name} className="h-full w-full object-cover" />
+                ) : (
+                    <User className="h-3.5 w-3.5 text-text/25" />
+                )}
+            </div>
+
             {/* Jersey # */}
             <span className="w-6 text-center text-xs font-bold text-text/60">
                 {player.season.jersey_number ?? '—'}

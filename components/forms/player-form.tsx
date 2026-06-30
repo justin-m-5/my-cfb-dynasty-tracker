@@ -2,7 +2,8 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { Camera, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
@@ -25,6 +26,9 @@ export interface PlayerFormData {
     jersey_number: number | null
     is_redshirted: boolean
     notes: string | null
+    // Image (file to upload, handled separately by parent)
+    imageFile?: File | null
+    removeImage?: boolean
 }
 
 interface PlayerFormProps {
@@ -35,6 +39,7 @@ interface PlayerFormProps {
 }
 
 export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProps) {
+    const fileRef = useRef<HTMLInputElement>(null)
     const [form, setForm] = useState<PlayerFormData>({
         name: initial?.name ?? '',
         position: initial?.position ?? '',
@@ -46,9 +51,26 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
         jersey_number: initial?.season?.jersey_number ?? null,
         is_redshirted: initial?.season?.is_redshirted ?? false,
         notes: initial?.season?.notes ?? '',
+        imageFile: null,
+        removeImage: false,
     })
+    const [preview, setPreview] = useState<string | null>(initial?.avatar_url ?? null)
 
     const update = (field: string, value: unknown) => setForm(prev => ({ ...prev, [field]: value }))
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            setForm(prev => ({ ...prev, imageFile: file, removeImage: false }))
+            setPreview(URL.createObjectURL(file))
+        }
+    }
+
+    const handleRemoveImage = () => {
+        setForm(prev => ({ ...prev, imageFile: null, removeImage: true }))
+        setPreview(null)
+        if (fileRef.current) fileRef.current.value = ''
+    }
 
     return (
         <Card>
@@ -57,6 +79,45 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
             </CardHeader>
             <CardContent>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {/* Headshot */}
+                    <div className="col-span-2 sm:col-span-3 flex items-center gap-3">
+                        <div className="relative h-14 w-14 shrink-0 rounded-full border border-primary/20 bg-primary/5 flex items-center justify-center overflow-hidden">
+                            {preview ? (
+                                <>
+                                    <img src={preview} alt="Headshot" className="h-full w-full object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveImage}
+                                        className="absolute -right-0.5 -top-0.5 rounded-full bg-red-500 p-0.5 text-white shadow-sm"
+                                    >
+                                        <X className="h-2.5 w-2.5" />
+                                    </button>
+                                </>
+                            ) : (
+                                <Camera className="h-5 w-5 text-text/30" />
+                            )}
+                        </div>
+                        <div>
+                            <input
+                                ref={fileRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="hidden"
+                            />
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => fileRef.current?.click()}
+                                className="text-xs"
+                            >
+                                {preview ? 'Change Photo' : 'Add Photo'}
+                            </Button>
+                            <p className="mt-0.5 text-[10px] text-text/40">Optional headshot</p>
+                        </div>
+                    </div>
+
                     <div className="col-span-2 sm:col-span-1">
                         <Label className="text-xs">Name *</Label>
                         <Input

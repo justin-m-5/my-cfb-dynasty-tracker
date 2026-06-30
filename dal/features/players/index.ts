@@ -10,6 +10,7 @@ export interface Player {
     position: string
     height: string | null
     weight: number | null
+    avatar_url: string | null
 }
 
 // Per-season snapshot
@@ -38,6 +39,7 @@ export interface CreatePlayerInput {
     position: string
     height?: string | null
     weight?: number | null
+    avatar_url?: string | null
 }
 
 export interface CreatePlayerSeasonInput {
@@ -97,6 +99,7 @@ export const PlayerService = {
                 position: input.position,
                 height: input.height ?? null,
                 weight: input.weight ?? null,
+                avatar_url: input.avatar_url ?? null,
             })
             .select()
             .single()

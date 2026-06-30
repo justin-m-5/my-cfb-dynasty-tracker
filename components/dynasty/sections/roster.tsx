@@ -7,6 +7,7 @@ import { Plus } from 'lucide-react'
 
 import { YearRecordService } from '@/dal/features/year-records'
 import { PlayerService, type RosterPlayer } from '@/dal/features/players'
+import { uploadPlayerImage, deletePlayerImage } from '@/lib/upload-player-image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RosterFilters } from './roster/roster-filters'
@@ -58,12 +59,23 @@ export function Roster({ dynastyId }: RosterProps) {
         setSaving(true)
         try {
             if (editing?.id) {
+                // Handle image
+                let avatarUrl = editing.avatar_url
+                if (form.removeImage && editing.avatar_url) {
+                    await deletePlayerImage(dynastyId, editing.id, editing.avatar_url)
+                    avatarUrl = null
+                }
+                if (form.imageFile) {
+                    avatarUrl = await uploadPlayerImage(form.imageFile, dynastyId, editing.id)
+                }
+
                 // Update identity
                 await PlayerService.updatePlayer(editing.id, {
                     name: form.name,
                     position: form.position,
                     height: form.height,
                     weight: form.weight,
+                    avatar_url: avatarUrl,
                 })
                 // Update season
                 await PlayerService.updatePlayerSeason(editing.season.id, {
@@ -80,6 +92,7 @@ export function Roster({ dynastyId }: RosterProps) {
                     position: form.position,
                     height: form.height,
                     weight: form.weight,
+                    avatar_url: avatarUrl,
                     season: {
                         ...p.season,
                         year: form.year,
@@ -110,7 +123,17 @@ export function Roster({ dynastyId }: RosterProps) {
                         dev_trait: form.dev_trait,
                     }
                 )
-                if (created) setPlayers(prev => [...prev, created])
+                if (created) {
+                    // Upload image after player is created (need the ID)
+                    if (form.imageFile) {
+                        const avatarUrl = await uploadPlayerImage(form.imageFile, dynastyId, created.id)
+                        if (avatarUrl) {
+                            await PlayerService.updatePlayer(created.id, { avatar_url: avatarUrl })
+                            created.avatar_url = avatarUrl
+                        }
+                    }
+                    setPlayers(prev => [...prev, created])
+                }
             }
             setShowForm(false)
             setEditing(null)
