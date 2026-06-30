@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { YearRecordService, type YearRecord } from '@/dal/features/year-records'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { MiniTabNav } from '@/components/ui/mini-tab-nav'
 import { Select } from '@/components/ui/select'
 
 import { AllTimeOverview } from './season-history/all-time-overview'
@@ -111,22 +112,15 @@ export function SeasonHistory({ dynastyId }: SeasonHistoryProps) {
                 </span>
             </div>
 
-            {/* Inline tabs (no SidebarNav — dynasty nav already uses it) */}
-            <div className="flex gap-1 overflow-x-auto rounded-lg border border-primary/20 bg-background/70 p-1">
-                {tabs.map(tab => (
-                    <button
-                        key={tab.key}
-                        onClick={() => setActiveTab(tab.key)}
-                        className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                            activeTab === tab.key
-                                ? 'bg-primary text-white'
-                                : 'text-text/70 hover:bg-primary/10 hover:text-text'
-                        }`}
-                    >
-                        {tab.name}
-                    </button>
-                ))}
-            </div>
+            {/* Tabs — vertical on mobile, horizontal on desktop */}
+            <MiniTabNav
+                tabs={tabs.map(t => t.name)}
+                active={tabs.find(t => t.key === activeTab)?.name ?? tabs[0].name}
+                onChange={(name) => {
+                    const match = tabs.find(t => t.name === name)
+                    if (match) setActiveTab(match.key)
+                }}
+            />
 
             {/* Tab content */}
             {activeTab === 'overview' && (
