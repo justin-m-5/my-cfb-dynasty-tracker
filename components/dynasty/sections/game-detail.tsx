@@ -7,7 +7,7 @@ import Link from 'next/link'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { GameService, type Game } from '@/dal/features/games'
-import { PlayerService, type Player } from '@/dal/features/players'
+import { PlayerService, type RosterPlayer } from '@/dal/features/players'
 import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
 import { getSchoolLogoCandidates } from '@/lib/logos'
 import { fbsTeams } from '@/lib/fbs-teams'
@@ -36,7 +36,7 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
     const [saving, setSaving] = useState(false)
     const [isDirty, setIsDirty] = useState(false)
     const [activeTab, setActiveTab] = useState<TabKey>('Box Score')
-    const [roster, setRoster] = useState<Player[]>([])
+    const [roster, setRoster] = useState<RosterPlayer[]>([])
     const [playerStats, setPlayerStats] = useState<PlayerStat[]>([])
 
     useEffect(() => {
@@ -130,7 +130,6 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
 
     return (
         <div className="space-y-5">
-            {/* Save bar */}
             <div className="flex items-center justify-between gap-2">
                 <div>
                     <Link
@@ -160,7 +159,6 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
             <GameHeader dynasty={dynasty} game={game} userLogos={userLogos} oppLogos={oppLogos} />
             <QuickEditRow game={game} updateGame={updateGame} />
 
-            {/* Tabs */}
             <div className="flex gap-2 overflow-x-auto border-b border-primary/20 sm:gap-4">
                 {tabItems.map((tab) => (
                     <button

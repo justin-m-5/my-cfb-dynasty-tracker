@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
 
-import type { Player } from '@/dal/features/players'
+import type { RosterPlayer } from '@/dal/features/players'
 import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,7 +21,7 @@ import {
 
 interface PlayerStatsTabProps {
     gameId: string
-    roster: Player[]
+    roster: RosterPlayer[]
     stats: PlayerStat[]
     onStatsChange: (stats: PlayerStat[]) => void
 }
@@ -38,7 +38,6 @@ function blankStatFields(): Omit<PlayerStat, 'id' | 'player_id' | 'game_id'> {
     }
 }
 
-// Check if a stat row has any non-zero values for a given category
 function hasStatsInCategory(stat: PlayerStat, category: StatCategory): boolean {
     const fields = statCategories[category]
     return fields.some(({ field }) => {
@@ -55,7 +54,6 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
     const [formFields, setFormFields] = useState<Record<string, number>>({})
     const [saving, setSaving] = useState(false)
 
-    // Filter stats to only show rows that have non-zero values in the selected category
     const categoryStats = stats.filter(s => hasStatsInCategory(s, selectedCategory))
     const columns = displayColumns[selectedCategory]
     const inputFields = statCategories[selectedCategory]
@@ -83,11 +81,9 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
         setSaving(true)
 
         try {
-            // Check if this player already has a stat row for this game
             const existing = stats.find(s => s.player_id === formPlayerId)
 
             if (editingId || existing) {
-                // Update existing row with the category fields
                 const id = editingId || existing!.id
                 const updates: Partial<PlayerStat> = {}
                 for (const { field } of inputFields) {
@@ -96,7 +92,6 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                 await PlayerStatService.updateStat(id, updates)
                 onStatsChange(stats.map(s => s.id === id ? { ...s, ...updates } : s))
             } else {
-                // Create new row with all fields
                 const newStat: Omit<PlayerStat, 'id'> = {
                     ...blankStatFields(),
                     player_id: formPlayerId,
@@ -129,12 +124,11 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
 
     const playerName = (playerId: string) => {
         const p = roster.find(r => r.id === playerId)
-        return p ? `${p.name} #${p.jersey_number ?? ''}` : 'Unknown'
+        return p ? `${p.name} #${p.season.jersey_number ?? ''}` : 'Unknown'
     }
 
     return (
         <div className="space-y-4">
-            {/* Category view selector + Add button */}
             <div className="flex items-center gap-3">
                 <Select
                     value={selectedCategory}
@@ -158,7 +152,6 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                 </Button>
             </div>
 
-            {/* Stats table */}
             <Card>
                 <CardContent className="p-0">
                     <div className="overflow-x-auto">
@@ -220,7 +213,6 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                 </CardContent>
             </Card>
 
-            {/* Add/Edit form (inline panel) */}
             {showForm && (
                 <Card>
                     <CardHeader className="pb-3">
@@ -240,7 +232,7 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                                 <option value="">Select Player</option>
                                 {roster.map((p) => (
                                     <option key={p.id} value={p.id}>
-                                        {p.name} – {p.position} #{p.jersey_number ?? ''}
+                                        {p.name} – {p.position} #{p.season.jersey_number ?? ''}
                                     </option>
                                 ))}
                             </Select>

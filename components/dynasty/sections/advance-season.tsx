@@ -9,16 +9,20 @@ import { AlertTriangle, FastForward } from 'lucide-react'
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
 import { GameService, type Game } from '@/dal/features/games'
+import { PlayerService, type RosterPlayer } from '@/dal/features/players'
+import { TransferService, type Transfer } from '@/dal/features/transfers'
+import { RecruitService, type Recruit } from '@/dal/features/recruits'
+import { DraftedPlayerService, type DraftedPlayer } from '@/dal/features/drafted-players'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { SidebarNav } from '@/components/ui/sidebar-nav'
 import { SeasonRecap } from './advance-season/season-recap'
 import { SeasonFinalizeForm, type SeasonFinalizeData } from './advance-season/season-finalize-form'
 import { CoachingCarousel, type TeamChange } from './advance-season/coaching-carousel'
-import { Roster } from './roster'
-import { Recruiting } from './recruiting'
-import { Transfers } from './transfers'
-import { PlayerAwards } from './player-awards'
+import { RosterBreakdown } from './advance-season/roster-breakdown'
+import { CompactTransfers } from './advance-season/compact-transfers'
+import { CompactRecruits } from './advance-season/compact-recruits'
+import { CompactDraft } from './advance-season/compact-draft'
 
 interface AdvanceSeasonProps {
     dynastyId: string
@@ -26,16 +30,20 @@ interface AdvanceSeasonProps {
 
 const navItems = [
     { name: 'Overview', key: 'overview' },
-    { name: 'Roster', key: 'roster' },
-    { name: 'Recruiting', key: 'recruiting' },
     { name: 'Transfers', key: 'transfers' },
-    { name: 'Awards', key: 'awards' },
+    { name: 'Recruits', key: 'recruits' },
+    { name: 'Draft', key: 'draft' },
 ]
 
 export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
     const router = useRouter()
     const [dynasty, setDynasty] = useState<Dynasty | null>(null)
+    const [yearRecordId, setYearRecordId] = useState<string | null>(null)
     const [games, setGames] = useState<Game[]>([])
+    const [roster, setRoster] = useState<RosterPlayer[]>([])
+    const [transfers, setTransfers] = useState<Transfer[]>([])
+    const [recruits, setRecruits] = useState<Recruit[]>([])
+    const [draftedPlayers, setDraftedPlayers] = useState<DraftedPlayer[]>([])
     const [loading, setLoading] = useState(true)
     const [advancing, setAdvancing] = useState(false)
     const [activeTab, setActiveTab] = useState('overview')
@@ -53,20 +61,35 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
     useEffect(() => {
         const load = async () => {
             try {
-                const d = await DynastyService.getDynastyById(dynastyId)
+                const [d, yr] = await Promise.all([
+                    DynastyService.getDynastyById(dynastyId),
+                    YearRecordService.getCurrentYearRecord(dynastyId),
+                ])
+
                 setDynasty(d)
-                if (d) {
-                    const yr = await YearRecordService.getCurrentYearRecord(dynastyId)
-                    if (yr) {
-                        const g = await GameService.getGames(dynastyId, yr.id)
-                        setGames(g)
-                        setFinalizeData({
-                            conference_record: yr.conference_record || '',
-                            final_ranking: yr.final_ranking,
-                            heisman: yr.heisman || '',
-                            nat_champ: yr.nat_champ || '',
-                        })
-                    }
+
+                if (d && yr) {
+                    setYearRecordId(yr.id)
+                    setFinalizeData({
+                        conference_record: yr.conference_record || '',
+                        final_ranking: yr.final_ranking,
+                        heisman: yr.heisman || '',
+                        nat_champ: yr.nat_champ || '',
+                    })
+
+                    const [gameData, rosterData, transferData, recruitData, draftedData] = await Promise.all([
+                        GameService.getGames(dynastyId, yr.id),
+                        PlayerService.getRoster(dynastyId, yr.id),
+                        TransferService.getTransfers(dynastyId, yr.id),
+                        RecruitService.getRecruits(dynastyId, yr.id),
+                        DraftedPlayerService.getDraftedPlayers(dynastyId, yr.id),
+                    ])
+
+                    setGames(gameData)
+                    setRoster(rosterData)
+                    setTransfers(transferData)
+                    setRecruits(recruitData)
+                    setDraftedPlayers(draftedData)
                 }
             } catch (err) {
                 console.error('Failed to load:', err)
@@ -74,15 +97,18 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                 setLoading(false)
             }
         }
+
         load()
     }, [dynastyId])
 
     const handleStay = () => {
+        setShowConfirm(false)
         setTeamChange(null)
         setTeamDecided(true)
     }
 
     const handleSwitch = (change: TeamChange) => {
+        setShowConfirm(false)
         setTeamChange(change)
         setTeamDecided(true)
     }
@@ -121,7 +147,6 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
 
     return (
         <div className="space-y-4">
-            {/* Header */}
             <Card>
                 <CardHeader className="pb-2">
                     <CardTitle className="text-base">
@@ -135,10 +160,8 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                 </CardContent>
             </Card>
 
-            {/* Navigation */}
             <SidebarNav items={navItems} active={activeTab} onChange={setActiveTab} />
 
-            {/* Tab content */}
             {activeTab === 'overview' && (
                 <div className="space-y-4">
                     <Card>
@@ -153,7 +176,13 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                         onChange={setFinalizeData}
                     />
 
-                    {/* Coaching Carousel + Proceed */}
+                    <RosterBreakdown
+                        roster={roster}
+                        transfers={transfers}
+                        recruits={recruits}
+                        draftedPlayers={draftedPlayers}
+                    />
+
                     <CoachingCarousel
                         currentSchool={dynasty.school_name}
                         onSwitch={handleSwitch}
@@ -190,7 +219,7 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                                         <AlertTriangle className="h-4 w-4" />
                                         <span className="text-xs font-semibold">This action cannot be undone</span>
                                     </div>
-                                    <p className="text-[10px] text-text/60 max-w-sm">
+                                    <p className="max-w-sm text-[10px] text-text/60">
                                         The {dynasty.current_year} season will be permanently locked. You won&apos;t be able to edit schedule results, roster, recruits, or transfers for this year.
                                     </p>
                                     <div className="flex items-center gap-2">
@@ -222,10 +251,41 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                 </div>
             )}
 
-            {activeTab === 'roster' && <Roster dynastyId={dynastyId} />}
-            {activeTab === 'recruiting' && <Recruiting dynastyId={dynastyId} />}
-            {activeTab === 'transfers' && <Transfers dynastyId={dynastyId} />}
-            {activeTab === 'awards' && <PlayerAwards dynastyId={dynastyId} />}
+            {!yearRecordId && activeTab !== 'overview' && (
+                <div className="rounded-xl border border-red-500/20 bg-red-50/60 px-3 py-2 text-xs text-red-600">
+                    Current season record not found.
+                </div>
+            )}
+
+            {activeTab === 'transfers' && yearRecordId && (
+                <CompactTransfers
+                    dynastyId={dynastyId}
+                    yearRecordId={yearRecordId}
+                    transfers={transfers}
+                    onChange={setTransfers}
+                />
+            )}
+
+            {activeTab === 'recruits' && yearRecordId && (
+                <CompactRecruits
+                    dynastyId={dynastyId}
+                    yearRecordId={yearRecordId}
+                    recruits={recruits}
+                    onChange={setRecruits}
+                />
+            )}
+
+            {activeTab === 'draft' && yearRecordId && (
+                <CompactDraft
+                    dynastyId={dynastyId}
+                    yearRecordId={yearRecordId}
+                    year={dynasty.current_year}
+                    schoolName={dynasty.school_name}
+                    roster={roster}
+                    draftedPlayers={draftedPlayers}
+                    onChange={setDraftedPlayers}
+                />
+            )}
         </div>
     )
 }

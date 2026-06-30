@@ -1,4 +1,4 @@
-// components/form/player-form.tsx
+// components/forms/player-form.tsx
 
 'use client'
 
@@ -9,27 +9,43 @@ import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { positions, years, devTraits } from '@/lib/player-config'
-import type { Player } from '@/dal/features/players'
+import type { RosterPlayer } from '@/dal/features/players'
+
+// Combined form data for both player identity + season fields
+export interface PlayerFormData {
+    // Identity
+    name: string
+    position: string
+    height: string | null
+    weight: number | null
+    dev_trait: string | null
+    // Season
+    year: string | null
+    rating: number | null
+    jersey_number: number | null
+    is_redshirted: boolean
+    notes: string | null
+}
 
 interface PlayerFormProps {
-    initial?: Partial<Player>
-    onSave: (player: Partial<Player>) => Promise<void>
+    initial?: Partial<RosterPlayer>
+    onSave: (data: PlayerFormData) => Promise<void>
     onCancel: () => void
     saving: boolean
 }
 
 export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProps) {
-    const [form, setForm] = useState<Partial<Player>>({
+    const [form, setForm] = useState<PlayerFormData>({
         name: initial?.name ?? '',
         position: initial?.position ?? '',
-        year: initial?.year ?? null,
-        rating: initial?.rating ?? null,
-        jersey_number: initial?.jersey_number ?? null,
-        dev_trait: initial?.dev_trait ?? 'Normal',
         height: initial?.height ?? null,
         weight: initial?.weight ?? null,
-        notes: initial?.notes ?? '',
-        is_redshirted: initial?.is_redshirted ?? false,
+        dev_trait: initial?.dev_trait ?? 'Normal',
+        year: initial?.season?.year ?? null,
+        rating: initial?.season?.rating ?? null,
+        jersey_number: initial?.season?.jersey_number ?? null,
+        is_redshirted: initial?.season?.is_redshirted ?? false,
+        notes: initial?.season?.notes ?? '',
     })
 
     const update = (field: string, value: unknown) => setForm(prev => ({ ...prev, [field]: value }))

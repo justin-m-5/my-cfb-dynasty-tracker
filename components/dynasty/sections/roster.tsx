@@ -6,24 +6,24 @@ import { useEffect, useMemo, useState } from 'react'
 import { Plus } from 'lucide-react'
 
 import { YearRecordService } from '@/dal/features/year-records'
-import { PlayerService, type Player } from '@/dal/features/players'
+import { PlayerService, type RosterPlayer } from '@/dal/features/players'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RosterFilters } from './roster/roster-filters'
 import { RosterList } from './roster/roster-list'
-import { PlayerForm } from '../../forms/player-form'
+import { PlayerForm, type PlayerFormData } from '../../forms/player-form'
 
 interface RosterProps {
     dynastyId: string
 }
 
 export function Roster({ dynastyId }: RosterProps) {
-    const [players, setPlayers] = useState<Player[]>([])
+    const [players, setPlayers] = useState<RosterPlayer[]>([])
     const [yearRecordId, setYearRecordId] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [showForm, setShowForm] = useState(false)
-    const [editing, setEditing] = useState<Player | null>(null)
+    const [editing, setEditing] = useState<RosterPlayer | null>(null)
     const [search, setSearch] = useState('')
     const [posFilter, setPosFilter] = useState('ALL')
 
@@ -53,28 +53,63 @@ export function Roster({ dynastyId }: RosterProps) {
         })
     }, [players, search, posFilter])
 
-    const handleSave = async (form: Partial<Player>) => {
+    const handleSave = async (form: PlayerFormData) => {
         if (!yearRecordId) return
         setSaving(true)
         try {
             if (editing?.id) {
-                await PlayerService.updatePlayer(editing.id, form)
-                setPlayers(prev => prev.map(p => p.id === editing.id ? { ...p, ...form } as Player : p))
-            } else {
-                const created = await PlayerService.createPlayer({
-                    dynasty_id: dynastyId,
-                    year_record_id: yearRecordId,
-                    name: form.name ?? '',
-                    position: form.position ?? '',
-                    year: form.year ?? null,
-                    rating: form.rating ?? null,
-                    jersey_number: form.jersey_number ?? null,
-                    dev_trait: form.dev_trait ?? 'Normal',
-                    height: form.height ?? null,
-                    weight: form.weight ?? null,
-                    notes: form.notes ?? null,
-                    is_redshirted: form.is_redshirted ?? false,
+                // Update identity
+                await PlayerService.updatePlayer(editing.id, {
+                    name: form.name,
+                    position: form.position,
+                    height: form.height,
+                    weight: form.weight,
+                    dev_trait: form.dev_trait,
                 })
+                // Update season
+                await PlayerService.updatePlayerSeason(editing.season.id, {
+                    year: form.year,
+                    rating: form.rating,
+                    jersey_number: form.jersey_number,
+                    is_redshirted: form.is_redshirted,
+                    notes: form.notes,
+                })
+                setPlayers(prev => prev.map(p => p.id === editing.id ? {
+                    ...p,
+                    name: form.name,
+                    position: form.position,
+                    height: form.height,
+                    weight: form.weight,
+                    dev_trait: form.dev_trait,
+                    season: {
+                        ...p.season,
+                        year: form.year,
+                        rating: form.rating,
+                        jersey_number: form.jersey_number,
+                        is_redshirted: form.is_redshirted,
+                        notes: form.notes,
+                    },
+                } : p))
+            } else {
+                const created = await PlayerService.createPlayer(
+                    {
+                        dynasty_id: dynastyId,
+                        name: form.name,
+                        position: form.position,
+                        height: form.height,
+                        weight: form.weight,
+                        dev_trait: form.dev_trait,
+                    },
+                    {
+                        year_record_id: yearRecordId,
+                        dynasty_id: dynastyId,
+                        year: form.year,
+                        rating: form.rating,
+                        jersey_number: form.jersey_number,
+                        is_redshirted: form.is_redshirted,
+                        notes: form.notes,
+                    }
+                )
                 if (created) setPlayers(prev => [...prev, created])
             }
             setShowForm(false)
@@ -95,17 +130,20 @@ export function Roster({ dynastyId }: RosterProps) {
         }
     }
 
-    const handleToggleRedshirt = async (player: Player) => {
-        const updated = !player.is_redshirted
+    const handleToggleRedshirt = async (player: RosterPlayer) => {
+        const updated = !player.season.is_redshirted
         try {
-            await PlayerService.updatePlayer(player.id, { is_redshirted: updated })
-            setPlayers(prev => prev.map(p => p.id === player.id ? { ...p, is_redshirted: updated } : p))
+            await PlayerService.updatePlayerSeason(player.season.id, { is_redshirted: updated })
+            setPlayers(prev => prev.map(p => p.id === player.id ? {
+                ...p,
+                season: { ...p.season, is_redshirted: updated },
+            } : p))
         } catch (err) {
             console.error('Failed to toggle redshirt:', err)
         }
     }
 
-    const handleEdit = (player: Player) => {
+    const handleEdit = (player: RosterPlayer) => {
         setEditing(player)
         setShowForm(true)
     }
@@ -123,6 +161,7 @@ export function Roster({ dynastyId }: RosterProps) {
         <div className="space-y-4">
             {showForm && (
                 <PlayerForm
+                    key={editing?.id ?? 'new'}
                     initial={editing ?? undefined}
                     onSave={handleSave}
                     onCancel={handleCancel}

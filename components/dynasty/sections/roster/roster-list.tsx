@@ -2,15 +2,15 @@
 
 'use client'
 
-import type { Player } from '@/dal/features/players'
+import type { RosterPlayer } from '@/dal/features/players'
 import { PlayerRow } from './player-row'
 
 interface RosterListProps {
-    players: Player[]
+    players: RosterPlayer[]
     totalCount: number
-    onEdit: (player: Player) => void
+    onEdit: (player: RosterPlayer) => void
     onDelete: (id: string) => void
-    onToggleRedshirt: (player: Player) => void
+    onToggleRedshirt: (player: RosterPlayer) => void
 }
 
 export function RosterList({ players, totalCount, onEdit, onDelete, onToggleRedshirt }: RosterListProps) {

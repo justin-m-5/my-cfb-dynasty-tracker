@@ -2,13 +2,13 @@
 
 import { Pencil, Trash2, Shirt } from 'lucide-react'
 import { devTraitColors, type DevTrait } from '@/lib/player-config'
-import type { Player } from '@/dal/features/players'
+import type { RosterPlayer } from '@/dal/features/players'
 
 interface PlayerRowProps {
-    player: Player
-    onEdit: (player: Player) => void
+    player: RosterPlayer
+    onEdit: (player: RosterPlayer) => void
     onDelete: (id: string) => void
-    onToggleRedshirt: (player: Player) => void
+    onToggleRedshirt: (player: RosterPlayer) => void
 }
 
 export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: PlayerRowProps) {
@@ -18,7 +18,7 @@ export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: Player
         <div className="flex items-center gap-1.5 px-2 py-1.5 border-b border-primary/10 last:border-b-0 hover:bg-primary/5 transition-colors">
             {/* Jersey # */}
             <span className="w-6 text-center text-xs font-bold text-text/60">
-                {player.jersey_number ?? '—'}
+                {player.season.jersey_number ?? '—'}
             </span>
 
             {/* Name + Position */}
@@ -29,12 +29,12 @@ export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: Player
 
             {/* Year */}
             <span className="text-[10px] text-text/60 w-12 text-center hidden sm:block">
-                {player.year ?? '—'}
+                {player.season.year ?? '—'}
             </span>
 
             {/* Rating */}
             <span className="text-xs font-bold text-text w-7 text-center">
-                {player.rating ?? '—'}
+                {player.season.rating ?? '—'}
             </span>
 
             {/* Dev Trait — always occupies space on sm+ for alignment */}
@@ -47,9 +47,9 @@ export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: Player
                 <button
                     onClick={() => onToggleRedshirt(player)}
                     className="p-1 rounded hover:bg-primary/10 transition-colors"
-                    title={player.is_redshirted ? 'Remove redshirt' : 'Redshirt'}
+                    title={player.season.is_redshirted ? 'Remove redshirt' : 'Redshirt'}
                 >
-                    <Shirt className={`h-3.5 w-3.5 ${player.is_redshirted ? 'text-red-500' : 'text-text/30'}`} />
+                    <Shirt className={`h-3.5 w-3.5 ${player.season.is_redshirted ? 'text-red-500' : 'text-text/30'}`} />
                 </button>
                 <button
                     onClick={() => onEdit(player)}

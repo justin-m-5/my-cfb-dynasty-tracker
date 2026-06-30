@@ -47,7 +47,7 @@ export function AwardForm({ players, editing, saving, onSave, onCancel }: AwardF
                 <option value="">Select Player</option>
                 {players.map(p => (
                     <option key={p.id} value={p.id}>
-                        {p.name} — {p.position} {p.jersey_number ? `#${p.jersey_number}` : ''}
+                        {p.name} — {p.position}
                     </option>
                 ))}
             </Select>
