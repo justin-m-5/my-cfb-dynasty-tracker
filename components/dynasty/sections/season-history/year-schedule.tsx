@@ -78,7 +78,7 @@ export function YearSchedule({ dynastyId, yearRecord }: YearScheduleProps) {
                                         <div className="text-[10px] text-text/60">{score}</div>
                                     </div>
                                     <Link
-                                        href={`/dashboard/dynasty/${dynastyId}/game/${game.id}`}
+                                        href={`/dashboard/dynasty/${dynastyId}/game/${game.id}?readonly=1`}
                                         {...buttonStyles({ bg: 'var(--primary)', text: 'white', className: 'rounded px-2 py-1 text-[11px] font-semibold shrink-0' })}
                                     >
                                         <Eye className="h-3 w-3 sm:hidden" />

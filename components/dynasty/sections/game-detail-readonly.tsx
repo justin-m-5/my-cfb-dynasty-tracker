@@ -234,7 +234,9 @@ export function GameDetailReadOnly({ dynastyId, gameId }: GameDetailReadOnlyProp
                                                 ))}
                                             </tr>
                                         )) : (
-                                            <tr><td colSpan={columns.length + 1} className="px-3 py-4 text-center text-xs text-text/50">No {statCategory.toLowerCase()} stats recorded.</td></tr>
+                                            <tr>
+                                                <td colSpan={columns.length + 1} className="px-3 py-4 text-center text-xs text-text/50">No {statCategory.toLowerCase()} stats recorded.</td>
+                                            </tr>
                                         )}
                                     </tbody>
                                 </table>

@@ -164,7 +164,8 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                                             {col.label}
                                         </th>
                                     ))}
-                                    <th className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">Actions</th>                                </tr>
+                                    <th className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">Actions</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 {categoryStats.length > 0 ? (
