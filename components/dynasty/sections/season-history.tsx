@@ -92,7 +92,7 @@ export function SeasonHistory({ dynastyId }: SeasonHistoryProps) {
     }
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-3 pt-10">
             {/* Year picker */}
             <div className="flex items-center gap-3">
                 <Select

@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { FastForward } from 'lucide-react'
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
-import { buttonStyles } from '@/components/ui/button'
+import { buttonStyles } from '@/lib/button-utils'
 
 interface AdvanceSeasonButtonProps {
     dynastyId: string

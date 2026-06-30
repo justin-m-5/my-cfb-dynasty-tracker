@@ -79,8 +79,7 @@ export function CreateDynastyForm() {
                 almaMater: almaMater || null,
                 pipeline: pipeline || null,
                 primaryColor: selectedTeam.colors.primary,
-                secondaryColor: selectedTeam.colors.secondary,
-                accentColor: selectedTeam.colors.accent ?? null,
+                secondaryColor: selectedTeam.colors.secondary
             })
 
             router.push('/dashboard')
@@ -99,130 +98,130 @@ export function CreateDynastyForm() {
         <form onSubmit={handleSubmit}>
             <Card>
                 <CardContent className="space-y-6 p-8">
-                    <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                    <Label htmlFor="dynastyName">Dynasty Name</Label>
-                    <Input
-                        id="dynastyName"
-                        value={dynastyName}
-                        onChange={(event) => setDynastyName(event.target.value)}
-                        placeholder="Alabama Rebuild"
-                        required
-                    />
-                </div>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="space-y-2">
+                            <Label htmlFor="dynastyName">Dynasty Name</Label>
+                            <Input
+                                id="dynastyName"
+                                value={dynastyName}
+                                onChange={(event) => setDynastyName(event.target.value)}
+                                placeholder="Alabama Rebuild"
+                                required
+                            />
+                        </div>
 
-                <div className="space-y-2">
-                    <Label htmlFor="coachName">Coach Name</Label>
-                    <Input
-                        id="coachName"
-                        value={coachName}
-                        onChange={(event) => setCoachName(event.target.value)}
-                        placeholder="Nick Saban Jr."
-                        required
-                    />
-                </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="coachName">Coach Name</Label>
+                            <Input
+                                id="coachName"
+                                value={coachName}
+                                onChange={(event) => setCoachName(event.target.value)}
+                                placeholder="Nick Saban Jr."
+                                required
+                            />
+                        </div>
 
-                <div className="space-y-2">
-                    <Label htmlFor="currentYear">Starting Year</Label>
-                    <Input
-                        id="currentYear"
-                        type="number"
-                        value={currentYear}
-                        min={2026}
-                        max={2100}
-                        onChange={(event) => setCurrentYear(Number(event.target.value) || 2026)}
-                        required
-                    />
-                </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="currentYear">Starting Year</Label>
+                            <Input
+                                id="currentYear"
+                                type="number"
+                                value={currentYear}
+                                min={2026}
+                                max={2100}
+                                onChange={(event) => setCurrentYear(Number(event.target.value) || 2026)}
+                                required
+                            />
+                        </div>
 
-                <div className="space-y-2">
-                    <Label htmlFor="conference">Conference</Label>
-                    <Select
-                        id="conference"
-                        value={conference}
-                        onChange={(event) => {
-                            const nextConference = event.target.value
-                            setConference(nextConference)
-                            setTeamId('')
-                        }}
-                        required
-                    >
-                        <option value="">Select conference</option>
-                        {conferences.map((conf) => (
-                            <option key={conf} value={conf}>
-                                {conf}
-                            </option>
-                        ))}
-                    </Select>
-                </div>
-
-                <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="team">Team</Label>
-                    <Select
-                        id="team"
-                        value={teamId}
-                        onChange={(event) => {
-                            const nextTeamId = event.target.value
-                            setTeamId(nextTeamId)
-
-                            const team = filteredTeams.find((entry) => entry.id === nextTeamId)
-                            if (team && !dynastyName.trim()) {
-                                setDynastyName(`${team.name} Dynasty`)
-                            }
-                        }}
-                        disabled={!conference}
-                        required
-                    >
-                        <option value="">Select team</option>
-                        {filteredTeams.map((team) => (
-                            <option key={team.id} value={team.id}>
-                                {team.name} ({team.abbrev})
-                            </option>
-                        ))}
-                    </Select>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="pipeline">Pipeline</Label>
-                    <Select
-                        id="pipeline"
-                        value={pipeline}
-                        onChange={(event) => setPipeline(event.target.value)}
-                    >
-                        <option value="">None</option>
-                        {pipelinesByRegion.map((group) => (
-                            <optgroup key={group.region} label={group.region}>
-                                {group.pipelines.map((p) => (
-                                    <option key={p} value={p}>{p}</option>
+                        <div className="space-y-2">
+                            <Label htmlFor="conference">Conference</Label>
+                            <Select
+                                id="conference"
+                                value={conference}
+                                onChange={(event) => {
+                                    const nextConference = event.target.value
+                                    setConference(nextConference)
+                                    setTeamId('')
+                                }}
+                                required
+                            >
+                                <option value="">Select conference</option>
+                                {conferences.map((conf) => (
+                                    <option key={conf} value={conf}>
+                                        {conf}
+                                    </option>
                                 ))}
-                            </optgroup>
-                        ))}
-                    </Select>
-                </div>
+                            </Select>
+                        </div>
 
-                <div className="space-y-2">
-                    <Label htmlFor="almaMater">Alma Mater</Label>
-                    <Select
-                        id="almaMater"
-                        value={almaMater}
-                        onChange={(event) => setAlmaMater(event.target.value)}
-                    >
-                        <option value="">None</option>
-                        {[...new Set(fbsTeams.map(t => t.conference))].sort().map((conf) => (
-                            <optgroup key={conf} label={conf}>
-                                {fbsTeams
-                                    .filter(t => t.conference === conf)
-                                    .sort((a, b) => a.name.localeCompare(b.name))
-                                    .map((team) => (
-                                        <option key={team.id} value={team.name}>
-                                            {team.name} {team.nickName}
-                                        </option>
-                                    ))}
-                            </optgroup>
-                        ))}
-                    </Select>
-                </div>
-            </div>
+                        <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor="team">Team</Label>
+                            <Select
+                                id="team"
+                                value={teamId}
+                                onChange={(event) => {
+                                    const nextTeamId = event.target.value
+                                    setTeamId(nextTeamId)
+
+                                    const team = filteredTeams.find((entry) => entry.id === nextTeamId)
+                                    if (team && !dynastyName.trim()) {
+                                        setDynastyName(`${team.name} Dynasty`)
+                                    }
+                                }}
+                                disabled={!conference}
+                                required
+                            >
+                                <option value="">Select team</option>
+                                {filteredTeams.map((team) => (
+                                    <option key={team.id} value={team.id}>
+                                        {team.name} ({team.abbrev})
+                                    </option>
+                                ))}
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="pipeline">Pipeline</Label>
+                            <Select
+                                id="pipeline"
+                                value={pipeline}
+                                onChange={(event) => setPipeline(event.target.value)}
+                            >
+                                <option value="">None</option>
+                                {pipelinesByRegion.map((group) => (
+                                    <optgroup key={group.region} label={group.region}>
+                                        {group.pipelines.map((p) => (
+                                            <option key={p} value={p}>{p}</option>
+                                        ))}
+                                    </optgroup>
+                                ))}
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="almaMater">Alma Mater</Label>
+                            <Select
+                                id="almaMater"
+                                value={almaMater}
+                                onChange={(event) => setAlmaMater(event.target.value)}
+                            >
+                                <option value="">None</option>
+                                {[...new Set(fbsTeams.map(t => t.conference))].sort().map((conf) => (
+                                    <optgroup key={conf} label={conf}>
+                                        {fbsTeams
+                                            .filter(t => t.conference === conf)
+                                            .sort((a, b) => a.name.localeCompare(b.name))
+                                            .map((team) => (
+                                                <option key={team.id} value={team.name}>
+                                                    {team.name} {team.nickName}
+                                                </option>
+                                            ))}
+                                    </optgroup>
+                                ))}
+                            </Select>
+                        </div>
+                    </div>
 
                     <div className="rounded-xl border border-primary/20 bg-background/70 p-4">
                         <p className="mb-3 text-sm font-medium text-text">Preview</p>

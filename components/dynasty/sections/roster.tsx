@@ -181,7 +181,7 @@ export function Roster({ dynastyId }: RosterProps) {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 pt-10">
             {showForm && (
                 <PlayerForm
                     key={editing?.id ?? 'new'}

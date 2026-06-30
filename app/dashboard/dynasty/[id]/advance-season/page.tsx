@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { AdvanceSeason } from '@/components/dynasty/sections/advance-season'
-import { buttonStyles } from '@/components/ui/button'
+import { buttonStyles } from '@/lib/button-utils'
 
 interface AdvanceSeasonPageProps {
     params: Promise<{ id: string }>

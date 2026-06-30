@@ -36,7 +36,9 @@ export function Dynasty({ dynasty, onDelete }: DynastyProps) {
 
     return (
         <div className="group relative rounded-xl border border-primary/20 bg-background/70 transition-all hover:border-primary/40 hover:shadow-md">
-            <Link href={`/dashboard/dynasty/${dynasty.id}`} className="block p-5">
+            
+            {/* Replaced the <Link> wrapper with a standard <div> */}
+            <div className="block p-5">
                 <div className="mb-3 flex items-center gap-3">
                     <LogoImage candidates={schoolLogos} alt={dynasty.school_name} size={40} />
                     <div className="min-w-0 flex-1">
@@ -73,11 +75,11 @@ export function Dynasty({ dynasty, onDelete }: DynastyProps) {
                     <span>🏆 {dynasty.championships}</span>
                     <span>Seasons: {dynasty.seasons_played}</span>
                 </div>
-            </Link>
+            </div>
 
-            <div className="flex justify-end border-t border-primary/10 px-5 py-3">
+            <div className="flex justify-end gap-2 border-t border-primary/10 px-5 py-3">
                 {isConfirmingDelete ? (
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="flex w-full items-center justify-between gap-2">
                         <span className="text-xs font-medium text-red-500">Delete this dynasty?</span>
                         <div className="flex gap-2">
                             <Button size="sm" variant="delete" className="text-xs font-semibold" disabled={isDeleting} onClick={handleDelete}>
@@ -95,10 +97,20 @@ export function Dynasty({ dynasty, onDelete }: DynastyProps) {
                         </div>
                     </div>
                 ) : (
-                    <Button variant="delete" size="sm" onClick={() => setIsConfirmingDelete(true)} className="ml-auto text-xs">
-                        <Trash2 className="h-3.5 w-3.5" />
-                        Delete
-                    </Button>
+                    <>
+                        {/* New View Button */}
+                        <Link href={`/dashboard/dynasty/${dynasty.id}`}>
+                            <Button size="sm" variant="default" className="text-xs">
+                                View Dynasty
+                            </Button>
+                        </Link>
+                        
+                        {/* Existing Delete Button */}
+                        <Button variant="delete" size="sm" onClick={() => setIsConfirmingDelete(true)} className="text-xs">
+                            <Trash2 className="h-3.5 w-3.5 mr-1" />
+                            Delete
+                        </Button>
+                    </>
                 )}
             </div>
         </div>

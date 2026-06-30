@@ -4,7 +4,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { buttonStyles } from '@/components/ui/button'
+import { buttonStyles } from '@/lib/button-utils'
 
 interface DashboardBackButtonProps {
     dynastyId: string

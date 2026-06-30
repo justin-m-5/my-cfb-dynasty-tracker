@@ -1,7 +1,8 @@
 // components/layout/page-header.tsx
 
+import { buttonStyles } from '@/lib/button-utils'
 import Link from 'next/link'
-import { buttonStyles } from '@/components/ui/button'
+
 
 interface PageHeaderProps {
     title: string

@@ -4,7 +4,7 @@
 
 import Link from 'next/link'
 
-import { buttonStyles } from '@/components/ui/button'
+import { buttonStyles } from '@/lib/button-utils'
 import type { DynastySummary } from '@/dal/features/dynasty'
 import { Dynasty } from './dynasty'
 

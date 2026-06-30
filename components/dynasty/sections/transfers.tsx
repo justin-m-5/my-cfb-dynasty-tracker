@@ -97,7 +97,7 @@ export function Transfers({ dynastyId }: TransfersProps) {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 pt-10">
             {showForm && (
                 <TransferForm
                     initial={editing ?? undefined}

@@ -8,11 +8,11 @@ import { UserCog } from 'lucide-react'
 
 import type { DynastySummary } from '@/dal/features/dynasty'
 import { DynastyService } from '@/dal/features/dynasty'
-import { buttonStyles } from '@/components/ui/button'
 
 import { DashboardEmptyState } from './dashboard-empty-state'
 import { DashboardLoadingState } from './dashboard-loading-state'
 import { DynastyList } from './dynasty-list'
+import { buttonStyles } from '@/lib/button-utils'
 
 export function DashboardClientWrapper() {
     const [dynasties, setDynasties] = useState<DynastySummary[]>([])
@@ -45,13 +45,12 @@ export function DashboardClientWrapper() {
             <div className="flex flex-wrap items-center justify-start gap-4">
                 <Link
                     href="/dashboard/profile"
-                    {...buttonStyles({
-                        className:
-                            'h-28 w-36 shrink-0 flex-col items-center justify-center gap-1.5 rounded-xl border border-primary/20 bg-(--primary5) px-3 py-2 text-center hover:border-primary/40 hover:bg-primary/10',
-                    })}
+                    {...buttonStyles({ variant: "tile", size: "tile" })}
                 >
-                    <UserCog className="h-8 w-8 text-primary" />
-                    <span className="text-base font-semibold text-center">Edit Profile</span>
+                    <UserCog className="h-8 w-8" />
+                    <span className="text-base font-semibold text-center">
+                        Edit Profile
+                    </span>
                 </Link>
             </div>
 

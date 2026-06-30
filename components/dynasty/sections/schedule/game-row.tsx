@@ -7,8 +7,8 @@ import { fbsTeams } from '@/lib/fbs-teams'
 import { getWeekDisplayName, getResultColor, parseScore } from '@/lib/game-utils'
 import { LogoImage } from '@/components/ui/logo-image'
 import { getSchoolLogoCandidates } from '@/lib/logos'
-import { buttonStyles } from '@/components/ui/button'
 import type { Game } from '@/dal/features/games'
+import { buttonStyles } from '@/lib/button-utils'
 
 function ResultIcon({ result }: { result: string }) {
     switch (result) {

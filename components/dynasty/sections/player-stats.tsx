@@ -42,7 +42,7 @@ export function PlayerStats({ dynastyId }: PlayerStatsProps) {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 pt-10">
             <Card>
                 <CardHeader className="pb-2">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">

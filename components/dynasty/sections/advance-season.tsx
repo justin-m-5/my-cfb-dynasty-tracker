@@ -148,7 +148,7 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 pt-10">
             <Card>
                 <CardHeader className="pb-2">
                     <CardTitle className="text-base">

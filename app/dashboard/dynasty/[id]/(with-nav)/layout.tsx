@@ -14,8 +14,9 @@ export default async function NavLayout({ children, params }: NavLayoutProps) {
 
     return (
         <>
-            <DynastyActionBar dynastyId={id} />
             <DynastyNavShell dynastyId={id} />
+            <DynastyActionBar dynastyId={id} />
+            
             <div className="flex-1">{children}</div>
         </>
     )

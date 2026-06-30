@@ -128,7 +128,7 @@ export function Top25({ dynastyId }: Top25Props) {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 pt-10">
             <Card>
                 <CardHeader className="pb-2">
                     <div className="flex items-center justify-between gap-2 flex-wrap">

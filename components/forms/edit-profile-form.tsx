@@ -3,7 +3,6 @@
 'use client'
 
 import { useContext, useState } from 'react'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { AuthContext } from '@/auth/auth-provider'
 import { ProfileService } from '@/auth/profile'
@@ -11,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { AvatarInput } from '../ui/avatar-input'
 
 export function EditProfileForm() {
     const { user, profile } = useContext(AuthContext)
@@ -63,25 +63,21 @@ export function EditProfileForm() {
                     <CardTitle className="text-xl">Profile Settings</CardTitle>
                 </CardHeader>
 
-                <CardContent className="space-y-4">
-                    <Image
-                        src={avatarPreview || '/images/default_avatar.jpg'}
-                        alt="Avatar preview"
-                        width={80}
-                        height={80}
-                        className="rounded-full border border-primary/20 object-cover"
-                        unoptimized
-                    />
-
-                    <div>
-                        <Label htmlFor="avatar">Avatar</Label>
-                        <Input
-                            id="avatar"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleAvatarChange}
-                            className="mt-1"
-                        />
+                <CardContent className="space-y-6">
+                    {/* AVATAR DROPZONE SECTION */}
+                    <div className="flex flex-col gap-3">
+                        <Label>Avatar</Label>
+                        
+                        {/* The new component replaces all the previous markup! */}
+                        <div>
+                            <Label>Avatar</Label>
+                            <div className="mt-1">
+                                <AvatarInput 
+                                    previewUrl={avatarPreview} 
+                                    onChange={handleAvatarChange} 
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <div>
@@ -104,7 +100,7 @@ export function EditProfileForm() {
                     </Button>
                     <Button
                         type="button"
-                        bg="var(--secondary)" text="white"
+                        bg="var(--orange-400)" text="white"
                         onClick={() => router.push('/dashboard')}
                     >
                         Back

@@ -12,7 +12,7 @@ import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
 import { getSchoolLogoCandidates } from '@/lib/logos'
 import { fbsTeams } from '@/lib/fbs-teams'
 import { getWeekFullName, parseScore } from '@/lib/game-utils'
-import { buttonStyles } from '@/components/ui/button'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LogoImage } from '@/components/ui/logo-image'
 import { MiniTabNav } from '@/components/ui/mini-tab-nav'
@@ -23,6 +23,7 @@ import {
     displayColumns,
     computeStatValue,
 } from '@/lib/stat-config'
+import { buttonStyles } from '@/lib/button-utils'
 
 interface GameDetailReadOnlyProps {
     dynastyId: string

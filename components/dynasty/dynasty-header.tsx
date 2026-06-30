@@ -34,48 +34,91 @@ export function DynastyHeader({ dynastyId }: DynastyHeaderProps) {
 
     return (
         <Card className="my-4">
-            <CardContent className="space-y-4 py-4">
-                <div className="flex items-center gap-3">
-                    <LogoImage candidates={schoolLogos} alt={dynasty.school_name} size={52} />
-                    <div>
-                        <h1 className="text-lg font-bold text-text">{dynasty.current_year} Season</h1>
-                        <div className="flex items-center gap-2 text-sm text-text/70">
-                            {conferenceLogo && (
-                                <Image
-                                    src={conferenceLogo}
-                                    alt={dynasty.conference ?? ''}
-                                    width={24}
-                                    height={24}
-                                    className="rounded object-contain"
-                                    unoptimized
+            <CardContent className="py-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+
+                    {/* LEFT: Logo + Season */}
+                    <div className="flex shrink-0 items-center gap-3 sm:w-24 sm:flex-col">
+                        <LogoImage
+                            candidates={schoolLogos}
+                            alt={dynasty.school_name}
+                            size={64}
+                            className="sm:order-2"
+                        />
+                        <span className="text-xs font-bold uppercase tracking-wider text-primary sm:order-1 sm:mb-2">
+                            {dynasty.current_year} Season
+                        </span>
+                    </div>
+
+                    {/* RIGHT: Team info */}
+                    <div className="flex min-w-0 flex-1 flex-col justify-center gap-3">
+
+                        {/* ROW 1: Coach, School, Conference */}
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                            <h1 className="text-xl font-bold text-text sm:text-2xl">
+                                {dynasty.coach_name}
+                            </h1>
+
+                            <span className="text-base font-medium text-text/80 sm:text-lg">
+                                {dynasty.school_name} {dynasty.school_nickname}
+                            </span>
+
+                            <div className="flex items-center gap-1.5 text-sm text-text/70">
+                                {conferenceLogo && (
+                                    <Image
+                                        src={conferenceLogo}
+                                        alt=""
+                                        width={16}
+                                        height={16}
+                                        className="rounded"
+                                        unoptimized
+                                    />
+                                )}
+                                <span>{dynasty.conference ?? "Independent"}</span>
+                            </div>
+                        </div>
+
+                        {/* ROW 2: Alma Mater, Pipeline */}
+                        <div className="flex flex-wrap gap-x-6 gap-y-1">
+                            {dynasty.alma_mater && (
+                                <InfoRow
+                                    label="Alma Mater"
+                                    value={dynasty.alma_mater}
                                 />
                             )}
-                            <span>
-                                {dynasty.school_name}
-                                {dynasty.school_nickname ? ` ${dynasty.school_nickname}` : ''}
-                            </span>
-                        </div>
-                    </div>
-                </div>
 
-                <dl className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
-                    <InfoRow label="School" value={`${dynasty.school_name}${dynasty.school_nickname ? ` ${dynasty.school_nickname}` : ''}`} />
-                    <InfoRow label="Conference" value={dynasty.conference ?? 'Independent'} />
-                    <InfoRow label="Coach" value={dynasty.coach_name} />
-                    <InfoRow label="Current Year" value={String(dynasty.current_year)} />
-                    {dynasty.alma_mater && <InfoRow label="Alma Mater" value={dynasty.alma_mater} />}
-                    {dynasty.pipeline && <InfoRow label="Pipeline" value={dynasty.pipeline} />}
-                </dl>
+                            {dynasty.pipeline && (
+                                <InfoRow
+                                    label="Pipeline"
+                                    value={dynasty.pipeline}
+                                />
+                            )}
+                        </div>
+
+                    </div>
+
+                </div>
             </CardContent>
         </Card>
     )
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function InfoRow({
+    label,
+    value,
+}: {
+    label: string
+    value: string
+}) {
     return (
-        <div>
-            <dt className="font-medium text-text/60">{label}</dt>
-            <dd className="text-text">{value}</dd>
+        <div className="flex items-center gap-1 whitespace-nowrap">
+            <dt className="text-xs font-bold uppercase text-text/50">
+                {label}:
+            </dt>
+
+            <dd className="text-sm font-semibold text-text">
+                {value}
+            </dd>
         </div>
     )
 }
