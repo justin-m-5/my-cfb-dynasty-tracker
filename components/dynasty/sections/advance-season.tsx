@@ -11,6 +11,7 @@ import { YearRecordService } from '@/dal/features/year-records'
 import { GameService, type Game } from '@/dal/features/games'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { SidebarNav } from '@/components/ui/sidebar-nav'
 import { SeasonRecap } from './advance-season/season-recap'
 import { SeasonFinalizeForm, type SeasonFinalizeData } from './advance-season/season-finalize-form'
 import { CoachingCarousel, type TeamChange } from './advance-season/coaching-carousel'
@@ -23,8 +24,13 @@ interface AdvanceSeasonProps {
     dynastyId: string
 }
 
-const tabs = ['Overview', 'Roster', 'Recruiting', 'Transfers', 'Awards', 'Proceed'] as const
-type Tab = (typeof tabs)[number]
+const navItems = [
+    { name: 'Overview', key: 'overview' },
+    { name: 'Roster', key: 'roster' },
+    { name: 'Recruiting', key: 'recruiting' },
+    { name: 'Transfers', key: 'transfers' },
+    { name: 'Awards', key: 'awards' },
+]
 
 export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
     const router = useRouter()
@@ -32,7 +38,7 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
     const [games, setGames] = useState<Game[]>([])
     const [loading, setLoading] = useState(true)
     const [advancing, setAdvancing] = useState(false)
-    const [activeTab, setActiveTab] = useState<Tab>('Overview')
+    const [activeTab, setActiveTab] = useState('overview')
     const [teamDecided, setTeamDecided] = useState(false)
     const [teamChange, setTeamChange] = useState<TeamChange | null>(null)
     const [showConfirm, setShowConfirm] = useState(false)
@@ -124,59 +130,36 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                 </CardHeader>
                 <CardContent>
                     <p className="text-xs text-text/60">
-                        Review and make final edits to your {dynasty.current_year} season. Use the tabs below to update roster, recruits, transfers, and awards before locking.
+                        Review and make final edits to your {dynasty.current_year} season before locking.
                     </p>
                 </CardContent>
             </Card>
 
-            {/* Tabs */}
-            <div className="flex gap-1 overflow-x-auto rounded-lg border border-primary/20 bg-background/70 p-1.5">
-                {tabs.map(tab => (
-                    <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                            activeTab === tab
-                                ? 'bg-primary text-white'
-                                : 'text-text/70 hover:bg-primary/10 hover:text-text'
-                        }`}
-                    >
-                        {tab}
-                    </button>
-                ))}
-            </div>
+            {/* Navigation */}
+            <SidebarNav items={navItems} active={activeTab} onChange={setActiveTab} />
 
             {/* Tab content */}
-            {activeTab === 'Overview' && (
+            {activeTab === 'overview' && (
                 <div className="space-y-4">
                     <Card>
                         <CardContent className="pt-4">
                             <SeasonRecap dynasty={dynasty} games={games} />
                         </CardContent>
                     </Card>
+
                     <SeasonFinalizeForm
                         year={dynasty.current_year}
                         initialData={finalizeData}
                         onChange={setFinalizeData}
                     />
-                </div>
-            )}
 
-            {activeTab === 'Roster' && <Roster dynastyId={dynastyId} />}
-            {activeTab === 'Recruiting' && <Recruiting dynastyId={dynastyId} />}
-            {activeTab === 'Transfers' && <Transfers dynastyId={dynastyId} />}
-            {activeTab === 'Awards' && <PlayerAwards dynastyId={dynastyId} />}
-
-            {activeTab === 'Proceed' && (
-                <div className="space-y-4">
-                    {/* Coaching carousel */}
+                    {/* Coaching Carousel + Proceed */}
                     <CoachingCarousel
                         currentSchool={dynasty.school_name}
                         onSwitch={handleSwitch}
                         onStay={handleStay}
                     />
 
-                    {/* Confirmation gate */}
                     {teamDecided && !showConfirm && (
                         <Card>
                             <CardContent className="py-3">
@@ -199,7 +182,6 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                         </Card>
                     )}
 
-                    {/* Final lock confirmation */}
                     {showConfirm && (
                         <Card className="border-orange-500/30">
                             <CardContent className="py-4">
@@ -239,6 +221,11 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                     )}
                 </div>
             )}
+
+            {activeTab === 'roster' && <Roster dynastyId={dynastyId} />}
+            {activeTab === 'recruiting' && <Recruiting dynastyId={dynastyId} />}
+            {activeTab === 'transfers' && <Transfers dynastyId={dynastyId} />}
+            {activeTab === 'awards' && <PlayerAwards dynastyId={dynastyId} />}
         </div>
     )
 }
