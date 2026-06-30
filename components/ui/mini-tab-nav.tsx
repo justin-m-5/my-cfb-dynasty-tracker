@@ -11,7 +11,7 @@ interface MiniTabNavProps {
 export function MiniTabNav({ tabs, active, onChange }: MiniTabNavProps) {
     return (
         <>
-            {/* Mobile: vertical stacked buttons */}
+            {/* Below 640px: vertical stacked */}
             <div className="flex flex-col gap-1 sm:hidden">
                 {tabs.map(tab => (
                     <button
@@ -28,7 +28,7 @@ export function MiniTabNav({ tabs, active, onChange }: MiniTabNavProps) {
                 ))}
             </div>
 
-            {/* Desktop/tablet: horizontal tabs */}
+            {/* 640px and above: horizontal tabs */}
             <div className="hidden sm:flex gap-2 border-b border-primary/20">
                 {tabs.map(tab => (
                     <button
