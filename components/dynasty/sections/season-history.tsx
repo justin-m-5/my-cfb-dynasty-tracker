@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { YearRecordService, type YearRecord } from '@/dal/features/year-records'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select } from '@/components/ui/select'
-import { SidebarNav, type SidebarNavItem } from '@/components/ui/sidebar-nav'
 
 import { AllTimeOverview } from './season-history/all-time-overview'
 import { YearAwards } from './season-history/year-awards'
@@ -17,7 +16,7 @@ import { YearTop25 } from './season-history/year-top25'
 type HistoryTab = 'overview' | 'schedule' | 'top25' | 'stats' | 'awards'
 type YearSelection = 'all-time' | string
 
-const tabItems: SidebarNavItem[] = [
+const tabs: { name: string; key: HistoryTab }[] = [
     { name: 'Overview', key: 'overview' },
     { name: 'Schedule', key: 'schedule' },
     { name: 'Top 25', key: 'top25' },
@@ -73,11 +72,6 @@ export function SeasonHistory({ dynastyId }: SeasonHistoryProps) {
     )
 
     const isAllTime = selectedYear === 'all-time'
-    const selectionLabel = isAllTime
-        ? `All ${yearRecords.length || 0} seasons`
-        : selectedYearRecord
-            ? `${selectedYearRecord.year} ${selectedYearRecord.school_name}`
-            : 'Season history'
 
     if (loading) {
         return <div className="text-sm text-text/60">Loading season history...</div>
@@ -97,47 +91,51 @@ export function SeasonHistory({ dynastyId }: SeasonHistoryProps) {
     }
 
     return (
-        <div className="space-y-4">
-            <Card className="border-primary/15">
-                <CardContent className="space-y-3 pt-3">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                        <div>
-                            <h2 className="text-base font-semibold text-text">Season History</h2>
-                            <p className="text-xs text-text/60">{selectionLabel}</p>
-                        </div>
-                        <div className="w-full sm:max-w-44">
-                            <label htmlFor="season-history-year" className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-text/50">
-                                Season
-                            </label>
-                            <Select
-                                id="season-history-year"
-                                value={selectedYear}
-                                onChange={(event) => setSelectedYear(event.target.value as YearSelection)}
-                                className="h-9 bg-background/80 text-sm"
-                            >
-                                <option value="all-time">All-Time</option>
-                                {yearRecords.map((record) => (
-                                    <option key={record.id} value={record.id}>
-                                        {record.year}
-                                    </option>
-                                ))}
-                            </Select>
-                        </div>
-                    </div>
-                    <SidebarNav items={tabItems} active={activeTab} onChange={(key) => setActiveTab(key as HistoryTab)} />
-                </CardContent>
-            </Card>
+        <div className="space-y-3">
+            {/* Year picker */}
+            <div className="flex items-center gap-3">
+                <Select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value as YearSelection)}
+                    className="h-8 w-40 text-sm"
+                >
+                    <option value="all-time">All-Time</option>
+                    {yearRecords.map((record) => (
+                        <option key={record.id} value={record.id}>
+                            {record.year} — {record.school_name}
+                        </option>
+                    ))}
+                </Select>
+                <span className="text-xs text-text/50">
+                    {isAllTime ? `${yearRecords.length} season${yearRecords.length !== 1 ? 's' : ''}` : selectedYearRecord?.conference ?? ''}
+                </span>
+            </div>
 
+            {/* Inline tabs (no SidebarNav — dynasty nav already uses it) */}
+            <div className="flex gap-1 overflow-x-auto rounded-lg border border-primary/20 bg-background/70 p-1">
+                {tabs.map(tab => (
+                    <button
+                        key={tab.key}
+                        onClick={() => setActiveTab(tab.key)}
+                        className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                            activeTab === tab.key
+                                ? 'bg-primary text-white'
+                                : 'text-text/70 hover:bg-primary/10 hover:text-text'
+                        }`}
+                    >
+                        {tab.name}
+                    </button>
+                ))}
+            </div>
+
+            {/* Tab content */}
             {activeTab === 'overview' && (
                 isAllTime ? <AllTimeOverview yearRecords={yearRecords} /> : selectedYearRecord ? <YearOverview yearRecord={selectedYearRecord} /> : null
             )}
 
             {activeTab === 'schedule' && (
                 isAllTime ? (
-                    <HistoryPlaceholder
-                        title="Season Schedule"
-                        message="Select a single season to review weekly opponents, locations, and results."
-                    />
+                    <HistoryPlaceholder title="Schedule" message="Select a season to view game results." />
                 ) : selectedYearRecord ? (
                     <YearSchedule dynastyId={dynastyId} yearRecord={selectedYearRecord} />
                 ) : null
@@ -145,10 +143,7 @@ export function SeasonHistory({ dynastyId }: SeasonHistoryProps) {
 
             {activeTab === 'top25' && (
                 isAllTime ? (
-                    <HistoryPlaceholder
-                        title="Final Top 25"
-                        message="Select a single season to view the final saved poll for that year."
-                    />
+                    <HistoryPlaceholder title="Top 25" message="Select a season to view the final poll." />
                 ) : selectedYearRecord ? (
                     <YearTop25 dynastyId={dynastyId} yearRecord={selectedYearRecord} />
                 ) : null
