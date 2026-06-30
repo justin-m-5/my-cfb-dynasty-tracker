@@ -46,7 +46,7 @@ export function RecordSummary({ dynasty, games }: RecordSummaryProps) {
     const neutral = locationRecord('neutral')
 
     return (
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 gap-3">
             <DetailCard
                 label="Overall"
                 value={`${record.wins}-${record.losses}${record.ties > 0 ? `-${record.ties}` : ''}`}

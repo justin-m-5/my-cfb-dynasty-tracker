@@ -2,11 +2,10 @@
 
 'use client'
 
-import { Fragment } from 'react'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { SidebarNav, type SidebarNavItem } from '@/components/ui/sidebar-nav'
 
-const navItems = [
+const segments = [
     { name: 'Team Home', segment: '' },
     { name: 'Schedule', segment: 'schedule' },
     { name: 'Top 25', segment: 'top-25' },
@@ -27,41 +26,15 @@ interface DynastyNavShellProps {
 
 export function DynastyNavShell({ dynastyId }: DynastyNavShellProps) {
     const pathname = usePathname()
-
     const basePath = `/dashboard/dynasty/${dynastyId}`
 
-    const activeSegment = (() => {
-        const after = pathname.replace(basePath, '').replace(/^\//, '')
-        return after || ''
-    })()
+    const activeSegment = pathname.replace(basePath, '').replace(/^\//, '') || ''
 
-    return (
-        <nav className="w-full rounded-xl border border-primary/20 bg-background/70">
-            <div className="px-4 sm:px-6">
-                <div className="overflow-x-auto py-3">
-                    <div className="flex min-w-max gap-1">
-                        {navItems.map((item) => {
-                            const isActive = activeSegment === item.segment
-                            const href = item.segment ? `${basePath}/${item.segment}` : basePath
+    const items: SidebarNavItem[] = segments.map(s => ({
+        name: s.name,
+        key: s.segment,
+        href: s.segment ? `${basePath}/${s.segment}` : basePath,
+    }))
 
-                            return (
-                                <Fragment key={item.segment}>
-                                    <Link
-                                        href={href}
-                                        className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                                            isActive
-                                                ? 'bg-primary text-white'
-                                                : 'text-text/70 hover:bg-primary/10 hover:text-text'
-                                        }`}
-                                    >
-                                        {item.name}
-                                    </Link>
-                                </Fragment>
-                            )
-                        })}
-                    </div>
-                </div>
-            </div>
-        </nav>
-    )
+    return <SidebarNav items={items} active={activeSegment} />
 }
