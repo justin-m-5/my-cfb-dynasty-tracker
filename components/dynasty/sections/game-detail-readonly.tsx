@@ -11,8 +11,10 @@ import { PlayerService, type RosterPlayer } from '@/dal/features/players'
 import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
 import { getSchoolLogoCandidates } from '@/lib/logos'
 import { fbsTeams } from '@/lib/fbs-teams'
+import { getWeekFullName, parseScore } from '@/lib/game-utils'
 import { buttonStyles } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { LogoImage } from '@/components/ui/logo-image'
 import { Select } from '@/components/ui/select'
 import {
     type StatCategory,
@@ -20,8 +22,6 @@ import {
     displayColumns,
     computeStatValue,
 } from '@/lib/stat-config'
-
-import { GameHeader } from './game/game-header'
 
 interface GameDetailReadOnlyProps {
     dynastyId: string
@@ -111,25 +111,34 @@ export function GameDetailReadOnly({ dynastyId, gameId }: GameDetailReadOnlyProp
                 </span>
             </div>
 
-            <GameHeader dynasty={dynasty} game={game} userLogos={userLogos} oppLogos={oppLogos} />
-
-            {/* Result + Score summary */}
+            {/* Combined matchup header */}
             <Card className="border-primary/15">
-                <CardContent className="py-3">
-                    <div className="flex items-center justify-center gap-4 text-center">
-                        <div>
-                            <span className="text-xs text-text/50">Result</span>
-                            <p className={`text-lg font-bold ${game.result === 'W' ? 'text-green-600' : game.result === 'L' ? 'text-red-600' : 'text-text'}`}>
-                                {game.result || '—'}
-                            </p>
+                <CardContent className="py-5">
+                    <p className="mb-3 text-center text-xs font-semibold uppercase tracking-wider text-text/50">
+                        {getWeekFullName(game.week)}{game.location === 'neutral' ? ' • Neutral Site' : game.location === 'home' ? ' • Home' : game.location === 'away' ? ' • Away' : ''}
+                    </p>
+                    <div className="flex items-center justify-center gap-4 sm:gap-6">
+                        <div className="flex flex-col items-center gap-1">
+                            <LogoImage candidates={userLogos} alt={dynasty.school_name} size={44} />
+                            <p className="text-xs font-semibold text-text sm:text-sm">{dynasty.school_abbrev ?? dynasty.school_name}</p>
                         </div>
-                        <div>
-                            <span className="text-xs text-text/50">Score</span>
-                            <p className="text-lg font-bold text-text">{game.score || '—'}</p>
+                        <div className="text-center">
+                            {game.result && game.result !== 'N/A' ? (
+                                <>
+                                    <p className={`text-2xl font-bold sm:text-3xl ${game.result === 'W' ? 'text-green-600' : game.result === 'L' ? 'text-red-600' : 'text-text'}`}>
+                                        {(() => { const { user, opp } = parseScore(game.score); return `${user} - ${opp}` })()}
+                                    </p>
+                                    <p className={`text-xs font-semibold ${game.result === 'W' ? 'text-green-600' : game.result === 'L' ? 'text-red-600' : 'text-text'}`}>
+                                        {game.result === 'W' ? 'WIN' : game.result === 'L' ? 'LOSS' : game.result === 'T' ? 'TIE' : ''}
+                                    </p>
+                                </>
+                            ) : (
+                                <p className="text-xl font-bold text-text/40 sm:text-2xl">—</p>
+                            )}
                         </div>
-                        <div>
-                            <span className="text-xs text-text/50">Location</span>
-                            <p className="text-sm font-medium text-text">{game.location === 'home' ? 'Home' : game.location === 'away' ? 'Away' : game.location === 'neutral' ? 'Neutral' : '—'}</p>
+                        <div className="flex flex-col items-center gap-1">
+                            <LogoImage candidates={oppLogos} alt={game.opponent || 'TBD'} size={44} />
+                            <p className="text-xs font-semibold text-text sm:text-sm">{game.opponent || 'TBD'}</p>
                         </div>
                     </div>
                 </CardContent>
@@ -172,7 +181,12 @@ export function GameDetailReadOnly({ dynastyId, gameId }: GameDetailReadOnlyProp
                                 </thead>
                                 <tbody>
                                     <tr className="border-b border-primary/10">
-                                        <td className="px-3 py-1.5 text-xs font-medium">{dynasty.school_abbrev || dynasty.school_name}</td>
+                                        <td className="px-2 py-1.5">
+                                            <div className="flex items-center gap-1.5">
+                                                <LogoImage candidates={userLogos} alt={dynasty.school_name} size={20} />
+                                                <span className="text-xs font-medium">{dynasty.school_abbrev || dynasty.school_name}</span>
+                                            </div>
+                                        </td>
                                         {(game.score_by_quarter as { home: number; away: number }[]).map((q, i) => (
                                             <td key={i} className="px-2 py-1.5 text-center text-xs">{game.location === 'away' ? q.away : q.home}</td>
                                         ))}
@@ -181,7 +195,12 @@ export function GameDetailReadOnly({ dynastyId, gameId }: GameDetailReadOnlyProp
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td className="px-3 py-1.5 text-xs font-medium">{game.opponent}</td>
+                                        <td className="px-2 py-1.5">
+                                            <div className="flex items-center gap-1.5">
+                                                <LogoImage candidates={oppLogos} alt={game.opponent || 'OPP'} size={20} />
+                                                <span className="text-xs font-medium">{game.opponent}</span>
+                                            </div>
+                                        </td>
                                         {(game.score_by_quarter as { home: number; away: number }[]).map((q, i) => (
                                             <td key={i} className="px-2 py-1.5 text-center text-xs">{game.location === 'away' ? q.home : q.away}</td>
                                         ))}
