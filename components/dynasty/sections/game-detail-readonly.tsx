@@ -16,6 +16,7 @@ import { buttonStyles } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LogoImage } from '@/components/ui/logo-image'
 import { Select } from '@/components/ui/select'
+import { SidebarNav } from '@/components/ui/sidebar-nav'
 import {
     type StatCategory,
     statCategories,
@@ -106,9 +107,6 @@ export function GameDetailReadOnly({ dynastyId, gameId }: GameDetailReadOnlyProp
                 >
                     ← Season History
                 </Link>
-                <span className="rounded-md bg-text/10 px-2.5 py-1 text-[11px] font-medium text-text/60">
-                    Past Season · Read Only
-                </span>
             </div>
 
             {/* Combined matchup header */}
@@ -144,22 +142,12 @@ export function GameDetailReadOnly({ dynastyId, gameId }: GameDetailReadOnlyProp
                 </CardContent>
             </Card>
 
-            {/* Tabs */}
-            <div className="flex gap-2 overflow-x-auto border-b border-primary/20">
-                {tabs.map(tab => (
-                    <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`whitespace-nowrap pb-2 px-1 text-xs font-medium transition-colors sm:text-sm ${
-                            activeTab === tab
-                                ? 'border-b-2 border-primary text-primary'
-                                : 'text-text/60 hover:text-primary'
-                        }`}
-                    >
-                        {tab}
-                    </button>
-                ))}
-            </div>
+            {/* Tabs (hamburger on mobile) */}
+            <SidebarNav
+                items={tabs.map(tab => ({ name: tab, key: tab }))}
+                active={activeTab}
+                onChange={(key) => setActiveTab(key as typeof activeTab)}
+            />
 
             {/* Box Score */}
             {activeTab === 'Box Score' && game.score_by_quarter && (
