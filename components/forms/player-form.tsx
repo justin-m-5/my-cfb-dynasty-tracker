@@ -60,10 +60,13 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        if (file) {
-            setForm(prev => ({ ...prev, imageFile: file, removeImage: false }))
-            setPreview(URL.createObjectURL(file))
+        if (!file) return
+        if (file.size > 4 * 1024 * 1024) {
+            alert('Image must be under 4MB')
+            return
         }
+        setForm(prev => ({ ...prev, imageFile: file, removeImage: false }))
+        setPreview(URL.createObjectURL(file))
     }
 
     const handleRemoveImage = () => {
