@@ -9,7 +9,6 @@ import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { GameService, type Game } from '@/dal/features/games'
 import { PlayerService, type RosterPlayer } from '@/dal/features/players'
 import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
-import { YearRecordService } from '@/dal/features/year-records'
 import { getSchoolLogoCandidates } from '@/lib/logos'
 import { fbsTeams } from '@/lib/fbs-teams'
 import { Button, buttonStyles } from '@/components/ui/button'
@@ -39,7 +38,7 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
     const [activeTab, setActiveTab] = useState<TabKey>('Box Score')
     const [roster, setRoster] = useState<RosterPlayer[]>([])
     const [playerStats, setPlayerStats] = useState<PlayerStat[]>([])
-    const [readOnly, setReadOnly] = useState(false)
+
     useEffect(() => {
         const load = async () => {
             try {
@@ -59,14 +58,12 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
                         ],
                     })
 
-                    const [rosterData, statsData, currentYr] = await Promise.all([
+                    const [rosterData, statsData] = await Promise.all([
                         d ? PlayerService.getRoster(dynastyId, g.year_record_id) : Promise.resolve([]),
                         PlayerStatService.getStatsForGame(g.id),
-                        d ? YearRecordService.getCurrentYearRecord(dynastyId) : Promise.resolve(null),
                     ])
                     setRoster(rosterData)
                     setPlayerStats(statsData)
-                    setReadOnly(currentYr ? g.year_record_id !== currentYr.id : false)
                 }
             } catch (err) {
                 console.error('Failed to load game:', err)
@@ -85,10 +82,9 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
     }, [isDirty])
 
     const updateGame = useCallback((field: keyof Game, value: unknown) => {
-        if (readOnly) return
         setGame(prev => prev ? { ...prev, [field]: value } : prev)
         setIsDirty(true)
-    }, [readOnly])
+    }, [])
 
     const handleSave = async () => {
         if (!game) return
@@ -145,31 +141,23 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    {readOnly ? (
-                        <span className="rounded-md bg-text/10 px-2 py-1 text-[11px] font-medium text-text/60">
-                            Past Season (Read Only)
-                        </span>
-                    ) : (
-                        <>
-                            {isDirty && <span className="text-xs font-medium text-amber-500">Unsaved</span>}
-                            <Button
-                                bg="var(--green-600)"
-                                text="white"
-                                size="sm"
-                                onClick={handleSave}
-                                disabled={saving}
-                                className="flex items-center gap-1 font-semibold"
-                            >
-                                <Save className="h-3.5 w-3.5" />
-                                {saving ? 'Saving...' : 'Save'}
-                            </Button>
-                        </>
-                    )}
+                    {isDirty && <span className="text-xs font-medium text-amber-500">Unsaved</span>}
+                    <Button
+                        bg="var(--green-600)"
+                        text="white"
+                        size="sm"
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="flex items-center gap-1 font-semibold"
+                    >
+                        <Save className="h-3.5 w-3.5" />
+                        {saving ? 'Saving...' : 'Save'}
+                    </Button>
                 </div>
             </div>
 
             <GameHeader dynasty={dynasty} game={game} userLogos={userLogos} oppLogos={oppLogos} />
-            {!readOnly && <QuickEditRow game={game} updateGame={updateGame} />}
+            <QuickEditRow game={game} updateGame={updateGame} />
 
             <div className="flex gap-2 overflow-x-auto border-b border-primary/20 sm:gap-4">
                 {tabItems.map((tab) => (
@@ -190,7 +178,7 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
             {activeTab === 'Box Score' && <BoxScoreTab game={game} dynasty={dynasty} updateGame={updateGame} userLogos={userLogos} oppLogos={oppLogos} />}
             {activeTab === 'Team Stats' && <TeamStatsTab game={game} updateGame={updateGame} />}
             {activeTab === 'Player Stats' && (
-                <PlayerStatsTab gameId={game.id} roster={roster} stats={playerStats} onStatsChange={setPlayerStats} readOnly={readOnly} />
+                <PlayerStatsTab gameId={game.id} roster={roster} stats={playerStats} onStatsChange={setPlayerStats} />
             )}
             {activeTab === 'Recap' && <RecapTab game={game} updateGame={updateGame} />}
         </div>

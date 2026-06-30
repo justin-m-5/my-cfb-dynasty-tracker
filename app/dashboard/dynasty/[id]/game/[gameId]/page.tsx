@@ -1,6 +1,6 @@
 // app/dashboard/dynasty/[id]/game/[gameId]/page.tsx
 
-import { GameDetail } from '@/components/dynasty/sections/game-detail'
+import { GameRouter } from '@/components/dynasty/sections/game-router'
 
 interface GamePageProps {
     params: Promise<{ id: string; gameId: string }>
@@ -9,9 +9,5 @@ interface GamePageProps {
 export default async function GamePage({ params }: GamePageProps) {
     const { id, gameId } = await params
 
-    return (
-        <>
-            <GameDetail dynastyId={id} gameId={gameId} />
-        </>
-    )
+    return <GameRouter dynastyId={id} gameId={gameId} />
 }

@@ -24,7 +24,6 @@ interface PlayerStatsTabProps {
     roster: RosterPlayer[]
     stats: PlayerStat[]
     onStatsChange: (stats: PlayerStat[]) => void
-    readOnly?: boolean
 }
 
 function blankStatFields(): Omit<PlayerStat, 'id' | 'player_id' | 'game_id'> {
@@ -47,7 +46,7 @@ function hasStatsInCategory(stat: PlayerStat, category: StatCategory): boolean {
     })
 }
 
-export function PlayerStatsTab({ gameId, roster, stats, onStatsChange, readOnly }: PlayerStatsTabProps) {
+export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerStatsTabProps) {
     const [selectedCategory, setSelectedCategory] = useState<StatCategory>('Passing')
     const [showForm, setShowForm] = useState(false)
     const [editingId, setEditingId] = useState<string | null>(null)
@@ -141,18 +140,16 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange, readOnly 
                     ))}
                 </Select>
 
-                {!readOnly && (
-                    <Button
-                        bg="var(--primary)"
-                        text="white"
-                        size="sm"
-                        onClick={openAddForm}
-                        className="font-semibold"
-                    >
-                        <Plus className="mr-1 h-4 w-4" />
-                        Add Stats
-                    </Button>
-                )}
+                <Button
+                    bg="var(--primary)"
+                    text="white"
+                    size="sm"
+                    onClick={openAddForm}
+                    className="font-semibold"
+                >
+                    <Plus className="mr-1 h-4 w-4" />
+                    Add Stats
+                </Button>
             </div>
 
             <Card>
@@ -167,8 +164,7 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange, readOnly 
                                             {col.label}
                                         </th>
                                     ))}
-                                    {!readOnly && <th className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">Actions</th>}
-                                </tr>
+                                    <th className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">Actions</th>                                </tr>
                             </thead>
                             <tbody>
                                 {categoryStats.length > 0 ? (
@@ -183,7 +179,6 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange, readOnly 
                                                 </td>
                                             ))}
                                             <td className="px-2 py-2 text-center">
-                                                {!readOnly && (
                                                 <div className="flex items-center justify-center gap-1">
                                                     <button
                                                         onClick={() => openEditForm(stat)}
@@ -198,7 +193,6 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange, readOnly 
                                                         <Trash2 className="h-3.5 w-3.5" />
                                                     </button>
                                                 </div>
-                                                )}
                                             </td>
                                         </tr>
                                     ))
