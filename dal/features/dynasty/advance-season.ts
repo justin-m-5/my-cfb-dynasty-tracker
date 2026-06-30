@@ -133,6 +133,7 @@ export async function advanceSeason(dynastyId: string, options?: AdvanceSeasonOp
                     jersey_number: ps.jersey_number,
                     is_redshirted: false,
                     notes: null,
+                    dev_trait: ps.dev_trait || null,
                 }))
 
             const { data: incomingTransfers } = await supabase
@@ -152,7 +153,6 @@ export async function advanceSeason(dynastyId: string, options?: AdvanceSeasonOp
                             position: t.position,
                             height: t.height,
                             weight: t.weight,
-                            dev_trait: t.dev_trait || 'Normal',
                         })
                         .select()
                         .single()
@@ -167,6 +167,7 @@ export async function advanceSeason(dynastyId: string, options?: AdvanceSeasonOp
                             jersey_number: null,
                             is_redshirted: false,
                             notes: `Transfer from ${t.school}`,
+                            dev_trait: t.dev_trait || 'Normal',
                         })
                     }
                 }
@@ -188,7 +189,6 @@ export async function advanceSeason(dynastyId: string, options?: AdvanceSeasonOp
                             position: r.position,
                             height: r.height,
                             weight: r.weight,
-                            dev_trait: r.dev_trait || 'Normal',
                         })
                         .select()
                         .single()
@@ -203,6 +203,7 @@ export async function advanceSeason(dynastyId: string, options?: AdvanceSeasonOp
                             jersey_number: null,
                             is_redshirted: false,
                             notes: r.state ? `Recruit from ${r.state}` : null,
+                            dev_trait: r.dev_trait || 'Normal',
                         })
                     }
                 }

@@ -12,7 +12,7 @@ interface PlayerRowProps {
 }
 
 export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: PlayerRowProps) {
-    const traitColor = player.dev_trait ? devTraitColors[player.dev_trait as DevTrait] ?? '' : ''
+    const traitColor = player.season.dev_trait ? devTraitColors[player.season.dev_trait as DevTrait] ?? '' : ''
 
     return (
         <div className="flex items-center gap-1.5 px-2 py-1.5 border-b border-primary/10 last:border-b-0 hover:bg-primary/5 transition-colors">
@@ -38,8 +38,8 @@ export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: Player
             </span>
 
             {/* Dev Trait — always occupies space on sm+ for alignment */}
-            <span className={`w-12 text-center rounded-full px-1 py-0.5 text-[10px] font-semibold hidden sm:block ${player.dev_trait && player.dev_trait !== 'Normal' ? traitColor : 'text-transparent'}`}>
-                {player.dev_trait && player.dev_trait !== 'Normal' ? player.dev_trait : '—'}
+            <span className={`w-12 text-center rounded-full px-1 py-0.5 text-[10px] font-semibold hidden sm:block ${player.season.dev_trait && player.season.dev_trait !== 'Normal' ? traitColor : 'text-transparent'}`}>
+                {player.season.dev_trait && player.season.dev_trait !== 'Normal' ? player.season.dev_trait : '—'}
             </span>
 
             {/* Actions */}

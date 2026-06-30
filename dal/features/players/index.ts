@@ -10,7 +10,6 @@ export interface Player {
     position: string
     height: string | null
     weight: number | null
-    dev_trait: string | null
 }
 
 // Per-season snapshot
@@ -25,6 +24,7 @@ export interface PlayerSeason {
     is_redshirted: boolean
     notes: string | null
     honors: string[]
+    dev_trait: string | null
 }
 
 // Combined view for roster display
@@ -38,7 +38,6 @@ export interface CreatePlayerInput {
     position: string
     height?: string | null
     weight?: number | null
-    dev_trait?: string | null
 }
 
 export interface CreatePlayerSeasonInput {
@@ -50,6 +49,7 @@ export interface CreatePlayerSeasonInput {
     jersey_number?: number | null
     is_redshirted?: boolean
     notes?: string | null
+    dev_trait?: string | null
 }
 
 export const PlayerService = {
@@ -80,6 +80,7 @@ export const PlayerService = {
                 is_redshirted: row.is_redshirted as boolean,
                 notes: row.notes as string | null,
                 honors: (row.honors as string[] | null) ?? [],
+                dev_trait: row.dev_trait as string | null,
             }
             return { ...player, season }
         }).sort((a, b) => a.position.localeCompare(b.position) || a.name.localeCompare(b.name))
@@ -96,7 +97,6 @@ export const PlayerService = {
                 position: input.position,
                 height: input.height ?? null,
                 weight: input.weight ?? null,
-                dev_trait: input.dev_trait ?? null,
             })
             .select()
             .single()
@@ -118,6 +118,7 @@ export const PlayerService = {
                 jersey_number: seasonInput.jersey_number ?? null,
                 is_redshirted: seasonInput.is_redshirted ?? false,
                 notes: seasonInput.notes ?? null,
+                dev_trait: seasonInput.dev_trait ?? null,
             })
             .select()
             .single()

@@ -64,7 +64,6 @@ export function Roster({ dynastyId }: RosterProps) {
                     position: form.position,
                     height: form.height,
                     weight: form.weight,
-                    dev_trait: form.dev_trait,
                 })
                 // Update season
                 await PlayerService.updatePlayerSeason(editing.season.id, {
@@ -73,6 +72,7 @@ export function Roster({ dynastyId }: RosterProps) {
                     jersey_number: form.jersey_number,
                     is_redshirted: form.is_redshirted,
                     notes: form.notes,
+                    dev_trait: form.dev_trait,
                 })
                 setPlayers(prev => prev.map(p => p.id === editing.id ? {
                     ...p,
@@ -80,7 +80,6 @@ export function Roster({ dynastyId }: RosterProps) {
                     position: form.position,
                     height: form.height,
                     weight: form.weight,
-                    dev_trait: form.dev_trait,
                     season: {
                         ...p.season,
                         year: form.year,
@@ -88,6 +87,7 @@ export function Roster({ dynastyId }: RosterProps) {
                         jersey_number: form.jersey_number,
                         is_redshirted: form.is_redshirted,
                         notes: form.notes,
+                        dev_trait: form.dev_trait,
                     },
                 } : p))
             } else {
@@ -98,7 +98,6 @@ export function Roster({ dynastyId }: RosterProps) {
                         position: form.position,
                         height: form.height,
                         weight: form.weight,
-                        dev_trait: form.dev_trait,
                     },
                     {
                         year_record_id: yearRecordId,
@@ -108,6 +107,7 @@ export function Roster({ dynastyId }: RosterProps) {
                         jersey_number: form.jersey_number,
                         is_redshirted: form.is_redshirted,
                         notes: form.notes,
+                        dev_trait: form.dev_trait,
                     }
                 )
                 if (created) setPlayers(prev => [...prev, created])

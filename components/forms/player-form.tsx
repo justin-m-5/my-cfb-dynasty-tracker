@@ -18,8 +18,8 @@ export interface PlayerFormData {
     position: string
     height: string | null
     weight: number | null
-    dev_trait: string | null
     // Season
+    dev_trait: string | null
     year: string | null
     rating: number | null
     jersey_number: number | null
@@ -40,7 +40,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
         position: initial?.position ?? '',
         height: initial?.height ?? null,
         weight: initial?.weight ?? null,
-        dev_trait: initial?.dev_trait ?? 'Normal',
+        dev_trait: initial?.season?.dev_trait ?? 'Normal',
         year: initial?.season?.year ?? null,
         rating: initial?.season?.rating ?? null,
         jersey_number: initial?.season?.jersey_number ?? null,
