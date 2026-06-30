@@ -39,7 +39,10 @@ export function DynastyHeader({ dynastyId }: DynastyHeaderProps) {
 
                     {/* LEFT: Logo column (always on left) */}
                     <div className="flex w-20 shrink-0 flex-col items-center gap-2 sm:w-24">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-primary sm:text-xs">
+                        <span 
+                            className="font-bold uppercase tracking-wider text-primary"
+                            style={{ fontSize: 'var(--text-dynasty-label)' }}
+                        >
                             {dynasty.current_year} Season
                         </span>
                         <LogoImage
@@ -54,15 +57,24 @@ export function DynastyHeader({ dynastyId }: DynastyHeaderProps) {
 
                         {/* Row 1: Coach, School, Conference (wraps on mobile) */}
                         <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-                            <h1 className="text-lg font-bold text-text sm:text-xl lg:text-2xl">
+                            <h1 
+                                className="font-bold text-text"
+                                style={{ fontSize: 'var(--text-dynasty-coach)' }}
+                            >
                                 {dynasty.coach_name}
                             </h1>
 
-                            <span className="text-sm font-medium text-text/80 sm:text-base lg:text-lg">
+                            <span 
+                                className="font-medium text-text/90"
+                                style={{ fontSize: 'var(--text-dynasty-school)' }}
+                            >
                                 {dynasty.school_name} {dynasty.school_nickname}
                             </span>
 
-                            <div className="flex items-center gap-1.5 text-xs text-text/70 sm:text-sm">
+                            <div 
+                                className="flex items-center gap-1.5 text-text/70"
+                                style={{ fontSize: 'var(--text-dynasty-meta)' }}
+                            >
                                 {conferenceLogo && (
                                     <Image
                                         src={conferenceLogo}
@@ -113,11 +125,17 @@ function InfoRow({
 }) {
     return (
         <div className="flex items-center gap-1 whitespace-nowrap">
-            <dt className="text-xs font-bold uppercase text-text/50">
+            <dt 
+                className="font-bold uppercase text-text/50"
+                style={{ fontSize: 'var(--text-dynasty-label)' }}
+            >
                 {label}:
             </dt>
 
-            <dd className="text-sm font-semibold text-text">
+            <dd 
+                className="font-semibold text-text"
+                style={{ fontSize: 'var(--text-dynasty-meta)' }}
+            >
                 {value}
             </dd>
         </div>

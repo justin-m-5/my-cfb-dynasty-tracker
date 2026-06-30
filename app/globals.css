@@ -9,9 +9,11 @@
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
 
-  /* Clamp(min, ideal, max) */
+  /* Fluid typography using clamp(min, preferred, max) */
   --text-dynasty-coach: clamp(1.125rem, 2.5vw, 1.75rem);
-  --text-dynasty-school: clamp(1rem, 2vw, 1.25rem);
+  --text-dynasty-school: clamp(0.875rem, 1.5vw, 1.125rem);
+  --text-dynasty-label: clamp(0.625rem, 1vw, 0.75rem);
+  --text-dynasty-meta: clamp(0.75rem, 1.25vw, 0.875rem);
 }
 
 @layer base {
