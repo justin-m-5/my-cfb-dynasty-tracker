@@ -23,6 +23,7 @@ import { RosterBreakdown } from './advance-season/roster-breakdown'
 import { CompactTransfers } from './advance-season/compact-transfers'
 import { CompactRecruits } from './advance-season/compact-recruits'
 import { CompactDraft } from './advance-season/compact-draft'
+import { CompactHonors } from './advance-season/compact-honors'
 
 interface AdvanceSeasonProps {
     dynastyId: string
@@ -33,6 +34,7 @@ const navItems = [
     { name: 'Transfers', key: 'transfers' },
     { name: 'Recruits', key: 'recruits' },
     { name: 'Draft', key: 'draft' },
+    { name: 'Honors', key: 'honors' },
 ]
 
 export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
@@ -284,6 +286,13 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                     roster={roster}
                     draftedPlayers={draftedPlayers}
                     onChange={setDraftedPlayers}
+                />
+            )}
+
+            {activeTab === 'honors' && yearRecordId && (
+                <CompactHonors
+                    roster={roster}
+                    onRosterUpdate={setRoster}
                 />
             )}
         </div>

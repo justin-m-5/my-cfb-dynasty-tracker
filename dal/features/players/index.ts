@@ -24,6 +24,7 @@ export interface PlayerSeason {
     jersey_number: number | null
     is_redshirted: boolean
     notes: string | null
+    honors: string[]
 }
 
 // Combined view for roster display
@@ -78,6 +79,7 @@ export const PlayerService = {
                 jersey_number: row.jersey_number as number | null,
                 is_redshirted: row.is_redshirted as boolean,
                 notes: row.notes as string | null,
+                honors: (row.honors as string[] | null) ?? [],
             }
             return { ...player, season }
         }).sort((a, b) => a.position.localeCompare(b.position) || a.name.localeCompare(b.name))
