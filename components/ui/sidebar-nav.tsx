@@ -39,7 +39,7 @@ export function SidebarNav({ items, active, onChange }: SidebarNavProps) {
             {open && (
                 <div className="md:hidden fixed inset-0 z-40">
                     <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
-                    <nav className="absolute right-0 top-0 h-full w-52 bg-background border-l border-primary/20 shadow-lg pt-32 px-3">
+                    <nav className="absolute right-0 top-0 h-full w-52 bg-background border-l border-primary/20 shadow-lg pt-36 px-3">
                         <div className="space-y-1">
                             {items.map(item => (
                                 <button
