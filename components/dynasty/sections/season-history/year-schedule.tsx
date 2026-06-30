@@ -79,7 +79,7 @@ export function YearSchedule({ dynastyId, yearRecord }: YearScheduleProps) {
                                     </div>
                                     <Link
                                         href={`/dashboard/dynasty/${dynastyId}/game/${game.id}`}
-                                        {...buttonStyles({ variant: 'outline', className: 'rounded px-2 py-1 text-[11px] font-medium shrink-0' })}
+                                        {...buttonStyles({ bg: 'var(--primary)', text: 'white', className: 'rounded px-2 py-1 text-[11px] font-semibold shrink-0' })}
                                     >
                                         <Eye className="h-3 w-3 sm:hidden" />
                                         <span className="hidden sm:inline">View</span>
