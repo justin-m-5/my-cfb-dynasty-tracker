@@ -52,46 +52,46 @@ export function DynastyHeader({ dynastyId }: DynastyHeaderProps) {
                         />
                     </div>
 
-                    {/* RIGHT: Two rows of info */}
-                    <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 sm:gap-3">
+                    {/* RIGHT: Info rows stacked */}
+                    <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 sm:gap-2">
 
-                        {/* Row 1: Coach, School, Conference (wraps on mobile) */}
-                        <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-                            <h1 
-                                className="font-bold text-text"
-                                style={{ fontSize: 'var(--text-dynasty-coach)' }}
-                            >
-                                {dynasty.coach_name}
-                            </h1>
+                        {/* Row 1: Coach name */}
+                        <h1 
+                            className="font-bold text-text"
+                            style={{ fontSize: 'var(--text-dynasty-coach)' }}
+                        >
+                            {dynasty.coach_name}
+                        </h1>
 
-                            <span 
-                                className="font-medium text-text/90"
-                                style={{ fontSize: 'var(--text-dynasty-school)' }}
-                            >
-                                {dynasty.school_name} {dynasty.school_nickname}
-                            </span>
-
-                            <div 
-                                className="flex items-center gap-1.5 text-text/70"
-                                style={{ fontSize: 'var(--text-dynasty-meta)' }}
-                            >
-                                {conferenceLogo && (
-                                    <Image
-                                        src={conferenceLogo}
-                                        alt=""
-                                        width={16}
-                                        height={16}
-                                        className="rounded"
-                                        unoptimized
-                                    />
-                                )}
-                                <span>{dynasty.conference ?? "Independent"}</span>
-                            </div>
+                        {/* Row 2: School name + nickname */}
+                        <div 
+                            className="font-medium text-text/90"
+                            style={{ fontSize: 'var(--text-dynasty-school)' }}
+                        >
+                            {dynasty.school_name} {dynasty.school_nickname}
                         </div>
 
-                        {/* Row 2: Alma Mater, Pipeline (wraps on mobile) */}
+                        {/* Row 3: Conference */}
+                        <div 
+                            className="flex items-center gap-1.5 text-text/70"
+                            style={{ fontSize: 'var(--text-dynasty-meta)' }}
+                        >
+                            {conferenceLogo && (
+                                <Image
+                                    src={conferenceLogo}
+                                    alt=""
+                                    width={16}
+                                    height={16}
+                                    className="rounded"
+                                    unoptimized
+                                />
+                            )}
+                            <span>{dynasty.conference ?? "Independent"}</span>
+                        </div>
+
+                        {/* Row 4: Alma Mater & Pipeline (wraps on mobile) */}
                         {(dynasty.alma_mater || dynasty.pipeline) && (
-                            <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-4">
+                            <div className="mt-1 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-4">
                                 {dynasty.alma_mater && (
                                     <InfoRow
                                         label="Alma Mater"
