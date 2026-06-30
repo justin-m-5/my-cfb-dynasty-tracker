@@ -1,11 +1,16 @@
+// components/dynasty/sections/season-history/year-schedule.tsx
+
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { Eye } from 'lucide-react'
 
 import { GameService, type Game } from '@/dal/features/games'
 import type { YearRecord } from '@/dal/features/year-records'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getLocationLabel, getWeekDisplayName, parseScore } from '@/lib/game-utils'
+import { buttonStyles } from '@/components/ui/button'
 
 interface YearScheduleProps {
     dynastyId: string
@@ -57,8 +62,8 @@ export function YearSchedule({ dynastyId, yearRecord }: YearScheduleProps) {
                             const score = game.score ? `${user}-${opp}` : '—'
 
                             return (
-                                <div key={game.id} className="flex items-center gap-3 border-b border-primary/10 px-3 py-2 text-xs last:border-b-0 hover:bg-primary/5">
-                                    <div className="w-20 shrink-0 font-semibold text-text/75">{getWeekDisplayName(game.week)}</div>
+                                <div key={game.id} className="flex items-center gap-2 border-b border-primary/10 px-3 py-2 text-xs last:border-b-0 hover:bg-primary/5">
+                                    <div className="w-16 shrink-0 font-semibold text-text/75 sm:w-20">{getWeekDisplayName(game.week)}</div>
                                     <div className="min-w-0 flex-1">
                                         <div className="truncate font-medium text-text">
                                             {game.location !== 'none' ? `${getLocationLabel(game.location)} ` : ''}
@@ -72,6 +77,13 @@ export function YearSchedule({ dynastyId, yearRecord }: YearScheduleProps) {
                                         <div>{game.result}</div>
                                         <div className="text-[10px] text-text/60">{score}</div>
                                     </div>
+                                    <Link
+                                        href={`/dashboard/dynasty/${dynastyId}/game/${game.id}`}
+                                        {...buttonStyles({ variant: 'outline', className: 'rounded px-2 py-1 text-[11px] font-medium shrink-0' })}
+                                    >
+                                        <Eye className="h-3 w-3 sm:hidden" />
+                                        <span className="hidden sm:inline">View</span>
+                                    </Link>
                                 </div>
                             )
                         })}
