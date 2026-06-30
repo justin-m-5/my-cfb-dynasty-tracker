@@ -17,12 +17,7 @@ export type CreateAwardInput = Omit<Award, 'id'>
 
 export const AwardService = {
     async getAwards(dynastyId: string, yearRecordId: string): Promise<Award[]> {
-        const { data, error } = await supabase
-            .from('awards')
-            .select('*')
-            .eq('dynasty_id', dynastyId)
-            .eq('year_record_id', yearRecordId)
-            .order('award_name')
+        const { data, error } = await supabase.from('awards').select('*').eq('dynasty_id', dynastyId).eq('year_record_id', yearRecordId).order('award_name')
 
         if (error) {
             console.error('Get awards error:', error.message)
@@ -32,12 +27,7 @@ export const AwardService = {
     },
 
     async getAwardsByPlayer(dynastyId: string, playerId: string): Promise<Award[]> {
-        const { data, error } = await supabase
-            .from('awards')
-            .select('*')
-            .eq('dynasty_id', dynastyId)
-            .eq('player_id', playerId)
-            .order('year', { ascending: false })
+        const { data, error } = await supabase.from('awards').select('*').eq('dynasty_id', dynastyId).eq('player_id', playerId).order('year', { ascending: false })
 
         if (error) {
             console.error('Get awards by player error:', error.message)
@@ -47,11 +37,7 @@ export const AwardService = {
     },
 
     async createAward(input: CreateAwardInput): Promise<Award | null> {
-        const { data, error } = await supabase
-            .from('awards')
-            .insert(input)
-            .select()
-            .single()
+        const { data, error } = await supabase.from('awards').insert(input).select().single()
 
         if (error) {
             console.error('Create award error:', error.message)
@@ -61,12 +47,7 @@ export const AwardService = {
     },
 
     async updateAward(id: string, updates: Partial<CreateAwardInput>): Promise<Award | null> {
-        const { data, error } = await supabase
-            .from('awards')
-            .update(updates)
-            .eq('id', id)
-            .select()
-            .single()
+        const { data, error } = await supabase.from('awards').update(updates).eq('id', id).select().single()
 
         if (error) {
             console.error('Update award error:', error.message)
@@ -76,10 +57,7 @@ export const AwardService = {
     },
 
     async deleteAward(id: string): Promise<boolean> {
-        const { error } = await supabase
-            .from('awards')
-            .delete()
-            .eq('id', id)
+        const { error } = await supabase.from('awards').delete().eq('id', id)
 
         if (error) {
             console.error('Delete award error:', error.message)

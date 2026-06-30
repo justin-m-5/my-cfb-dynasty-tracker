@@ -29,7 +29,7 @@ export function SidebarNav({ items, active, onChange }: SidebarNavProps) {
             {/* Mobile: toggle button */}
             <button
                 onClick={() => setOpen(!open)}
-                className="md:hidden fixed top-4 right-4 z-50 flex items-center gap-1.5 rounded-lg border border-primary/20 bg-background px-2.5 py-1.5 text-xs font-medium text-text/80 shadow-sm"
+                className="md:hidden fixed top-20 right-4 z-50 flex items-center gap-1.5 rounded-lg border border-primary/20 bg-background px-2.5 py-1.5 text-xs font-medium text-text/80 shadow-sm"
             >
                 {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
                 {!open && <span>{items.find(i => i.key === active)?.name}</span>}
