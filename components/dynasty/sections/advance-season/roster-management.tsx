@@ -20,54 +20,17 @@ interface RosterManagementProps {
 }
 
 type RosterStatus = 'Returning' | 'Incoming Transfer' | 'Incoming Recruit' | 'Graduating' | 'Transfer Out' | 'Draft'
-type StatusFilter = 'All' | 'Returning' | 'Incoming' | 'Leaving'
-type PositionGroupFilter = 'All' | keyof typeof positionGroups
 
-type RosterItem =
-    | {
-        key: string
-        kind: 'roster'
-        name: string
-        position: string
-        year: string
-        rating: number | null
-        devTrait: string | null
-        status: RosterStatus
-        player: RosterPlayer
-    }
-    | {
-        key: string
-        kind: 'transfer'
-        name: string
-        position: string
-        year: string
-        rating: number | null
-        devTrait: string | null
-        status: RosterStatus
-        transfer: Transfer
-    }
-    | {
-        key: string
-        kind: 'recruit'
-        name: string
-        position: string
-        year: string
-        rating: number | null
-        devTrait: string | null
-        status: RosterStatus
-        recruit: Recruit
-    }
-
-const statusFilterOptions: StatusFilter[] = ['All', 'Returning', 'Incoming', 'Leaving']
-const positionGroupOptions: PositionGroupFilter[] = ['All', ...(Object.keys(positionGroups) as Array<keyof typeof positionGroups>)]
-
-const statusRank: Record<RosterStatus, number> = {
-    Returning: 0,
-    'Incoming Transfer': 1,
-    'Incoming Recruit': 2,
-    Draft: 3,
-    'Transfer Out': 4,
-    Graduating: 5,
+type DepthChartItem = {
+    id: string
+    kind: 'roster' | 'transfer' | 'recruit'
+    name: string
+    position: string
+    year: string
+    rating: number | null
+    devTrait: string | null
+    status: RosterStatus
+    player?: RosterPlayer
 }
 
 const statusStyles: Record<RosterStatus, string> = {
@@ -79,12 +42,13 @@ const statusStyles: Record<RosterStatus, string> = {
     Draft: 'bg-red-500/15 text-red-600',
 }
 
-const statusNotes: Record<Exclude<RosterStatus, 'Returning'>, string> = {
-    'Incoming Transfer': 'Incoming players carry in automatically.',
-    'Incoming Recruit': 'Incoming players carry in automatically.',
-    Graduating: 'This player already leaves after the season.',
-    'Transfer Out': 'This player already leaves after the season.',
-    Draft: 'This player already leaves after the season.',
+const statusLabels: Record<RosterStatus, string> = {
+    Returning: '',
+    'Incoming Transfer': 'TR In',
+    'Incoming Recruit': 'FR In',
+    Graduating: 'Grad',
+    'Transfer Out': 'TR Out',
+    Draft: 'Draft',
 }
 
 function normalizeName(value: string) {
@@ -98,26 +62,14 @@ function isGraduatingPlayer(player: RosterPlayer) {
 function parseRating(value: string) {
     const trimmed = value.trim()
     if (!trimmed) return null
-
     const parsed = Number.parseInt(trimmed, 10)
     if (!Number.isFinite(parsed)) return undefined
-
     return Math.max(0, Math.min(99, parsed))
 }
 
-function getStatusFilterMatch(status: RosterStatus, filter: StatusFilter) {
-    if (filter === 'All') return true
-    if (filter === 'Returning') return status === 'Returning'
-    if (filter === 'Incoming') return status === 'Incoming Transfer' || status === 'Incoming Recruit'
-    return status === 'Graduating' || status === 'Transfer Out' || status === 'Draft'
-}
-
 function getTraitClasses(devTrait: string | null) {
-    if (!devTrait || devTrait === 'Normal') {
-        return 'bg-primary/5 text-text/55'
-    }
-
-    return devTraitColors[devTrait as DevTrait] ?? 'bg-primary/10 text-text/70'
+    if (!devTrait || devTrait === 'Normal') return 'text-text/40'
+    return devTraitColors[devTrait as DevTrait] ?? 'text-text/60'
 }
 
 export function RosterManagement({
@@ -127,50 +79,31 @@ export function RosterManagement({
     draftedPlayers,
     onRosterUpdate,
 }: RosterManagementProps) {
-    const [search, setSearch] = useState('')
-    const [statusFilter, setStatusFilter] = useState<StatusFilter>('All')
-    const [positionGroupFilter, setPositionGroupFilter] = useState<PositionGroupFilter>('All')
+    const [positionGroupFilter, setPositionGroupFilter] = useState<string>('All')
     const [ratingDrafts, setRatingDrafts] = useState<Record<string, string>>({})
-    const [busyLabels, setBusyLabels] = useState<Record<string, string>>({})
+    const [busyIds, setBusyIds] = useState<Set<string>>(new Set())
     const [confirmCutId, setConfirmCutId] = useState<string | null>(null)
 
     const transferOutNames = useMemo(
-        () => new Set(transfers.filter((transfer) => transfer.transfer_direction === 'To').map((transfer) => normalizeName(transfer.player_name))),
+        () => new Set(transfers.filter(t => t.transfer_direction === 'To').map(t => normalizeName(t.player_name))),
         [transfers]
     )
     const draftedNames = useMemo(
-        () => new Set(draftedPlayers.map((player) => normalizeName(player.player_name))),
+        () => new Set(draftedPlayers.map(p => normalizeName(p.player_name))),
         [draftedPlayers]
     )
 
-    const returningCount = useMemo(
-        () => roster.filter((player) => {
-            const normalized = normalizeName(player.name)
-
-            return !isGraduatingPlayer(player) && !transferOutNames.has(normalized) && !draftedNames.has(normalized)
-        }).length,
-        [draftedNames, roster, transferOutNames]
-    )
-    const incomingCount = transfers.filter((transfer) => transfer.transfer_direction === 'From').length + recruits.length
-    const leavingCount = roster.length - returningCount
-    const projectedRosterCount = returningCount + incomingCount
-    const overCapBy = projectedRosterCount - 85
-
-    const items = useMemo<RosterItem[]>(() => {
-        const rosterItems: RosterItem[] = roster.map((player) => {
+    // Build all items with status
+    const allItems = useMemo<DepthChartItem[]>(() => {
+        const rosterItems: DepthChartItem[] = roster.map(player => {
             const normalized = normalizeName(player.name)
             let status: RosterStatus = 'Returning'
-
-            if (draftedNames.has(normalized)) {
-                status = 'Draft'
-            } else if (transferOutNames.has(normalized)) {
-                status = 'Transfer Out'
-            } else if (isGraduatingPlayer(player)) {
-                status = 'Graduating'
-            }
+            if (draftedNames.has(normalized)) status = 'Draft'
+            else if (transferOutNames.has(normalized)) status = 'Transfer Out'
+            else if (isGraduatingPlayer(player)) status = 'Graduating'
 
             return {
-                key: `roster-${player.id}`,
+                id: player.id,
                 kind: 'roster',
                 name: player.name,
                 position: player.position,
@@ -182,384 +115,284 @@ export function RosterManagement({
             }
         })
 
-        const incomingTransfers: RosterItem[] = transfers
-            .filter((transfer) => transfer.transfer_direction === 'From')
-            .map((transfer) => ({
-                key: `transfer-${transfer.id}`,
+        const incomingTransfers: DepthChartItem[] = transfers
+            .filter(t => t.transfer_direction === 'From')
+            .map(t => ({
+                id: `tr-${t.id}`,
                 kind: 'transfer',
-                name: transfer.player_name,
-                position: transfer.position,
+                name: t.player_name,
+                position: t.position,
                 year: 'TR',
                 rating: null,
-                devTrait: transfer.dev_trait,
-                status: 'Incoming Transfer',
-                transfer,
+                devTrait: t.dev_trait,
+                status: 'Incoming Transfer' as const,
             }))
 
-        const incomingRecruits: RosterItem[] = recruits.map((recruit) => ({
-            key: `recruit-${recruit.id}`,
+        const incomingRecruits: DepthChartItem[] = recruits.map(r => ({
+            id: `rc-${r.id}`,
             kind: 'recruit',
-            name: recruit.name,
-            position: recruit.position,
+            name: r.name,
+            position: r.position,
             year: 'FR',
             rating: null,
-            devTrait: recruit.dev_trait,
-            status: 'Incoming Recruit',
-            recruit,
+            devTrait: r.dev_trait,
+            status: 'Incoming Recruit' as const,
         }))
 
-        return [...rosterItems, ...incomingTransfers, ...incomingRecruits].sort((a, b) => {
-            const statusDiff = statusRank[a.status] - statusRank[b.status]
-            if (statusDiff !== 0) return statusDiff
-
-            const positionDiff = a.position.localeCompare(b.position)
-            if (positionDiff !== 0) return positionDiff
-
-            const ratingDiff = (b.rating ?? -1) - (a.rating ?? -1)
-            if (ratingDiff !== 0) return ratingDiff
-
-            return a.name.localeCompare(b.name)
-        })
+        return [...rosterItems, ...incomingTransfers, ...incomingRecruits]
     }, [draftedNames, recruits, roster, transfers, transferOutNames])
 
-    const filteredItems = useMemo(() => {
-        const normalizedSearch = search.trim().toLowerCase()
+    // Group by position, sorted by rating (depth chart style)
+    const depthChart = useMemo(() => {
+        const filtered = positionGroupFilter === 'All'
+            ? allItems
+            : allItems.filter(item => (positionGroups as Record<string, string[]>)[positionGroupFilter]?.includes(item.position))
 
-        return items.filter((item) => {
-            const matchesSearch = normalizedSearch.length === 0
-                || item.name.toLowerCase().includes(normalizedSearch)
-                || item.position.toLowerCase().includes(normalizedSearch)
+        const groups: Record<string, DepthChartItem[]> = {}
+        for (const item of filtered) {
+            if (!groups[item.position]) groups[item.position] = []
+            groups[item.position].push(item)
+        }
 
-            const matchesStatus = getStatusFilterMatch(item.status, statusFilter)
-            const matchesGroup = positionGroupFilter === 'All' || positionGroups[positionGroupFilter].includes(item.position)
+        // Sort within each position by rating desc
+        for (const pos of Object.keys(groups)) {
+            groups[pos].sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1))
+        }
 
-            return matchesSearch && matchesStatus && matchesGroup
-        })
-    }, [items, positionGroupFilter, search, statusFilter])
+        // Sort position groups by count desc then name
+        return Object.entries(groups).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
+    }, [allItems, positionGroupFilter])
 
-    const setBusyLabel = (playerId: string, label: string | null) => {
-        setBusyLabels((current) => {
-            const next = { ...current }
+    const returningCount = allItems.filter(i => i.status === 'Returning').length
+    const incomingCount = allItems.filter(i => i.status === 'Incoming Transfer' || i.status === 'Incoming Recruit').length
+    const projectedCount = returningCount + incomingCount
+    const overCap = projectedCount - 85
 
-            if (label) {
-                next[playerId] = label
-            } else {
-                delete next[playerId]
-            }
-
-            return next
-        })
-    }
-
-    const clearRatingDraft = (playerId: string) => {
-        setRatingDrafts((current) => {
-            if (!(playerId in current)) return current
-
-            const next = { ...current }
-            delete next[playerId]
+    const markBusy = (id: string, busy: boolean) => {
+        setBusyIds(prev => {
+            const next = new Set(prev)
+            busy ? next.add(id) : next.delete(id)
             return next
         })
     }
 
     const handlePositionChange = async (player: RosterPlayer, nextPosition: string) => {
-        if (player.position === nextPosition || busyLabels[player.id]) return
-
-        setBusyLabel(player.id, 'Saving...')
+        if (player.position === nextPosition || busyIds.has(player.id)) return
+        markBusy(player.id, true)
         try {
             await PlayerService.updatePlayer(player.id, { position: nextPosition })
-            onRosterUpdate(
-                roster.map((currentPlayer) => (
-                    currentPlayer.id === player.id
-                        ? { ...currentPlayer, position: nextPosition }
-                        : currentPlayer
-                ))
-            )
+            onRosterUpdate(roster.map(p => p.id === player.id ? { ...p, position: nextPosition } : p))
         } catch (err) {
-            console.error('Failed to update player position:', err)
+            console.error('Position update failed:', err)
         } finally {
-            setBusyLabel(player.id, null)
+            markBusy(player.id, false)
         }
     }
 
     const handleRatingCommit = async (player: RosterPlayer, rawValue: string) => {
-        if (busyLabels[player.id]) return
-
+        if (busyIds.has(player.id)) return
         const nextRating = parseRating(rawValue)
+        if (typeof nextRating === 'undefined') { clearDraft(player.id); return }
+        if (nextRating === player.season.rating) { clearDraft(player.id); return }
 
-        if (typeof nextRating === 'undefined') {
-            clearRatingDraft(player.id)
-            return
-        }
-
-        if (nextRating === player.season.rating) {
-            clearRatingDraft(player.id)
-            return
-        }
-
-        setBusyLabel(player.id, 'Saving...')
+        markBusy(player.id, true)
         try {
             await PlayerService.updatePlayerSeason(player.season.id, { rating: nextRating })
-            onRosterUpdate(
-                roster.map((currentPlayer) => (
-                    currentPlayer.id === player.id
-                        ? { ...currentPlayer, season: { ...currentPlayer.season, rating: nextRating } }
-                        : currentPlayer
-                ))
-            )
+            onRosterUpdate(roster.map(p => p.id === player.id ? { ...p, season: { ...p.season, rating: nextRating } } : p))
         } catch (err) {
-            console.error('Failed to update player rating:', err)
+            console.error('Rating update failed:', err)
         } finally {
-            clearRatingDraft(player.id)
-            setBusyLabel(player.id, null)
+            clearDraft(player.id)
+            markBusy(player.id, false)
         }
     }
 
-    const handleCutPlayer = async (player: RosterPlayer) => {
-        if (busyLabels[player.id]) return
-
-        setBusyLabel(player.id, 'Cutting...')
+    const handleCut = async (player: RosterPlayer) => {
+        if (busyIds.has(player.id)) return
+        markBusy(player.id, true)
         try {
             await PlayerService.deletePlayer(player.id)
-            onRosterUpdate(roster.filter((currentPlayer) => currentPlayer.id !== player.id))
+            onRosterUpdate(roster.filter(p => p.id !== player.id))
             setConfirmCutId(null)
-            clearRatingDraft(player.id)
         } catch (err) {
-            console.error('Failed to cut player:', err)
+            console.error('Cut player failed:', err)
         } finally {
-            setBusyLabel(player.id, null)
+            markBusy(player.id, false)
         }
+    }
+
+    const clearDraft = (id: string) => {
+        setRatingDrafts(prev => {
+            if (!(id in prev)) return prev
+            const next = { ...prev }
+            delete next[id]
+            return next
+        })
     }
 
     return (
         <div className="overflow-hidden rounded-2xl border border-primary/15 bg-background/80">
-            <div className="border-b border-primary/10 px-3 py-2">
-                <div className="flex flex-wrap items-start justify-between gap-3">
+            {/* Header */}
+            <div className="border-b border-primary/10 px-3 py-2.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                        <h3 className="text-sm font-semibold text-text">Roster Management</h3>
+                        <h3 className="text-sm font-semibold text-text">Depth Chart</h3>
                         <p className="text-[10px] text-text/55">
-                            {returningCount} returning • {incomingCount} incoming • {leavingCount} leaving
+                            {returningCount} returning + {incomingCount} incoming
                         </p>
                     </div>
                     <div className="text-right">
-                        <p className={`text-sm font-semibold ${overCapBy > 0 ? 'text-red-600' : 'text-text'}`}>
-                            Roster: {projectedRosterCount}/85
+                        <p className={`text-sm font-bold ${overCap > 0 ? 'text-red-600' : 'text-text'}`}>
+                            {projectedCount}/85
                         </p>
-                        <p className={`text-[10px] ${overCapBy > 0 ? 'text-red-500' : 'text-text/50'}`}>
-                            {overCapBy > 0 ? `Over the cap by ${overCapBy}` : `${85 - projectedRosterCount} spot${85 - projectedRosterCount === 1 ? '' : 's'} open`}
-                        </p>
+                        {overCap > 0 && (
+                            <p className="text-[10px] text-red-500">Cut {overCap} to advance</p>
+                        )}
                     </div>
                 </div>
 
-                <div className="mt-3 grid gap-2 md:grid-cols-[minmax(0,1fr)_152px]">
-                    <Input
-                        type="search"
-                        value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                        placeholder="Search players or positions..."
-                        aria-label="Search roster management players"
-                        className="h-8 text-base sm:text-xs"
-                    />
+                <div className="mt-2">
                     <Select
-                        value={statusFilter}
-                        onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
+                        value={positionGroupFilter}
+                        onChange={(e) => setPositionGroupFilter(e.target.value)}
                         className="h-8 text-base sm:text-xs"
-                        aria-label="Filter roster players by status"
+                        aria-label="Filter by position group"
                     >
-                        {statusFilterOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option === 'All' ? 'All statuses' : option}
-                            </option>
+                        <option value="All">All Positions</option>
+                        {Object.keys(positionGroups).map(group => (
+                            <option key={group} value={group}>{group}</option>
                         ))}
                     </Select>
                 </div>
-
-                <div className="mt-2 flex flex-wrap gap-1">
-                    {positionGroupOptions.map((option) => {
-                        const isActive = positionGroupFilter === option
-
-                        return (
-                            <Button
-                                key={option}
-                                type="button"
-                                variant={isActive ? 'default' : 'ghost'}
-                                size="sm"
-                                onClick={() => setPositionGroupFilter(option)}
-                                className="h-7 px-2.5 text-[11px] font-semibold"
-                            >
-                                {option}
-                            </Button>
-                        )
-                    })}
-                </div>
-
-                <p className="mt-2 text-[10px] text-text/45">
-                    Position changes save instantly. Rating changes save when the field loses focus.
-                </p>
             </div>
 
-            <div className="hidden border-b border-primary/10 bg-primary/5 px-3 py-2 text-[10px] font-medium text-text/45 md:grid md:grid-cols-[minmax(0,1.6fr)_92px_64px_88px_88px_136px_200px] md:items-center">
-                <span>Name</span>
-                <span>Position</span>
-                <span>Year</span>
-                <span>OVR</span>
-                <span>Dev</span>
-                <span>Status</span>
-                <span className="text-right">Actions</span>
-            </div>
+            {/* Depth Chart */}
+            <div className="divide-y divide-primary/10">
+                {depthChart.map(([position, players]) => (
+                    <div key={position} className="px-3 py-2">
+                        <div className="mb-1.5 flex items-center gap-2">
+                            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">
+                                {position}
+                            </span>
+                            <span className="text-[10px] text-text/40">{players.length} player{players.length !== 1 ? 's' : ''}</span>
+                        </div>
 
-            <div>
-                {filteredItems.length > 0 ? filteredItems.map((item) => {
-                    const isEditable = item.kind === 'roster' && item.status === 'Returning'
-                    const currentRatingValue = item.kind === 'roster'
-                        ? (ratingDrafts[item.player.id] ?? (item.player.season.rating?.toString() ?? ''))
-                        : ''
-                    const busyLabel = item.kind === 'roster' ? busyLabels[item.player.id] : null
+                        <div className="space-y-1">
+                            {players.map((item, depth) => {
+                                const isEditable = item.kind === 'roster' && item.status === 'Returning'
+                                const isBusy = busyIds.has(item.id)
+                                const ratingValue = item.player
+                                    ? (ratingDrafts[item.player.id] ?? (item.player.season.rating?.toString() ?? ''))
+                                    : ''
 
-                    return (
-                        <div
-                            key={item.key}
-                            className="grid grid-cols-2 gap-2 border-b border-primary/10 px-3 py-2 text-xs last:border-b-0 hover:bg-primary/5 md:grid-cols-[minmax(0,1.6fr)_92px_64px_88px_88px_136px_200px] md:items-center"
-                        >
-                            <div className="col-span-2 min-w-0 md:col-span-1">
-                                <p className="truncate font-semibold text-text">{item.name}</p>
-                                <p className="text-[10px] text-text/45 md:hidden">
-                                    {item.position} • {item.year} • {item.rating ?? '—'} OVR
-                                </p>
-                            </div>
-
-                            <div>
-                                <p className="mb-1 text-[10px] text-text/45 md:hidden">Position</p>
-                                {isEditable ? (
-                                    <Select
-                                        value={item.player.position}
-                                        onChange={(event) => handlePositionChange(item.player, event.target.value)}
-                                        disabled={Boolean(busyLabel)}
-                                        className="h-8 text-base sm:text-xs"
-                                        aria-label={`Change position for ${item.name}`}
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-primary/5"
                                     >
-                                        {positions.map((position) => (
-                                            <option key={position} value={position}>
-                                                {position}
-                                            </option>
-                                        ))}
-                                    </Select>
-                                ) : (
-                                    <div className="rounded-md border border-primary/10 bg-background/70 px-2 py-2 text-xs text-text/70">
-                                        {item.position}
-                                    </div>
-                                )}
-                            </div>
+                                        {/* Depth number */}
+                                        <span className="w-4 shrink-0 text-center text-[10px] font-bold text-text/30">
+                                            {depth + 1}
+                                        </span>
 
-                            <div>
-                                <p className="mb-1 text-[10px] text-text/45 md:hidden">Year</p>
-                                <div className="rounded-md border border-primary/10 bg-background/70 px-2 py-2 text-xs text-text/70">
-                                    {item.year}
-                                </div>
-                            </div>
+                                        {/* Name + year */}
+                                        <div className="min-w-0 flex-1">
+                                            <span className="text-xs font-semibold text-text">{item.name}</span>
+                                            <span className="ml-1.5 text-[10px] text-text/45">{item.year}</span>
+                                        </div>
 
-                            <div>
-                                <p className="mb-1 text-[10px] text-text/45 md:hidden">OVR</p>
-                                {isEditable ? (
-                                    <Input
-                                        type="number"
-                                        min={0}
-                                        max={99}
-                                        value={currentRatingValue}
-                                        onChange={(event) => setRatingDrafts((current) => ({
-                                            ...current,
-                                            [item.player.id]: event.target.value,
-                                        }))}
-                                        onBlur={(event) => handleRatingCommit(item.player, event.target.value)}
-                                        onKeyDown={(event) => {
-                                            if (event.key === 'Enter') {
-                                                event.currentTarget.blur()
-                                            }
-                                        }}
-                                        disabled={Boolean(busyLabel)}
-                                        className="h-8 text-base sm:text-xs"
-                                        aria-label={`Change overall rating for ${item.name}`}
-                                    />
-                                ) : (
-                                    <div className="rounded-md border border-primary/10 bg-background/70 px-2 py-2 text-xs text-text/70">
-                                        {item.rating ?? '—'}
-                                    </div>
-                                )}
-                            </div>
+                                        {/* Dev trait */}
+                                        {item.devTrait && item.devTrait !== 'Normal' && (
+                                            <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${getTraitClasses(item.devTrait)}`}>
+                                                {item.devTrait}
+                                            </span>
+                                        )}
 
-                            <div>
-                                <p className="mb-1 text-[10px] text-text/45 md:hidden">Dev Trait</p>
-                                <div className="flex h-8 items-center">
-                                    <span className={`inline-flex rounded-full px-2 py-1 text-[10px] font-semibold ${getTraitClasses(item.devTrait)}`}>
-                                        {item.devTrait ?? '—'}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <p className="mb-1 text-[10px] text-text/45 md:hidden">Status</p>
-                                <div className="flex min-h-8 items-center">
-                                    <span className={`inline-flex rounded-full px-2 py-1 text-[10px] font-semibold ${statusStyles[item.status]}`}>
-                                        {item.status}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="col-span-2 md:col-span-1 md:text-right">
-                                {isEditable ? (
-                                    <div className="flex flex-wrap items-center gap-1.5 md:justify-end">
-                                        {confirmCutId === item.player.id ? (
-                                            <>
-                                                <span className="text-[10px] text-red-500">Cut {item.name}?</span>
-                                                <Button
-                                                    type="button"
-                                                    variant="delete"
-                                                    size="sm"
-                                                    onClick={() => handleCutPlayer(item.player)}
-                                                    disabled={Boolean(busyLabel)}
-                                                    className="h-7 px-2 text-[10px] font-semibold"
-                                                >
-                                                    Confirm
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => setConfirmCutId(null)}
-                                                    disabled={Boolean(busyLabel)}
-                                                    className="h-7 px-2 text-[10px]"
-                                                >
-                                                    Cancel
-                                                </Button>
-                                            </>
+                                        {/* Rating */}
+                                        {isEditable && item.player ? (
+                                            <Input
+                                                type="number"
+                                                min={0}
+                                                max={99}
+                                                value={ratingValue}
+                                                onChange={(e) => setRatingDrafts(prev => ({ ...prev, [item.player!.id]: e.target.value }))}
+                                                onBlur={(e) => handleRatingCommit(item.player!, e.target.value)}
+                                                onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+                                                disabled={isBusy}
+                                                className="h-7 w-12 text-center text-xs"
+                                                aria-label={`OVR for ${item.name}`}
+                                            />
                                         ) : (
-                                            <>
-                                                {busyLabel && (
-                                                    <span className="text-[10px] text-text/45">{busyLabel}</span>
-                                                )}
-                                                <Button
+                                            <span className="w-12 text-center text-xs font-bold text-text">
+                                                {item.rating ?? '—'}
+                                            </span>
+                                        )}
+
+                                        {/* Status badge (non-returning only) */}
+                                        {item.status !== 'Returning' && (
+                                            <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${statusStyles[item.status]}`}>
+                                                {statusLabels[item.status]}
+                                            </span>
+                                        )}
+
+                                        {/* Position change */}
+                                        {isEditable && item.player && (
+                                            <Select
+                                                value={item.player.position}
+                                                onChange={(e) => handlePositionChange(item.player!, e.target.value)}
+                                                disabled={isBusy}
+                                                className="h-7 w-20 text-[10px]"
+                                                aria-label={`Position for ${item.name}`}
+                                            >
+                                                {positions.map(p => <option key={p} value={p}>{p}</option>)}
+                                            </Select>
+                                        )}
+
+                                        {/* Cut button */}
+                                        {isEditable && item.player && (
+                                            confirmCutId === item.player.id ? (
+                                                <div className="flex items-center gap-1">
+                                                    <Button
+                                                        type="button"
+                                                        variant="delete"
+                                                        size="sm"
+                                                        onClick={() => handleCut(item.player!)}
+                                                        disabled={isBusy}
+                                                        className="h-6 px-1.5 text-[9px]"
+                                                    >
+                                                        Yes
+                                                    </Button>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => setConfirmCutId(null)}
+                                                        className="h-6 px-1.5 text-[9px]"
+                                                    >
+                                                        No
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <button
                                                     type="button"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => setConfirmCutId(item.player.id)}
-                                                    disabled={Boolean(busyLabel)}
-                                                    className="h-8 text-[10px] font-semibold text-red-500 hover:text-red-600"
+                                                    onClick={() => setConfirmCutId(item.player!.id)}
+                                                    disabled={isBusy}
+                                                    className="rounded px-1.5 py-0.5 text-[9px] font-semibold text-red-500 transition-colors hover:bg-red-500/10 disabled:opacity-50"
                                                 >
                                                     Cut
-                                                </Button>
-                                            </>
+                                                </button>
+                                            )
                                         )}
                                     </div>
-                                ) : (
-                                    <p className="text-[10px] text-text/45">
-                                        {statusNotes[item.status as Exclude<RosterStatus, 'Returning'>]}
-                                    </p>
-                                )}
-                            </div>
+                                )
+                            })}
                         </div>
-                    )
-                }) : (
+                    </div>
+                ))}
+
+                {depthChart.length === 0 && (
                     <div className="px-3 py-6 text-center text-xs text-text/50">
-                        No players match the current search and filters.
+                        No players found.
                     </div>
                 )}
             </div>
