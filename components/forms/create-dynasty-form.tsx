@@ -239,7 +239,7 @@ export function CreateDynastyForm() {
                                         alt={`${conference} logo`}
                                         width={56}
                                         height={56}
-                                        className="h-14 w-14 rounded-md border bg-background object-contain p-1"
+                                        className="h-14 w-14 rounded-md border bg-white dark:bg-white object-contain p-1"
                                         unoptimized
                                     />
                                 ) : (

@@ -71,7 +71,7 @@ export function YearPickerHeader({
                         alt={selectedYearRecord.conference ?? ''}
                         width={24}
                         height={24}
-                        className="rounded"
+                        className="rounded bg-white dark:bg-white"
                         unoptimized
                     />
                     <span className="text-sm font-semibold text-text">{selectedYearRecord.conference}</span>

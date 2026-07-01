@@ -28,12 +28,9 @@ export function SidebarNav({ items, active, onChange }: SidebarNavProps) {
 
     const activeLabel = items.find(i => i.key === active)?.name
 
-    const itemClasses = (isActive: boolean) =>
-        `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-            isActive
-                ? 'bg-primary text-white'
-                : 'text-text/70 hover:bg-primary/10 hover:text-text'
-        }`
+    const itemClasses = (isActive: boolean) => `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+        isActive ? 'bg-primary text-white' : 'text-text/70 hover:bg-primary/10 hover:text-text'
+    }`
 
     return (
         <>

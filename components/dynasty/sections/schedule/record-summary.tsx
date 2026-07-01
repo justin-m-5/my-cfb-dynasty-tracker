@@ -69,7 +69,7 @@ export function RecordSummary({ dynasty, games }: RecordSummaryProps) {
                                 alt={dynasty.conference!}
                                 width={24}
                                 height={24}
-                                className="rounded"
+                                className="rounded bg-white dark:bg-white"
                                 unoptimized
                             />
                         ) : undefined
