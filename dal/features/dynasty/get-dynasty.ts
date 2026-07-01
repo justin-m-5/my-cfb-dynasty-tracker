@@ -21,7 +21,6 @@ export interface Dynasty {
     school_nickname: string | null
     school_abbrev: string | null
     conference: string | null
-    stadium: string | null
     primary_color: string | null
     secondary_color: string | null
     accent_color: string | null

@@ -32,8 +32,9 @@ export function QuickEditRow({ game, dynasty, updateGame, userLogos, oppLogos }:
     // Handle stadium auto-selection
     useEffect(() => {
         if (game.location === 'home') {
-            // Use dynasty's stadium (you may need to add this to Dynasty type)
-            updateGame('stadium', dynasty.stadium || null)
+            // Use dynasty's stadium from fbsTeams lookup
+            const dynastyTeam = fbsTeams.find(t => t.name === dynasty.school_name)
+            updateGame('stadium', dynastyTeam?.stadium || null)
         } else if (game.location === 'away') {
             // Use opponent's stadium
             const oppTeam = fbsTeams.find(t => t.name === game.opponent)
@@ -43,7 +44,7 @@ export function QuickEditRow({ game, dynasty, updateGame, userLogos, oppLogos }:
             updateGame('stadium', null)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [game.location, game.opponent, dynasty.stadium])
+    }, [game.location, game.opponent, dynasty.school_name])
 
     const quarters = (game.score_by_quarter ?? []) as QuarterScore[]
     const labels = ['Q1', 'Q2', 'Q3', 'Q4']
