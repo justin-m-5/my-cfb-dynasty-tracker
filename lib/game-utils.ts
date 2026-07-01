@@ -31,10 +31,10 @@ export const MAX_RANKINGS_WEEK = 19
 
 export function getResultColor(result: string): string {
     switch (result) {
-        case 'W': return 'bg-green-100/80 text-green-900 dark:bg-green-950/40 dark:text-green-200'
-        case 'L': return 'bg-red-100/80 text-red-900 dark:bg-red-950/40 dark:text-red-200'
-        case 'Bye': return 'bg-slate-100/80 text-slate-700 dark:bg-slate-800/40 dark:text-slate-300'
-        default: return 'bg-background/70 text-text'
+        case 'W': return 'bg-green-600/10 border-green-600/20'
+        case 'L': return 'bg-red-600/10 border-red-600/20'
+        case 'Bye': return 'bg-text/5 border-text/10'
+        default: return 'bg-background/70 border-primary/15'
     }
 }
 
