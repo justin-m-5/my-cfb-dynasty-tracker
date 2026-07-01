@@ -145,6 +145,7 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                     value={form.school}
                     teams={fbsTeams}
                     onChange={(name) => update('school', name)}
+                    inputClassName="h-8 text-base sm:text-xs"
                 />
                 <Button
                     size="sm"

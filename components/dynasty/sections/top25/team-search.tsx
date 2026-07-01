@@ -14,6 +14,7 @@ interface TeamSearchProps {
     value: string
     teams: FbsTeam[]
     onChange: (name: string) => void
+    inputClassName?: string
 }
 
 function matchesTeam(team: FbsTeam, query: string) {
@@ -26,7 +27,7 @@ function startsWithMatch(team: FbsTeam, query: string) {
     return [team.name, team.abbrev, team.nickName].some(field => field.toLowerCase().startsWith(normalizedQuery))
 }
 
-export function TeamSearch({ value, teams, onChange }: TeamSearchProps) {
+export function TeamSearch({ value, teams, onChange, inputClassName }: TeamSearchProps) {
     const [inputValue, setInputValue] = useState(value)
     const [isOpen, setIsOpen] = useState(false)
     const [activeIndex, setActiveIndex] = useState(-1)
@@ -128,7 +129,7 @@ export function TeamSearch({ value, teams, onChange }: TeamSearchProps) {
                         setIsOpen(false)
                     }
                 }}
-                className="h-10 border-primary/15 bg-background/90 pr-3 text-base sm:text-sm"
+                className={cn("h-10 pr-3 text-base sm:text-sm", inputClassName)}
             />
 
             {isOpen && (
