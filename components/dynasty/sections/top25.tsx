@@ -141,32 +141,34 @@ export function Top25({ dynastyId }: Top25Props) {
         <div className="space-y-4 pt-10">
             <Card>
                 <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <div className="flex items-center gap-3">
-                            <CardTitle className="text-base">Top 25 Poll</CardTitle>
+                    <div className="flex flex-col gap-3">
+                        <CardTitle className="text-base">Top 25 Poll</CardTitle>
+                        
+                        <div className="flex items-center gap-3 flex-wrap">
                             <Select
                                 value={String(week)}
                                 onChange={(e) => setWeek(Number(e.target.value))}
-                                className="h-8 w-32 text-xs"
+                                className="h-8 w-40 text-xs"
                             >
                                 {weekOptions.map(opt => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                                 ))}
                             </Select>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            {saved && <span className="text-xs text-green-600 font-medium">Saved!</span>}
-                            <Button
-                                bg="var(--green-600)"
-                                text="white"
-                                size="sm"
-                                onClick={handleSave}
-                                disabled={saving}
-                                className="flex items-center gap-1 text-xs font-semibold"
-                            >
-                                <Save className="h-3.5 w-3.5" />
-                                {saving ? 'Saving...' : 'Save'}
-                            </Button>
+                            
+                            <div className="flex items-center gap-2">
+                                {saved && <span className="text-xs text-green-600 font-medium">Saved!</span>}
+                                <Button
+                                    bg="var(--green-600)"
+                                    text="white"
+                                    size="sm"
+                                    onClick={handleSave}
+                                    disabled={saving}
+                                    className="flex items-center gap-1 text-xs font-semibold"
+                                >
+                                    <Save className="h-3.5 w-3.5" />
+                                    {saving ? 'Saving...' : 'Save'}
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </CardHeader>
