@@ -2,13 +2,16 @@
 
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useEffect, useState } from 'react'
 import { fbsTeams } from '@/lib/fbs-teams'
+import { neutralStadiums } from '@/lib/neutral-stadiums'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 import { LogoImage } from '@/components/ui/logo-image'
 import { getSchoolLogoCandidates } from '@/lib/logos'
+import { Plus } from 'lucide-react'
 import type { Game, QuarterScore } from '@/dal/features/games'
 import type { Dynasty } from '@/dal/features/dynasty'
 
@@ -26,35 +29,65 @@ export function QuickEditRow({ game, dynasty, updateGame, userLogos, oppLogos }:
         []
     )
 
+    // Handle stadium auto-selection
+    useEffect(() => {
+        if (game.location === 'home') {
+            // Use dynasty's stadium (you may need to add this to Dynasty type)
+            updateGame('stadium', dynasty.stadium || null)
+        } else if (game.location === 'away') {
+            // Use opponent's stadium
+            const oppTeam = fbsTeams.find(t => t.name === game.opponent)
+            updateGame('stadium', oppTeam?.stadium || null)
+        } else if (game.location === 'neutral' && !game.stadium) {
+            // Leave null for neutral, user will pick
+            updateGame('stadium', null)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [game.location, game.opponent, dynasty.stadium])
+
     const quarters = (game.score_by_quarter ?? []) as QuarterScore[]
     const labels = ['Q1', 'Q2', 'Q3', 'Q4']
+    const hasOT = quarters.length > 4
 
     const updateQuarter = (qi: number, side: 'home' | 'away', val: string) => {
         const updated = [...quarters]
         updated[qi] = { ...updated[qi], [side]: Number(val) || 0 }
         updateGame('score_by_quarter', updated)
 
-        // Auto-calculate totals if score is null or empty
-        const yourScore = game.score?.split('-')[0] ?? ''
-        const oppScore = game.score?.split('-')[1] ?? ''
+        // Auto-calculate totals and result
+        const homeTotal = updated.reduce((sum, q) => sum + (q.home || 0), 0)
+        const awayTotal = updated.reduce((sum, q) => sum + (q.away || 0), 0)
         
-        if (!yourScore || !oppScore) {
-            const homeTotal = updated.reduce((sum, q) => sum + (q.home || 0), 0)
-            const awayTotal = updated.reduce((sum, q) => sum + (q.away || 0), 0)
-            
-            // Determine which side is "you" based on location
-            const [yourTotal, oppTotal] = game.location === 'away' 
-                ? [awayTotal, homeTotal] 
-                : [homeTotal, awayTotal]
-            
-            updateGame('score', `${yourTotal}-${oppTotal}`)
+        // Determine which side is "you" based on location
+        const [yourTotal, oppTotal] = game.location === 'away' 
+            ? [awayTotal, homeTotal] 
+            : [homeTotal, awayTotal]
+        
+        updateGame('score', `${yourTotal}-${oppTotal}`)
+        
+        // Auto-calculate result
+        if (yourTotal > oppTotal) {
+            updateGame('result', 'W')
+        } else if (yourTotal < oppTotal) {
+            updateGame('result', 'L')
+        } else if (yourTotal === oppTotal && (yourTotal > 0 || oppTotal > 0)) {
+            updateGame('result', 'T')
+        } else {
+            updateGame('result', 'N/A')
         }
+    }
+
+    const addOT = () => {
+        const updated = [...quarters, { home: 0, away: 0 }]
+        updateGame('score_by_quarter', updated)
     }
 
     const homeName = game.location === 'away' ? (game.opponent || 'Opponent') : (dynasty.school_abbrev ?? dynasty.school_name)
     const awayName = game.location === 'away' ? (dynasty.school_abbrev ?? dynasty.school_name) : (game.opponent || 'Opponent')
     const homeLogos = game.location === 'away' ? oppLogos : userLogos
     const awayLogos = game.location === 'away' ? userLogos : oppLogos
+
+    const [yourScore, oppScore] = game.score?.split('-').map(s => parseInt(s) || 0) ?? [0, 0]
 
     return (
         <div className="space-y-4">
@@ -87,57 +120,60 @@ export function QuickEditRow({ game, dynasty, updateGame, userLogos, oppLogos }:
                         <option value="none">None</option>
                     </Select>
                 </div>
-                <div>
-                    <Label className="text-xs">Result</Label>
-                    <Select
-                        value={game.result}
-                        onChange={(e) => updateGame('result', e.target.value)}
-                        className="mt-1 h-9 text-sm"
-                    >
-                        <option value="N/A">—</option>
-                        <option value="W">Win</option>
-                        <option value="L">Loss</option>
-                        <option value="T">Tie</option>
-                        <option value="Bye">Bye</option>
-                    </Select>
-                </div>
-                <div>
-                    <Label className="text-xs">Your Score</Label>
-                    <Input
-                        type="number"
-                        min={0}
-                        value={game.score?.split('-')[0] ?? ''}
-                        onChange={(e) => {
-                            const opp = game.score?.split('-')[1] ?? '0'
-                            updateGame('score', `${e.target.value}-${opp}`)
-                        }}
-                        className="mt-1 h-9 w-full text-center text-sm sm:w-20"
-                    />
-                </div>
-                <div>
-                    <Label className="text-xs">Opp Score</Label>
-                    <Input
-                        type="number"
-                        min={0}
-                        value={game.score?.split('-')[1] ?? ''}
-                        onChange={(e) => {
-                            const you = game.score?.split('-')[0] ?? '0'
-                            updateGame('score', `${you}-${e.target.value}`)
-                        }}
-                        className="mt-1 h-9 w-full text-center text-sm sm:w-20"
-                    />
-                </div>
+                
+                {/* Stadium field: auto-filled or dropdown for neutral */}
+                {game.location === 'neutral' ? (
+                    <div className="col-span-2 sm:flex-1">
+                        <Label className="text-xs">Stadium</Label>
+                        <Select
+                            value={game.stadium || ''}
+                            onChange={(e) => updateGame('stadium', e.target.value || null)}
+                            className="mt-1 h-9 text-sm"
+                        >
+                            <option value="">Select Neutral Site</option>
+                            {neutralStadiums.map((s) => (
+                                <option key={s} value={s}>{s}</option>
+                            ))}
+                        </Select>
+                    </div>
+                ) : (
+                    <div className="col-span-2 sm:flex-1">
+                        <Label className="text-xs">Stadium</Label>
+                        <Input
+                            value={game.stadium || '—'}
+                            readOnly
+                            className="mt-1 h-9 text-sm bg-background/50"
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Score by Quarter */}
             <div>
-                <Label className="mb-2 text-xs">Score by Quarter</Label>
+                <div className="mb-2 flex items-center justify-between">
+                    <Label className="text-xs">Score by Quarter</Label>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addOT}
+                        className="h-7 text-xs"
+                    >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Add OT
+                    </Button>
+                </div>
                 <div className="overflow-x-auto rounded-lg border border-primary/20 bg-background/50">
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="border-b border-primary/20 text-xs text-text/60">
                                 <th className="py-2 pl-2 pr-4 text-left font-medium">Team</th>
                                 {labels.map(l => <th key={l} className="px-2 py-2 text-center font-medium">{l}</th>)}
+                                {hasOT && quarters.slice(4).map((_, i) => (
+                                    <th key={`ot${i}`} className="px-2 py-2 text-center font-medium">
+                                        {i === 0 ? 'OT' : `${i + 1}OT`}
+                                    </th>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
@@ -179,6 +215,19 @@ export function QuickEditRow({ game, dynasty, updateGame, userLogos, oppLogos }:
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            {/* Total Scores (read-only, at bottom) */}
+            <div className="flex items-center justify-center gap-8 rounded-lg border border-primary/20 bg-background/50 py-3">
+                <div className="text-center">
+                    <p className="text-xs text-text/60 mb-1">Your Score</p>
+                    <p className="text-2xl font-bold text-text tabular-nums">{yourScore}</p>
+                </div>
+                <div className="text-4xl font-bold text-text/30">-</div>
+                <div className="text-center">
+                    <p className="text-xs text-text/60 mb-1">Opp Score</p>
+                    <p className="text-2xl font-bold text-text tabular-nums">{oppScore}</p>
                 </div>
             </div>
         </div>

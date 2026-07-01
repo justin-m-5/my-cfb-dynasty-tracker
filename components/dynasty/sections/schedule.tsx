@@ -64,6 +64,7 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                 result: 'N/A',
                 score: null,
                 score_by_quarter: null,
+                stadium: null,
                 team_stats: null,
                 recap: null,
                 is_user_controlled: false,

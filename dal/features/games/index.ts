@@ -20,6 +20,7 @@ export interface Game {
     team_stats: Record<string, unknown> | null
     recap: string | null
     is_user_controlled: boolean
+    stadium: string | null
 }
 
 export const GameService = {

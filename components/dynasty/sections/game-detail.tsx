@@ -97,6 +97,7 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
                 result: game.result,
                 score: game.score,
                 score_by_quarter: game.score_by_quarter,
+                stadium: game.stadium,
                 team_stats: game.team_stats,
                 recap: game.recap,
             })
