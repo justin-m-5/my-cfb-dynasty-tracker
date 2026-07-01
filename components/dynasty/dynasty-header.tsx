@@ -64,29 +64,36 @@ export function DynastyHeader({ dynastyId }: DynastyHeaderProps) {
                         </h1>
 
                         {/* Row 2: School name + Conference (wraps together) */}
-                        <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-                            <div 
-                                className="font-medium text-text/90"
-                                style={{ fontSize: 'var(--text-dynasty-school)' }}
-                            >
-                                {dynasty.school_name} {dynasty.school_nickname}
-                            </div>
+                        <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-4">
+                            <InfoRow
+                                label="School"
+                                value={`${dynasty.school_name} ${dynasty.school_nickname}`}
+                            />
 
-                            <div 
-                                className="flex items-center gap-1.5 text-text/70"
-                                style={{ fontSize: 'var(--text-dynasty-meta)' }}
-                            >
-                                {conferenceLogo && (
-                                    <Image
-                                        src={conferenceLogo}
-                                        alt=""
-                                        width={16}
-                                        height={16}
-                                        className="rounded"
-                                        unoptimized
-                                    />
-                                )}
-                                <span>{dynasty.conference ?? "Independent"}</span>
+                            {/* Conference with logo */}
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                                <span 
+                                    className="font-bold uppercase text-text/50"
+                                    style={{ fontSize: 'var(--text-dynasty-label)' }}
+                                >
+                                    Conference:
+                                </span>
+                                <div 
+                                    className="flex items-center gap-1.5 font-semibold text-text"
+                                    style={{ fontSize: 'var(--text-dynasty-meta)' }}
+                                >
+                                    {conferenceLogo && (
+                                        <Image
+                                            src={conferenceLogo}
+                                            alt=""
+                                            width={16}
+                                            height={16}
+                                            className="rounded"
+                                            unoptimized
+                                        />
+                                    )}
+                                    <span>{dynasty.conference ?? "Independent"}</span>
+                                </div>
                             </div>
                         </div>
 
