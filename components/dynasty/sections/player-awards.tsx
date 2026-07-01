@@ -108,31 +108,40 @@ export function PlayerAwards({ dynastyId }: PlayerAwardsProps) {
 
     return (
         <div className="space-y-4 pt-10">
+            {showForm && (
+                <div className="p-4 rounded-lg border border-primary/15 bg-primary/5">
+                    <AwardForm
+                        key={editing?.id ?? 'new'}
+                        players={players}
+                        editing={editing}
+                        saving={saving}
+                        onSave={handleSave}
+                        onCancel={handleCancel}
+                    />
+                </div>
+            )}
+
             <Card>
                 <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                        <CardTitle className="text-base">Player Awards</CardTitle>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <CardTitle className="text-base">
+                            Player Awards ({awards.length})
+                        </CardTitle>
                         {!showForm && (
-                            <Button size="sm" bg="var(--primary)" text="white" onClick={() => setShowForm(true)}>
-                                <Plus className="h-3.5 w-3.5 mr-1" />
+                            <Button
+                                bg="var(--primary)"
+                                text="white"
+                                size="sm"
+                                onClick={() => { setEditing(null); setShowForm(true) }}
+                                className="flex items-center gap-1 text-xs font-semibold"
+                            >
+                                <Plus className="h-3.5 w-3.5" />
                                 Add Award
                             </Button>
                         )}
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {showForm && (
-                        <div className="mb-4 p-3 rounded-lg border border-primary/15 bg-primary/5">
-                            <AwardForm
-                                key={editing?.id ?? 'new'}
-                                players={players}
-                                editing={editing}
-                                saving={saving}
-                                onSave={handleSave}
-                                onCancel={handleCancel}
-                            />
-                        </div>
-                    )}
                     <AwardList
                         awards={awards}
                         onEdit={handleEdit}
