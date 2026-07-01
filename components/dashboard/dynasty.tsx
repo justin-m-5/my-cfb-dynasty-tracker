@@ -64,7 +64,7 @@ export function Dynasty({ dynasty, onDelete }: DynastyProps) {
                             alt={dynasty.conference ?? ''}
                             width={24}
                             height={24}
-                            className="rounded object-contain bg-white dark:bg-white"
+                            className="rounded bg-white dark:bg-white object-contain p-0.5"
                             unoptimized
                         />
                     ) : null}

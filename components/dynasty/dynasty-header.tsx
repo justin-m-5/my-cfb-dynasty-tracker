@@ -93,7 +93,7 @@ export function DynastyHeader({ dynastyId }: DynastyHeaderProps) {
                                             alt=""
                                             width={24}
                                             height={24}
-                                            className="rounded bg-white dark:bg-white"
+                                            className="rounded bg-white dark:bg-white object-contain p-0.5"
                                             unoptimized
                                         />
                                     )}
