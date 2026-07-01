@@ -81,6 +81,7 @@ export function RosterManagement({
     onRosterUpdate,
 }: RosterManagementProps) {
     const [positionGroupFilter, setPositionGroupFilter] = useState<string>('Offense')
+    const [selectedPosition, setSelectedPosition] = useState<string>('QB')
     const [ratingDrafts, setRatingDrafts] = useState<Record<string, string>>({})
     const [busyIds, setBusyIds] = useState<Set<string>>(new Set())
     const [confirmCutId, setConfirmCutId] = useState<string | null>(null)
@@ -143,29 +144,17 @@ export function RosterManagement({
         return [...rosterItems, ...incomingTransfers, ...incomingRecruits]
     }, [draftedNames, recruits, roster, transfers, transferOutNames])
 
-    // Group by position, sorted by rating (depth chart style)
-    const depthChart = useMemo(() => {
-        const groupPositions = (recruitPositionGroups as Record<string, readonly string[]>)[positionGroupFilter] ?? []
-        const filtered = allItems.filter(item => groupPositions.includes(item.position))
+    // Positions in the current group tab
+    const currentGroupPositions = useMemo(() => {
+        return [...((recruitPositionGroups as Record<string, readonly string[]>)[positionGroupFilter] ?? [])]
+    }, [positionGroupFilter])
 
-        const groups: Record<string, DepthChartItem[]> = {}
-        // Initialize in position order from the group
-        for (const pos of groupPositions) {
-            groups[pos] = []
-        }
-        for (const item of filtered) {
-            if (!groups[item.position]) groups[item.position] = []
-            groups[item.position].push(item)
-        }
-
-        // Sort within each position by rating desc
-        for (const pos of Object.keys(groups)) {
-            groups[pos].sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1))
-        }
-
-        // Return in position order (matching the group definition)
-        return Object.entries(groups).filter(([, players]) => players.length > 0)
-    }, [allItems, positionGroupFilter])
+    // Players at the selected position, sorted by rating desc
+    const playersAtPosition = useMemo(() => {
+        return allItems
+            .filter(item => item.position === selectedPosition)
+            .sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1))
+    }, [allItems, selectedPosition])
 
     const returningCount = allItems.filter(i => i.status === 'Returning').length
     const incomingCount = allItems.filter(i => i.status === 'Incoming Transfer' || i.status === 'Incoming Recruit').length
@@ -261,146 +250,142 @@ export function RosterManagement({
                         label: group === 'Other' ? 'ATH' : group,
                     }))}
                     active={positionGroupFilter}
-                    onChange={setPositionGroupFilter}
+                    onChange={(key) => {
+                        setPositionGroupFilter(key)
+                        const groupPositions = (recruitPositionGroups as Record<string, readonly string[]>)[key] ?? []
+                        setSelectedPosition(groupPositions[0] ?? '')
+                    }}
                     className="mt-2"
                 />
+
+                {/* Position dropdown */}
+                <Select
+                    value={selectedPosition}
+                    onChange={(e) => setSelectedPosition(e.target.value)}
+                    className="mt-2 h-8 text-base sm:text-xs"
+                    aria-label="Select position"
+                >
+                    {currentGroupPositions.map(pos => (
+                        <option key={pos} value={pos}>
+                            {pos} ({allItems.filter(i => i.position === pos).length} players)
+                        </option>
+                    ))}
+                </Select>
             </div>
 
-            {/* Depth Chart */}
-            <div className="divide-y divide-primary/10">
-                {depthChart.map(([position, players]) => (
-                    <div key={position} className="px-3 py-3">
-                        <div className="mb-2 flex items-center gap-2">
-                            <span className="rounded bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary">
-                                {position}
-                            </span>
-                            <span className="text-[10px] text-text/40">{players.length} player{players.length !== 1 ? 's' : ''}</span>
-                        </div>
+            {/* Player Cards */}
+            <div className="space-y-3 p-3">
+                {playersAtPosition.length > 0 ? playersAtPosition.map((item, depth) => {
+                    const isEditable = item.kind === 'roster' && item.status === 'Returning'
+                    const isBusy = busyIds.has(item.id)
+                    const ratingValue = item.player
+                        ? (ratingDrafts[item.player.id] ?? (item.player.season.rating?.toString() ?? ''))
+                        : ''
 
-                        <div className="space-y-2">
-                            {players.map((item, depth) => {
-                                const isEditable = item.kind === 'roster' && item.status === 'Returning'
-                                const isBusy = busyIds.has(item.id)
-                                const ratingValue = item.player
-                                    ? (ratingDrafts[item.player.id] ?? (item.player.season.rating?.toString() ?? ''))
-                                    : ''
+                    return (
+                        <div
+                            key={item.id}
+                            className="rounded-xl border border-primary/10 bg-background/70 p-3"
+                        >
+                            {/* Row 1: Depth badge + Name + Status */}
+                            <div className="flex items-center gap-2.5">
+                                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">
+                                    {depth + 1}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                    <p className="truncate text-sm font-semibold text-text">{item.name}</p>
+                                    <p className="text-[10px] text-text/50">{item.year}{item.devTrait && item.devTrait !== 'Normal' ? ` • ${item.devTrait}` : ''}</p>
+                                </div>
+                                {item.status !== 'Returning' && (
+                                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusStyles[item.status]}`}>
+                                        {statusLabels[item.status]}
+                                    </span>
+                                )}
+                            </div>
 
-                                return (
-                                    <div
-                                        key={item.id}
-                                        className="rounded-xl border border-primary/10 bg-background/70 px-3 py-2.5"
-                                    >
-                                        {/* Top row: depth, name, status */}
-                                        <div className="flex items-center gap-2">
-                                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
-                                                {depth + 1}
-                                            </span>
-                                            <div className="min-w-0 flex-1">
-                                                <span className="text-xs font-semibold text-text">{item.name}</span>
-                                                <span className="ml-1.5 text-[10px] text-text/45">{item.year}</span>
-                                            </div>
-                                            {item.status !== 'Returning' && (
-                                                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusStyles[item.status]}`}>
-                                                    {statusLabels[item.status]}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        {/* Bottom row: rating, dev trait, position, cut */}
-                                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                                            {/* OVR */}
-                                            {isEditable && item.player ? (
-                                                <div className="flex items-center gap-1">
-                                                    <span className="text-[10px] text-text/45">OVR</span>
-                                                    <Input
-                                                        type="number"
-                                                        min={0}
-                                                        max={99}
-                                                        value={ratingValue}
-                                                        onChange={(e) => setRatingDrafts(prev => ({ ...prev, [item.player!.id]: e.target.value }))}
-                                                        onBlur={(e) => handleRatingCommit(item.player!, e.target.value)}
-                                                        onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
-                                                        disabled={isBusy}
-                                                        className="h-7 w-14 text-center text-xs"
-                                                        aria-label={`OVR for ${item.name}`}
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <span className="rounded-md bg-primary/5 px-2 py-1 text-[10px] font-bold text-text">
-                                                    {item.rating ?? '—'} OVR
-                                                </span>
-                                            )}
-
-                                            {/* Dev Trait */}
-                                            {item.devTrait && item.devTrait !== 'Normal' && (
-                                                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${getTraitClasses(item.devTrait)}`}>
-                                                    {item.devTrait}
-                                                </span>
-                                            )}
-
-                                            {/* Position change */}
-                                            {isEditable && item.player && (
-                                                <Select
-                                                    value={item.player.position}
-                                                    onChange={(e) => handlePositionChange(item.player!, e.target.value)}
-                                                    disabled={isBusy}
-                                                    className="h-7 w-24 text-[11px]"
-                                                    aria-label={`Position for ${item.name}`}
-                                                >
-                                                    {positions.map(p => <option key={p} value={p}>{p}</option>)}
-                                                </Select>
-                                            )}
-
-                                            {/* Spacer */}
-                                            <div className="flex-1" />
-
-                                            {/* Cut */}
-                                            {isEditable && item.player && (
-                                                confirmCutId === item.player.id ? (
-                                                    <div className="flex items-center gap-1.5">
-                                                        <span className="text-[10px] text-red-500">Cut?</span>
-                                                        <Button
-                                                            type="button"
-                                                            variant="delete"
-                                                            size="sm"
-                                                            onClick={() => handleCut(item.player!)}
-                                                            disabled={isBusy}
-                                                            className="h-6 px-2 text-[10px]"
-                                                        >
-                                                            Yes
-                                                        </Button>
-                                                        <Button
-                                                            type="button"
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() => setConfirmCutId(null)}
-                                                            className="h-6 px-2 text-[10px]"
-                                                        >
-                                                            No
-                                                        </Button>
-                                                    </div>
-                                                ) : (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setConfirmCutId(item.player!.id)}
-                                                        disabled={isBusy}
-                                                        className="rounded-md px-2 py-1 text-[10px] font-semibold text-red-500 transition-colors hover:bg-red-500/10 disabled:opacity-50"
-                                                    >
-                                                        Cut
-                                                    </button>
-                                                )
-                                            )}
-                                        </div>
+                            {/* Row 2: Editable fields (only for returning roster players) */}
+                            {isEditable && item.player ? (
+                                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                                    <div>
+                                        <label className="mb-1 block text-[10px] text-text/45">Overall</label>
+                                        <Input
+                                            type="number"
+                                            min={0}
+                                            max={99}
+                                            value={ratingValue}
+                                            onChange={(e) => setRatingDrafts(prev => ({ ...prev, [item.player!.id]: e.target.value }))}
+                                            onBlur={(e) => handleRatingCommit(item.player!, e.target.value)}
+                                            onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+                                            disabled={isBusy}
+                                            className="h-8 text-sm"
+                                            aria-label={`OVR for ${item.name}`}
+                                        />
                                     </div>
-                                )
-                            })}
+                                    <div>
+                                        <label className="mb-1 block text-[10px] text-text/45">Position</label>
+                                        <Select
+                                            value={item.player.position}
+                                            onChange={(e) => handlePositionChange(item.player!, e.target.value)}
+                                            disabled={isBusy}
+                                            className="h-8 text-sm"
+                                            aria-label={`Position for ${item.name}`}
+                                        >
+                                            {positions.map(p => <option key={p} value={p}>{p}</option>)}
+                                        </Select>
+                                    </div>
+                                    <div className="col-span-2 flex items-end sm:col-span-2 sm:justify-end">
+                                        {confirmCutId === item.player.id ? (
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs text-red-500">Cut this player?</span>
+                                                <Button
+                                                    type="button"
+                                                    variant="delete"
+                                                    size="sm"
+                                                    onClick={() => handleCut(item.player!)}
+                                                    disabled={isBusy}
+                                                    className="h-7 text-xs"
+                                                >
+                                                    Confirm
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => setConfirmCutId(null)}
+                                                    className="h-7 text-xs"
+                                                >
+                                                    Cancel
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setConfirmCutId(item.player!.id)}
+                                                disabled={isBusy}
+                                                className="h-7 text-xs font-semibold text-red-500 hover:text-red-600"
+                                            >
+                                                Cut Player
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="mt-2 flex items-center gap-3 text-xs text-text/50">
+                                    {item.rating && <span className="font-bold text-text">{item.rating} OVR</span>}
+                                    {item.devTrait && item.devTrait !== 'Normal' && (
+                                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${getTraitClasses(item.devTrait)}`}>
+                                            {item.devTrait}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                    </div>
-                ))}
-
-                {depthChart.length === 0 && (
-                    <div className="px-3 py-6 text-center text-xs text-text/50">
-                        No players at this position group.
+                    )
+                }) : (
+                    <div className="py-6 text-center text-xs text-text/50">
+                        No players at {selectedPosition}.
                     </div>
                 )}
             </div>
