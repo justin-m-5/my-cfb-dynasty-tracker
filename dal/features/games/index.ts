@@ -19,7 +19,6 @@ export interface Game {
     score_by_quarter: QuarterScore[] | null
     team_stats: Record<string, unknown> | null
     recap: string | null
-    is_user_controlled: boolean
     stadium: string | null
 }
 

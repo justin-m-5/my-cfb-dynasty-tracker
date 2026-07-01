@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Trophy } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { LogoImage } from '@/components/ui/logo-image'
@@ -77,7 +77,7 @@ export function Dynasty({ dynasty, onDelete }: DynastyProps) {
                     <span>
                         {dynasty.total_wins}W - {dynasty.total_losses}L
                     </span>
-                    <span>🏆 {dynasty.championships}</span>
+                    <span className="inline-flex items-center gap-1"><Trophy className="h-3 w-3" />{dynasty.championships}</span>
                     <span>Seasons: {dynasty.seasons_played}</span>
                 </div>
             </div>

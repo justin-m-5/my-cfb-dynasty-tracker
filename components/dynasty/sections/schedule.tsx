@@ -67,7 +67,6 @@ export function Schedule({ dynastyId }: ScheduleProps) {
                 stadium: null,
                 team_stats: null,
                 recap: null,
-                is_user_controlled: false,
             })
             if (created) {
                 setGames(prev => [...prev, created])

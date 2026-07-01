@@ -1,7 +1,7 @@
 // components/dynasty/sections/schedule/game-row.tsx
 
 import Link from 'next/link'
-import { Trophy, TrendingDown, Minus, Calendar, Pencil, Gamepad2 } from 'lucide-react'
+import { Trophy, TrendingDown, Minus, Calendar, Pencil, MapPin } from 'lucide-react'
 
 import { fbsTeams } from '@/lib/fbs-teams'
 import { getWeekDisplayName, getResultColor, parseScore } from '@/lib/game-utils'
@@ -83,15 +83,10 @@ export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
                         <span className="hidden sm:block text-[11px] text-text/50 truncate">
                             {oppTeam?.conference}
                             {isConf && <span className="ml-1 text-amber-600 font-semibold">• Conf</span>}
-                            {game.stadium && <span className="ml-2">📍 {game.stadium}</span>}
+                            {game.stadium && <span className="ml-2 inline-flex items-center gap-0.5"><MapPin className="h-3 w-3 inline" />{game.stadium}</span>}
                         </span>
                     </div>
                 </div>
-
-                {/* User controlled */}
-                {game.is_user_controlled && (
-                    <Gamepad2 className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
-                )}
 
                 {/* Result + Score */}
                 {game.result && game.result !== 'N/A' && (
