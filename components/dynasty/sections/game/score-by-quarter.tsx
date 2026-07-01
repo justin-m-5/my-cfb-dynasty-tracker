@@ -72,7 +72,6 @@ export function ScoreByQuarter({ game, dynasty, updateGame, userLogos, oppLogos 
                 <Label className="text-xs">Score by Quarter</Label>
                 <Button
                     type="button"
-                    variant="outline"
                     size="sm"
                     onClick={toggleOT}
                     className="h-7 text-xs"
