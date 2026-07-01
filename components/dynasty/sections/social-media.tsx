@@ -6,11 +6,12 @@ import { useState, useEffect, useMemo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, TrendingUp, Heart, Star, RefreshCw, Share2, Repeat2 } from 'lucide-react'
-import type { Dynasty } from '@/dal/features/dynasty'
-import type { Game } from '@/dal/features/games'
-import type { RosterPlayer } from '@/dal/features/players'
-import type { Recruit } from '@/dal/features/recruits'
-import type { Transfer } from '@/dal/features/transfers'
+import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
+import { YearRecordService } from '@/dal/features/year-records'
+import { GameService, type Game } from '@/dal/features/games'
+import { PlayerService, type RosterPlayer } from '@/dal/features/players'
+import { RecruitService, type Recruit } from '@/dal/features/recruits'
+import { TransferService, type Transfer } from '@/dal/features/transfers'
 
 interface SocialPost {
     id: string
@@ -27,11 +28,7 @@ interface SocialPost {
 }
 
 interface SocialMediaProps {
-    dynasty: Dynasty
-    games: Game[]
-    roster: RosterPlayer[]
-    recruits: Recruit[]
-    transfers: Transfer[]
+    dynastyId: string
 }
 
 // Media personalities
@@ -50,12 +47,54 @@ const FAN_ACCOUNTS = [
     { name: '12th Man', handle: '@Always12th', verified: true },
 ]
 
-export function SocialMedia({ dynasty, games, roster, recruits, transfers }: SocialMediaProps) {
+export function SocialMedia({ dynastyId }: SocialMediaProps) {
     const [posts, setPosts] = useState<SocialPost[]>([])
     const [filter, setFilter] = useState<'all' | 'news' | 'recruiting'>('all')
     const [isGenerating, setIsGenerating] = useState(false)
+    const [loading, setLoading] = useState(true)
+
+    const [dynasty, setDynasty] = useState<Dynasty | null>(null)
+    const [games, setGames] = useState<Game[]>([])
+    const [roster, setRoster] = useState<RosterPlayer[]>([])
+    const [recruits, setRecruits] = useState<Recruit[]>([])
+    const [transfers, setTransfers] = useState<Transfer[]>([])
+
+    useEffect(() => {
+        async function loadData() {
+            setLoading(true)
+            const dyn = await DynastyService.getDynastyById(dynastyId)
+            if (!dyn) {
+                setLoading(false)
+                return
+            }
+            setDynasty(dyn)
+
+            const yr = await YearRecordService.getCurrentYearRecord(dynastyId)
+            if (!yr) {
+                setLoading(false)
+                return
+            }
+
+            const [g, r, rec, t] = await Promise.all([
+                GameService.getGames(dynastyId, yr.id),
+                PlayerService.getRoster(dynastyId, yr.id),
+                RecruitService.getRecruits(dynastyId, yr.id),
+                TransferService.getTransfers(dynastyId, yr.id),
+            ])
+
+            setGames(g)
+            setRoster(r)
+            setRecruits(rec)
+            setTransfers(t)
+            setLoading(false)
+        }
+
+        loadData()
+    }, [dynastyId])
 
     const generatePosts = () => {
+        if (!dynasty) return
+
         setIsGenerating(true)
         const generated: SocialPost[] = []
         const now = new Date()
@@ -186,9 +225,11 @@ export function SocialMedia({ dynasty, games, roster, recruits, transfers }: Soc
     }
 
     useEffect(() => {
-        generatePosts()
+        if (!loading && dynasty) {
+            generatePosts()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dynasty, games, roster, recruits, transfers])
+    }, [loading, dynasty, games, roster, recruits, transfers])
 
     const filteredPosts = useMemo(() => {
         if (filter === 'all') return posts
@@ -196,6 +237,22 @@ export function SocialMedia({ dynasty, games, roster, recruits, transfers }: Soc
         if (filter === 'recruiting') return posts.filter(p => ['recruiting', 'transfer'].includes(p.type))
         return posts
     }, [posts, filter])
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-12">
+                <p className="text-sm text-text/60">Loading social feed...</p>
+            </div>
+        )
+    }
+
+    if (!dynasty) {
+        return (
+            <div className="flex items-center justify-center py-12">
+                <p className="text-sm text-red-500">Dynasty not found.</p>
+            </div>
+        )
+    }
 
     return (
         <div className="space-y-6">
