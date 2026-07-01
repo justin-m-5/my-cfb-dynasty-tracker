@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { UserCog } from 'lucide-react'
+import { UserCog, Wrench } from 'lucide-react'
 
 import type { DynastySummary } from '@/dal/features/dynasty'
 import { DynastyService } from '@/dal/features/dynasty'
@@ -50,6 +50,16 @@ export function DashboardClientWrapper() {
                     <UserCog className="h-8 w-8" />
                     <span className="text-base font-semibold text-center">
                         Edit Profile
+                    </span>
+                </Link>
+
+                <Link
+                    href="/dashboard/tools"
+                    {...buttonStyles({ variant: "tile", size: "tile" })}
+                >
+                    <Wrench className="h-8 w-8" />
+                    <span className="text-base font-semibold text-center">
+                        Tools
                     </span>
                 </Link>
             </div>

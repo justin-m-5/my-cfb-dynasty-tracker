@@ -10,11 +10,10 @@ import { PlayerNameGenerator } from './tools/player-name-generator'
 export function Tools() {
     return (
         <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
                     <CardHeader className="pb-3">
                         <CardTitle className="text-sm">Recruiting Predictor</CardTitle>
-                        <p className="text-xs text-muted-foreground">@MaxPlaysCFB</p>
                     </CardHeader>
                     <CardContent>
                         <RecruitPredictor />
@@ -24,14 +23,13 @@ export function Tools() {
                 <Card>
                     <CardHeader className="pb-3">
                         <CardTitle className="text-sm">Recruiting Calculator</CardTitle>
-                        <p className="text-xs text-muted-foreground">@MaxPlaysCFB</p>
                     </CardHeader>
                     <CardContent>
                         <RecruitingCalculator />
                     </CardContent>
                 </Card>
 
-                <Card className="md:col-span-2">
+                <Card className="col-span-2 md:col-span-1">
                     <CardHeader className="pb-3">
                         <CardTitle className="text-sm">Player Name Generator</CardTitle>
                     </CardHeader>
