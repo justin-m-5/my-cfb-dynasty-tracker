@@ -189,7 +189,7 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(stat.id)}
-                                                        className="rounded p-1 text-text/50 hover:bg-red-100 hover:text-red-600"
+                                                        className="rounded p-1 text-text/50 hover:bg-red-500/10 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3.5 w-3.5" />
                                                     </button>

@@ -48,7 +48,7 @@ export function TransferRow({ transfer, onEdit, onDelete }: TransferRowProps) {
                 </button>
                 <button
                     onClick={() => onDelete(transfer.id)}
-                    className="p-1 rounded hover:bg-red-100 transition-colors"
+                    className="p-1 rounded hover:bg-red-500/10 transition-colors"
                 >
                     <Trash2 className="h-3.5 w-3.5 text-red-500" />
                 </button>
