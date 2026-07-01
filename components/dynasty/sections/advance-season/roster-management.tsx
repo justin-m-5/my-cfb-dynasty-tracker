@@ -9,7 +9,8 @@ import type { Transfer } from '@/dal/features/transfers'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
-import { devTraitColors, positionGroups, positions, type DevTrait } from '@/lib/player-config'
+import { FilterTabs } from '@/components/ui/filter-tabs'
+import { devTraitColors, recruitPositionGroups, positions, type DevTrait } from '@/lib/player-config'
 
 interface RosterManagementProps {
     roster: RosterPlayer[]
@@ -79,7 +80,7 @@ export function RosterManagement({
     draftedPlayers,
     onRosterUpdate,
 }: RosterManagementProps) {
-    const [positionGroupFilter, setPositionGroupFilter] = useState<string>('All')
+    const [positionGroupFilter, setPositionGroupFilter] = useState<string>('Offense')
     const [ratingDrafts, setRatingDrafts] = useState<Record<string, string>>({})
     const [busyIds, setBusyIds] = useState<Set<string>>(new Set())
     const [confirmCutId, setConfirmCutId] = useState<string | null>(null)
@@ -144,11 +145,14 @@ export function RosterManagement({
 
     // Group by position, sorted by rating (depth chart style)
     const depthChart = useMemo(() => {
-        const filtered = positionGroupFilter === 'All'
-            ? allItems
-            : allItems.filter(item => (positionGroups as Record<string, string[]>)[positionGroupFilter]?.includes(item.position))
+        const groupPositions = (recruitPositionGroups as Record<string, readonly string[]>)[positionGroupFilter] ?? []
+        const filtered = allItems.filter(item => groupPositions.includes(item.position))
 
         const groups: Record<string, DepthChartItem[]> = {}
+        // Initialize in position order from the group
+        for (const pos of groupPositions) {
+            groups[pos] = []
+        }
         for (const item of filtered) {
             if (!groups[item.position]) groups[item.position] = []
             groups[item.position].push(item)
@@ -159,8 +163,8 @@ export function RosterManagement({
             groups[pos].sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1))
         }
 
-        // Sort position groups by count desc then name
-        return Object.entries(groups).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
+        // Return in position order (matching the group definition)
+        return Object.entries(groups).filter(([, players]) => players.length > 0)
     }, [allItems, positionGroupFilter])
 
     const returningCount = allItems.filter(i => i.status === 'Returning').length
@@ -251,19 +255,15 @@ export function RosterManagement({
                     </div>
                 </div>
 
-                <div className="mt-2">
-                    <Select
-                        value={positionGroupFilter}
-                        onChange={(e) => setPositionGroupFilter(e.target.value)}
-                        className="h-8 text-base sm:text-xs"
-                        aria-label="Filter by position group"
-                    >
-                        <option value="All">All Positions</option>
-                        {Object.keys(positionGroups).map(group => (
-                            <option key={group} value={group}>{group}</option>
-                        ))}
-                    </Select>
-                </div>
+                <FilterTabs
+                    tabs={Object.keys(recruitPositionGroups).map(group => ({
+                        key: group,
+                        label: group === 'Other' ? 'ATH' : group,
+                    }))}
+                    active={positionGroupFilter}
+                    onChange={setPositionGroupFilter}
+                    className="mt-2"
+                />
             </div>
 
             {/* Depth Chart */}
