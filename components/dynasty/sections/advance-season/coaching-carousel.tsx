@@ -29,9 +29,7 @@ export function CoachingCarousel({ currentSchool, onSwitch, onStay }: CoachingCa
     const [selectedSchool, setSelectedSchool] = useState('')
 
     const schoolOptions = useMemo(() => {
-        return [...fbsTeams]
-            .filter(t => t.name !== currentSchool)
-            .sort((a, b) => a.name.localeCompare(b.name))
+        return [...fbsTeams].filter(t => t.name !== currentSchool).sort((a, b) => a.name.localeCompare(b.name))
     }, [currentSchool])
 
     const selectedTeam = useMemo(() => {

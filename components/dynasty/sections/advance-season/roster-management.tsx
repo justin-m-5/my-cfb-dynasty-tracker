@@ -1,3 +1,5 @@
+// components/dynasty/sections/advance-season/roster-management.tsx
+
 'use client'
 
 import { useMemo, useState } from 'react'
@@ -164,7 +166,11 @@ export function RosterManagement({
     const markBusy = (id: string, busy: boolean) => {
         setBusyIds(prev => {
             const next = new Set(prev)
-            busy ? next.add(id) : next.delete(id)
+            if (busy) {
+                next.add(id)
+            } else {
+                next.delete(id)
+            }
             return next
         })
     }
