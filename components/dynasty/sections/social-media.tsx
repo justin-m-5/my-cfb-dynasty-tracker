@@ -108,7 +108,7 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
         if (latestGame) {
             const isWin = latestGame.result === 'W'
             const content = isWin
-                ? `🎉 That&apos;s a W! Final: ${dynasty.school_name} ${latestGame.score} vs ${latestGame.opponent}!\n\n#Go${dynasty.school_name.replace(/\s+/g, '')}`
+                ? `🎉 That's a W! Final: ${dynasty.school_name} ${latestGame.score} vs ${latestGame.opponent}!\n\n#Go${dynasty.school_name.replace(/\s+/g, '')}`
                 : `Tough battle today. ${dynasty.school_name} falls to ${latestGame.opponent}, ${latestGame.score}. We'll be back stronger. 💪`
 
             generated.push({
@@ -129,7 +129,7 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
             const fanIndex = latestGame.id.charCodeAt(0) % FAN_ACCOUNTS.length
             const fan = FAN_ACCOUNTS[fanIndex]
             const fanContent = isWin
-                ? `LET&apos;S GOOOOO!!! 🔥🔥🔥 #Go${dynasty.school_name.replace(/\s+/g, '')}`
+                ? `LET'S GOOOOO!!! 🔥🔥🔥 #Go${dynasty.school_name.replace(/\s+/g, '')}`
                 : `Tough one today. But we bounce back. Always. 💯 #${dynasty.school_name.replace(/\s+/g, '')}`
 
             // Use week number for stable engagement numbers
