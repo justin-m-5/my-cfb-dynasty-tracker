@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { YearRecordService, type YearRecord } from '@/dal/features/year-records'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MiniTabNav } from '@/components/ui/mini-tab-nav'
-import { Select } from '@/components/ui/select'
 
 import { AllTimeOverview } from './season-history/all-time-overview'
 import { YearAwards } from './season-history/year-awards'

@@ -28,7 +28,7 @@ export function AllTimeOverview({ yearRecords }: AllTimeOverviewProps) {
             </CardHeader>
             <CardContent>
                 <div className="overflow-x-auto rounded-xl border border-primary/15 bg-background/60">
-                    <table className="w-full min-w-[860px] text-xs">
+                    <table className="w-full min-w-215 text-xs">
                         <thead>
                             <tr className="border-b border-primary/15 bg-primary/5 text-left text-[10px] font-semibold uppercase tracking-wide text-text/55">
                                 <th className="px-2 py-2">Year</th>
