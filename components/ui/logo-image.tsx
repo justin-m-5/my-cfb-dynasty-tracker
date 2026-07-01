@@ -18,7 +18,7 @@ export function LogoImage({ candidates, alt, size = 40, className }: LogoImagePr
     if (candidates.length === 0 || index >= candidates.length) {
         return (
             <div
-                className={`flex items-center justify-center rounded-md border bg-background text-xs text-text/70 ${className ?? ''}`}
+                className={`flex items-center justify-center rounded-md border bg-white dark:bg-white text-xs text-text/70 ${className ?? ''}`}
                 style={{ width: size, height: size }}
             >
                 N/A

@@ -91,8 +91,8 @@ export function DynastyHeader({ dynastyId }: DynastyHeaderProps) {
                                         <Image
                                             src={conferenceLogo}
                                             alt=""
-                                            width={16}
-                                            height={16}
+                                            width={24}
+                                            height={24}
                                             className="rounded"
                                             unoptimized
                                         />

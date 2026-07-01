@@ -1,4 +1,4 @@
-// components/dynasty/sections/advance-season/season-finalize-form.tsx
+// components/forms/season-finalize-form.tsx
 
 'use client'
 

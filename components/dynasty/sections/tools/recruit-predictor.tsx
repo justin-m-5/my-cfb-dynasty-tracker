@@ -74,7 +74,7 @@ export function RecruitPredictor() {
                         onChange={(e) => setPosition(e.target.value)}
                         className="mt-1 h-8"
                     >
-                        <option value="">Select Position</option>
+                        <option value="">Select</option>
                         {positions.map(p => (
                             <option key={p.value} value={p.value}>{p.label}</option>
                         ))}
@@ -87,7 +87,7 @@ export function RecruitPredictor() {
                         onChange={(e) => setStarRating(e.target.value)}
                         className="mt-1 h-8"
                     >
-                        <option value="">Select Stars</option>
+                        <option value="">Select</option>
                         {stars.map(s => (
                             <option key={s.value} value={s.value.toString()}>{s.label}</option>
                         ))}

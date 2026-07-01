@@ -62,9 +62,9 @@ export function Dynasty({ dynasty, onDelete }: DynastyProps) {
                         <Image
                             src={conferenceLogo}
                             alt={dynasty.conference ?? ''}
-                            width={20}
-                            height={20}
-                            className="rounded object-contain"
+                            width={24}
+                            height={24}
+                            className="rounded object-contain bg-white dark:bg-white"
                             unoptimized
                         />
                     ) : null}

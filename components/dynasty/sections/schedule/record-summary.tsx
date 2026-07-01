@@ -67,8 +67,8 @@ export function RecordSummary({ dynasty, games }: RecordSummaryProps) {
                             <Image
                                 src={conferenceLogo}
                                 alt={dynasty.conference!}
-                                width={16}
-                                height={16}
+                                width={24}
+                                height={24}
                                 className="rounded"
                                 unoptimized
                             />
