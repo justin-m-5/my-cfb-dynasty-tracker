@@ -3,9 +3,11 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, TrendingUp, Heart, Star, Share2, Repeat2 } from 'lucide-react'
+import { buttonStyles } from '@/lib/button-utils'
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
 import { GameService, type Game } from '@/dal/features/games'
@@ -125,12 +127,15 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
                 verified: true,
             })
 
-            // Fan reaction
-            const fan = FAN_ACCOUNTS[Math.floor(Math.random() * FAN_ACCOUNTS.length)]
+            // Fan reaction - use game ID as seed for stable random
+            const fanIndex = latestGame.id.charCodeAt(0) % FAN_ACCOUNTS.length
+            const fan = FAN_ACCOUNTS[fanIndex]
             const fanContent = isWin
-                ? `LET'S GOOOOO!!! 🔥🔥🔥 #Go${dynasty.school_name.replace(/\s+/g, '')}`
+                ? `LET&apos;S GOOOOO!!! 🔥🔥🔥 #Go${dynasty.school_name.replace(/\s+/g, '')}`
                 : `Tough one today. But we bounce back. Always. 💯 #${dynasty.school_name.replace(/\s+/g, '')}`
 
+            // Use week number for stable engagement numbers
+            const weekSeed = latestGame.week || 1
             generated.push({
                 id: `fan-reaction-${latestGame.id}`,
                 type: 'fan',
@@ -139,9 +144,9 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
                 authorType: 'fan',
                 content: fanContent,
                 timestamp: new Date(now.getTime() - 5 * 3600000),
-                likes: Math.floor(Math.random() * 150) + 30,
-                retweets: Math.floor(Math.random() * 40) + 10,
-                comments: Math.floor(Math.random() * 25) + 5,
+                likes: (weekSeed * 13) % 150 + 30,
+                retweets: (weekSeed * 7) % 40 + 10,
+                comments: (weekSeed * 5) % 25 + 5,
                 verified: fan.verified,
             })
         }
@@ -244,10 +249,20 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5">
+            {/* Back button */}
+            <div>
+                <Link
+                    href={`/dashboard/dynasty/${dynastyId}`}
+                    {...buttonStyles({ bg: 'var(--orange-400)', text: 'white', className: 'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold' })}
+                >
+                    ← Team Home
+                </Link>
+            </div>
+
             <div className="text-center space-y-2">
                 <h1 className="text-2xl font-bold">Social Media Hub</h1>
-                <p className="text-sm text-text/60">Your dynasty's pulse on social media</p>
+                <p className="text-sm text-text/60">Your dynasty&apos;s pulse on social media</p>
             </div>
 
             {/* Filters */}
