@@ -249,95 +249,95 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
                 <CardContent className="space-y-4">
                     {/* Filters */}
                     <div className="flex justify-center gap-2 flex-wrap">
-                <Button
-                    variant={filter === 'all' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setFilter('all')}
-                    bg={filter === 'all' ? 'var(--primary)' : undefined}
-                    text={filter === 'all' ? 'white' : undefined}
-                >
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    All
-                </Button>
-                <Button
-                    variant={filter === 'news' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setFilter('news')}
-                    bg={filter === 'news' ? 'var(--primary)' : undefined}
-                    text={filter === 'news' ? 'white' : undefined}
-                >
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                    News
-                </Button>
-                <Button
-                    variant={filter === 'recruiting' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setFilter('recruiting')}
-                    bg={filter === 'recruiting' ? 'var(--primary)' : undefined}
-                    text={filter === 'recruiting' ? 'white' : undefined}
-                >
-                    <Star className="h-4 w-4 mr-2" />
-                    Recruiting
-                </Button>
-            </div>
+                        <Button
+                            variant={filter === 'all' ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => setFilter('all')}
+                            bg={filter === 'all' ? 'var(--primary)' : undefined}
+                            text={filter === 'all' ? 'white' : undefined}
+                        >
+                            <MessageCircle className="h-4 w-4 mr-2" />
+                            All
+                        </Button>
+                        <Button
+                            variant={filter === 'news' ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => setFilter('news')}
+                            bg={filter === 'news' ? 'var(--primary)' : undefined}
+                            text={filter === 'news' ? 'white' : undefined}
+                        >
+                            <TrendingUp className="h-4 w-4 mr-2" />
+                            News
+                        </Button>
+                        <Button
+                            variant={filter === 'recruiting' ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => setFilter('recruiting')}
+                            bg={filter === 'recruiting' ? 'var(--primary)' : undefined}
+                            text={filter === 'recruiting' ? 'white' : undefined}
+                        >
+                            <Star className="h-4 w-4 mr-2" />
+                            Recruiting
+                        </Button>
+                    </div>
 
-            {/* Posts */}
-            <div className="space-y-4">
-                {filteredPosts.length === 0 && (
-                    <Card>
-                        <CardContent className="py-12 text-center text-text/60">
-                            <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                            <p>No posts yet. Play some games to see the feed come alive!</p>
-                        </CardContent>
-                    </Card>
-                )}
+                    {/* Posts */}
+                    <div className="space-y-4">
+                        {filteredPosts.length === 0 && (
+                            <Card>
+                                <CardContent className="py-12 text-center text-text/60">
+                                    <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                                    <p>No posts yet. Play some games to see the feed come alive!</p>
+                                </CardContent>
+                            </Card>
+                        )}
 
-                {filteredPosts.map((post) => (
-                    <Card key={post.id} className="hover:shadow-lg transition-shadow">
-                        <CardContent className="p-4">
-                            {/* Author */}
-                            <div className="flex items-start gap-3 mb-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white font-semibold text-sm">
-                                    {post.author.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        <span className="font-semibold text-sm">{post.author}</span>
-                                        {post.verified && <span className="text-blue-500">✓</span>}
-                                        <span className="text-text/50 text-sm">{post.authorHandle}</span>
-                                        <span className="text-text/40">·</span>
-                                        <span className="text-text/50 text-sm">{post.timestamp.toLocaleDateString()}</span>
+                        {filteredPosts.map((post) => (
+                            <Card key={post.id} className="hover:shadow-lg transition-shadow">
+                                <CardContent className="p-4">
+                                    {/* Author */}
+                                    <div className="flex items-start gap-3 mb-3">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white font-semibold text-sm">
+                                            {post.author.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <span className="font-semibold text-sm">{post.author}</span>
+                                                {post.verified && <span className="text-blue-500">✓</span>}
+                                                <span className="text-text/50 text-sm">{post.authorHandle}</span>
+                                                <span className="text-text/40">·</span>
+                                                <span className="text-text/50 text-sm">{post.timestamp.toLocaleDateString()}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            {/* Content */}
-                            <div className="mb-3">
-                                <p className="whitespace-pre-wrap text-sm leading-relaxed">{post.content}</p>
-                            </div>
+                                    {/* Content */}
+                                    <div className="mb-3">
+                                        <p className="whitespace-pre-wrap text-sm leading-relaxed">{post.content}</p>
+                                    </div>
 
-                            {/* Actions */}
-                            <div className="flex items-center justify-between text-text/50 border-t border-primary/10 pt-3">
-                                <button className="flex items-center gap-2 hover:text-blue-500 transition-colors">
-                                    <MessageCircle className="h-4 w-4" />
-                                    <span className="text-xs">{post.comments}</span>
-                                </button>
-                                <button className="flex items-center gap-2 hover:text-green-500 transition-colors">
-                                    <Repeat2 className="h-4 w-4" />
-                                    <span className="text-xs">{post.retweets}</span>
-                                </button>
-                                <button className="flex items-center gap-2 hover:text-red-500 transition-colors">
-                                    <Heart className="h-4 w-4" />
-                                    <span className="text-xs">{post.likes.toLocaleString()}</span>
-                                </button>
-                                <button className="hover:text-blue-500 transition-colors">
-                                    <Share2 className="h-4 w-4" />
-                                </button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+                                    {/* Actions */}
+                                    <div className="flex items-center justify-between text-text/50 border-t border-primary/10 pt-3">
+                                        <button className="flex items-center gap-2 hover:text-blue-500 transition-colors">
+                                            <MessageCircle className="h-4 w-4" />
+                                            <span className="text-xs">{post.comments}</span>
+                                        </button>
+                                        <button className="flex items-center gap-2 hover:text-green-500 transition-colors">
+                                            <Repeat2 className="h-4 w-4" />
+                                            <span className="text-xs">{post.retweets}</span>
+                                        </button>
+                                        <button className="flex items-center gap-2 hover:text-red-500 transition-colors">
+                                            <Heart className="h-4 w-4" />
+                                            <span className="text-xs">{post.likes.toLocaleString()}</span>
+                                        </button>
+                                        <button className="hover:text-blue-500 transition-colors">
+                                            <Share2 className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
                 </CardContent>
             </Card>
         </div>
