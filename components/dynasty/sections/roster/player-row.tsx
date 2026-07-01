@@ -31,7 +31,11 @@ export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: Player
                 <div className="flex items-center gap-1.5 text-[10px] text-text/50">
                     <span>{player.position}</span>
                     {/* Year + Dev Trait inline on small screens */}
-                    <span className="sm:hidden">{player.season.year ?? ''}</span>
+                    {player.season.year && (
+                        <span className="sm:hidden rounded-full bg-primary/10 px-1.5 py-0 font-medium text-text/70">
+                            {player.season.year}
+                        </span>
+                    )}
                     {player.season.dev_trait && player.season.dev_trait !== 'Normal' && (
                         <span className={`sm:hidden rounded-full px-1.5 py-0 font-semibold ${traitColor}`}>
                             {player.season.dev_trait}
