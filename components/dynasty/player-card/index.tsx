@@ -1,3 +1,5 @@
+// components/dynasty/player-card/index.tsx
+
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'

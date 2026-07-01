@@ -1,3 +1,5 @@
+// components/dynasty/sections/season-history/year-stats.tsx
+
 'use client'
 
 import { useEffect, useState } from 'react'

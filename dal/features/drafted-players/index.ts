@@ -1,3 +1,5 @@
+// dal/features/drafted-players/index.ts
+
 import { supabase } from '@/supabase/client'
 
 export interface DraftedPlayer {

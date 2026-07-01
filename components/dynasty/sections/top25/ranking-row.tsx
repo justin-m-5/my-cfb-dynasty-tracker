@@ -1,3 +1,5 @@
+// components/dynasty/sections/top25/ranking-row.tsx
+
 import { ArrowDown, ArrowUp, ChevronDown, ChevronUp, GripVertical, Minus } from 'lucide-react'
 
 import type { RankedTeam } from '@/dal/features/top25'

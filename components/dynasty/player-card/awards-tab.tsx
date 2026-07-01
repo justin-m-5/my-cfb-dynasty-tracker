@@ -1,3 +1,5 @@
+// components/dynasty/player-card/awards-tab.tsx
+
 'use client'
 
 import { Trophy } from 'lucide-react'

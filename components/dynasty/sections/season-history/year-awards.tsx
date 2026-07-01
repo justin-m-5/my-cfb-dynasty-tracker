@@ -1,3 +1,5 @@
+// components/dynasty/sections/season-history/year-awards.tsx
+
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'

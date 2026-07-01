@@ -122,6 +122,7 @@ export const PlayerStatService = {
         return rows.map((row) => {
             const game = row.games as { week?: number | null; year_records?: { year?: number | null } | { year?: number | null }[] | null } | undefined
             const yearRecord = Array.isArray(game?.year_records) ? game?.year_records[0] : game?.year_records
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { games: _games, ...statRow } = row
 
             return {

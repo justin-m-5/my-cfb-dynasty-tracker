@@ -1,3 +1,5 @@
+// components/dynasty/sections/season-history/all-time-overview.tsx
+
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

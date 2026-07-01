@@ -1,3 +1,5 @@
+// components/dynasty/sections/advance-season/compact-transfers.tsx
+
 'use client'
 
 import { useMemo, useState } from 'react'

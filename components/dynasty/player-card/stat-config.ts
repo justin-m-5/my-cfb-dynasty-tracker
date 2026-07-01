@@ -1,3 +1,5 @@
+// components/dynasty/player-card/stat-config.ts
+
 import type { CareerPlayerStat } from '@/dal/features/player-stats'
 
 import type { StatCategoryConfig, StatKey, StatTotals, YearlyStats } from './types'

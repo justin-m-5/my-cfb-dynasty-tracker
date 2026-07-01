@@ -1,3 +1,5 @@
+// components/dynasty/player-card/types.ts
+
 export type PlayerCardTab = 'Career Stats' | 'Game Logs' | 'Awards' | 'Player Info'
 
 export type StatKey =

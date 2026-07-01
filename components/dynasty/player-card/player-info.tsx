@@ -1,3 +1,5 @@
+// components/dynasty/player-card/player-info.tsx
+
 'use client'
 
 import { Star } from 'lucide-react'

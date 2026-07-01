@@ -1,3 +1,5 @@
+// components/dynasty/player-card/game-logs.tsx
+
 'use client'
 
 import { useMemo, useState } from 'react'
