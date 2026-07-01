@@ -7,10 +7,10 @@ import { Plus } from 'lucide-react'
 
 import { YearRecordService } from '@/dal/features/year-records'
 import { RecruitService, type Recruit } from '@/dal/features/recruits'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { RecruitList } from './recruiting/recruit-list'
-import { RecruitForm } from '../../forms/recruit-form'
+import { Button } from '@/components/ui/display/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { RecruitList } from './recruit-list'
+import { RecruitForm } from '../../../forms/recruit-form'
 
 interface RecruitingProps {
     dynastyId: string

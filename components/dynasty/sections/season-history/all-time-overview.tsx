@@ -2,7 +2,7 @@
 
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 import type { YearRecord } from '@/dal/features/year-records'
 
 interface AllTimeOverviewProps {

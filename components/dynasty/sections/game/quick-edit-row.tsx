@@ -3,11 +3,11 @@
 'use client'
 
 import { useMemo, useEffect } from 'react'
-import { fbsTeams } from '@/lib/fbs-teams'
-import { neutralStadiums } from '@/lib/neutral-stadiums'
-import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
+import { fbsTeams } from '@/lib/teams/fbs-teams'
+import { neutralStadiums } from '@/lib/config/neutral-stadiums'
+import { Input } from '@/components/ui/form/input'
+import { Select } from '@/components/ui/form/select'
+import { Label } from '@/components/ui/form/label'
 import type { Game } from '@/dal/features/games'
 import type { Dynasty } from '@/dal/features/dynasty'
 

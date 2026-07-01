@@ -3,7 +3,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { SidebarNav, type SidebarNavItem } from '@/components/ui/sidebar-nav'
+import { SidebarNav, type SidebarNavItem } from '@/components/ui/layout/sidebar-nav'
 
 const segments = [
     // yearly things

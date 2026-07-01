@@ -2,9 +2,9 @@
 
 'use client'
 
-import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
-import { PositionOptions } from '@/components/ui/position-options'
+import { Input } from '@/components/ui/form/input'
+import { Select } from '@/components/ui/form/select'
+import { PositionOptions } from '@/components/ui/form/position-options'
 
 interface RosterFiltersProps {
     search: string

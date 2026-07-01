@@ -8,12 +8,12 @@ import { Plus } from 'lucide-react'
 import { YearRecordService } from '@/dal/features/year-records'
 import { PlayerService, type RosterPlayer } from '@/dal/features/players'
 import { uploadPlayerImage, deletePlayerImage } from '@/lib/upload-player-image'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/display/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 import { PlayerCard } from '@/components/dynasty/player-card'
-import { RosterFilters } from './roster/roster-filters'
-import { RosterList } from './roster/roster-list'
-import { PlayerForm, type PlayerFormData } from '../../forms/player-form'
+import { RosterFilters } from './roster-filters'
+import { RosterList } from './roster-list'
+import { PlayerForm, type PlayerFormData } from '../../../forms/player-form'
 
 interface RosterProps {
     dynastyId: string

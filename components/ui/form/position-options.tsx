@@ -1,6 +1,6 @@
 // components/ui/position-options.tsx
 
-import { positionGroups, recruitPositionGroups } from '@/lib/player-config'
+import { positionGroups, recruitPositionGroups } from '@/lib/config/player-config'
 
 export function PositionOptions() {
     return (

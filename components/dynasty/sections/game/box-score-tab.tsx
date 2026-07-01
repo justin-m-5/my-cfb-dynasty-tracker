@@ -2,9 +2,9 @@
 
 'use client'
 
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LogoImage } from '@/components/ui/logo-image'
+import { Input } from '@/components/ui/form/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { LogoImage } from '@/components/ui/display/logo-image'
 import type { Dynasty } from '@/dal/features/dynasty'
 import type { Game, QuarterScore } from '@/dal/features/games'
 

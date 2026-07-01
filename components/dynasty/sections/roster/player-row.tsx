@@ -1,8 +1,8 @@
 // components/dynasty/sections/roster/player-row.tsx
 
 import { Pencil, Trash2, Shirt } from 'lucide-react'
-import { devTraitColors, type DevTrait } from '@/lib/player-config'
-import { PlayerAvatar } from '@/components/ui/player-avatar'
+import { devTraitColors, type DevTrait } from '@/lib/config/player-config'
+import { PlayerAvatar } from '@/components/ui/display/player-avatar'
 import type { RosterPlayer } from '@/dal/features/players'
 
 interface PlayerRowProps {

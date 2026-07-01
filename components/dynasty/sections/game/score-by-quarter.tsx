@@ -2,10 +2,10 @@
 
 'use client'
 
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { LogoImage } from '@/components/ui/logo-image'
+import { Input } from '@/components/ui/form/input'
+import { Label } from '@/components/ui/form/label'
+import { Button } from '@/components/ui/display/button'
+import { LogoImage } from '@/components/ui/display/logo-image'
 import { Plus } from 'lucide-react'
 import type { Game, QuarterScore } from '@/dal/features/games'
 import type { Dynasty } from '@/dal/features/dynasty'

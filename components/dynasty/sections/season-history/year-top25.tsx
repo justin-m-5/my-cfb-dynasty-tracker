@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 
 import { Top25Service, type Top25Ranking } from '@/dal/features/top25'
 import type { YearRecord } from '@/dal/features/year-records'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 import { getWeekDisplayName } from '@/lib/game-utils'
 
 interface YearTop25Props {

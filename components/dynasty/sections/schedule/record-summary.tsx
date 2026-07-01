@@ -2,9 +2,9 @@
 
 import { useMemo, useCallback } from 'react'
 import Image from 'next/image'
-import { DetailCard } from '@/components/ui/detail-card'
-import { fbsTeams } from '@/lib/fbs-teams'
-import { conferenceLogoByName } from '@/lib/logos'
+import { DetailCard } from '@/components/ui/layout/detail-card'
+import { fbsTeams } from '@/lib/teams/fbs-teams'
+import { conferenceLogoByName } from '@/lib/teams/logos'
 import type { Dynasty } from '@/dal/features/dynasty'
 import type { Game } from '@/dal/features/games'
 

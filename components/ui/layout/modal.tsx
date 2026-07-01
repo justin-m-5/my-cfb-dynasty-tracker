@@ -6,8 +6,8 @@ import { type ReactNode, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/display/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 import { cn } from '@/lib/utils'
 
 interface ModalProps {

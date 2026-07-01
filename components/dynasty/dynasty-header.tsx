@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
-import { LogoImage } from '@/components/ui/logo-image'
-import { Card, CardContent } from '@/components/ui/card'
-import { conferenceLogoByName, getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
+import { LogoImage } from '@/components/ui/display/logo-image'
+import { Card, CardContent } from '@/components/ui/layout/card'
+import { conferenceLogoByName, getSchoolLogoCandidates, getTeamLogo } from '@/lib/teams/logos'
 
 interface DynastyHeaderProps {
     dynastyId: string

@@ -3,10 +3,10 @@
 import Link from 'next/link'
 import { Trophy, TrendingDown, Minus, Calendar, Pencil, MapPin } from 'lucide-react'
 
-import { fbsTeams } from '@/lib/fbs-teams'
+import { fbsTeams } from '@/lib/teams/fbs-teams'
 import { getWeekDisplayName, getResultColor, parseScore } from '@/lib/game-utils'
-import { LogoImage } from '@/components/ui/logo-image'
-import { getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
+import { LogoImage } from '@/components/ui/display/logo-image'
+import { getSchoolLogoCandidates, getTeamLogo } from '@/lib/teams/logos'
 import type { Game } from '@/dal/features/games'
 import { buttonStyles } from '@/lib/button-utils'
 

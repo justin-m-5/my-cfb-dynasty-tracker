@@ -3,11 +3,11 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Button } from '@/components/ui/button'
-import { Select } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { fbsTeams } from '@/lib/fbs-teams'
+import { Button } from '@/components/ui/display/button'
+import { Select } from '@/components/ui/form/select'
+import { Label } from '@/components/ui/form/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { fbsTeams } from '@/lib/teams/fbs-teams'
 
 export interface TeamChange {
     schoolName: string

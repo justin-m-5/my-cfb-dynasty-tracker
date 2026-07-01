@@ -4,9 +4,9 @@
 
 import { useState } from 'react'
 import { RefreshCw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Select } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/display/button'
+import { Select } from '@/components/ui/form/select'
+import { Label } from '@/components/ui/form/label'
 
 const grades = [
     { label: 'A+', value: 13 },

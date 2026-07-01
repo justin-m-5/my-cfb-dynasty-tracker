@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { positions } from '@/lib/player-config'
-import { devTraits } from '@/lib/player-config'
-import { usStates } from '@/lib/recruit-config'
+import { Button } from '@/components/ui/display/button'
+import { Input } from '@/components/ui/form/input'
+import { Select } from '@/components/ui/form/select'
+import { Label } from '@/components/ui/form/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { positions } from '@/lib/config/player-config'
+import { devTraits } from '@/lib/config/player-config'
+import { usStates } from '@/lib/config/recruit-config'
 import type { Recruit } from '@/dal/features/recruits'
 
 interface RecruitFormProps {

@@ -2,7 +2,7 @@
 
 'use client'
 
-import { categoryColumns, computeStat, type StatCategory } from '@/lib/stat-categories'
+import { categoryColumns, computeStat, type StatCategory } from '@/lib/config/stat-categories'
 import type { PlayerStat } from '@/dal/features/player-stats'
 
 interface AggregatedStat {

@@ -7,8 +7,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { AwardService, type Award } from '@/dal/features/awards'
 import { PlayerService } from '@/dal/features/players'
 import type { YearRecord } from '@/dal/features/year-records'
-import { HONOR_CATEGORIES, getHonorLabel } from '@/lib/honors-config'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { HONOR_CATEGORIES, getHonorLabel } from '@/lib/config/honors-config'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 
 interface YearAwardsProps {
     dynastyId: string

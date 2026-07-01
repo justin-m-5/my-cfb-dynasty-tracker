@@ -5,18 +5,18 @@ import { Pencil, Plus, Trash2 } from 'lucide-react'
 
 import type { RosterPlayer } from '@/dal/features/players'
 import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent } from '@/components/ui/card'
-import { Modal } from '@/components/ui/modal'
+import { Button } from '@/components/ui/display/button'
+import { Input } from '@/components/ui/form/input'
+import { Select } from '@/components/ui/form/select'
+import { Label } from '@/components/ui/form/label'
+import { Card, CardContent } from '@/components/ui/layout/card'
+import { Modal } from '@/components/ui/layout/modal'
 import {
     type StatCategory,
     statCategories,
     displayColumns,
     computeStatValue,
-} from '@/lib/stat-config'
+} from '@/lib/config/stat-config'
 
 interface PlayerStatsTabProps {
     gameId: string

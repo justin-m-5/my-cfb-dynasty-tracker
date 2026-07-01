@@ -8,10 +8,10 @@ import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService, type YearRecord } from '@/dal/features/year-records'
 import { GameService, type Game } from '@/dal/features/games'
 
-import { SeasonGlance } from './home/season-glance'
-import { SeasonDetails } from './home/season-details'
-import { NextGameCard } from './home/next-game-card'
-import { CareerStats } from './home/career-stats'
+import { SeasonGlance } from './season-glance'
+import { SeasonDetails } from './season-details'
+import { NextGameCard } from './next-game-card'
+import { CareerStats } from './career-stats'
 
 interface TeamHomeProps {
     dynastyId: string

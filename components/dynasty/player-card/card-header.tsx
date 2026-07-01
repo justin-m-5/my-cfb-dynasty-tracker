@@ -5,11 +5,11 @@
 import { Star, X } from 'lucide-react'
 
 import type { CareerSeason, Player } from '@/dal/features/players'
-import { Button } from '@/components/ui/button'
-import { CardHeader as UiCardHeader } from '@/components/ui/card'
-import { LogoImage } from '@/components/ui/logo-image'
-import { PlayerAvatar } from '@/components/ui/player-avatar'
-import { getTeamLogo } from '@/lib/logos'
+import { Button } from '@/components/ui/display/button'
+import { CardHeader as UiCardHeader } from '@/components/ui/layout/card'
+import { LogoImage } from '@/components/ui/display/logo-image'
+import { PlayerAvatar } from '@/components/ui/display/player-avatar'
+import { getTeamLogo } from '@/lib/teams/logos'
 import { cn } from '@/lib/utils'
 
 import type { SchoolColors } from './types'

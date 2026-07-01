@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { buttonStyles } from '@/lib/button-utils'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/layout/card'
 
 export function DashboardEmptyState() {
     return (

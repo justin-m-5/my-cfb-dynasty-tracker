@@ -2,9 +2,9 @@
 
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DetailCard } from '@/components/ui/detail-card'
-import { GlanceCard } from '@/components/ui/glance-card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { DetailCard } from '@/components/ui/layout/detail-card'
+import { GlanceCard } from '@/components/ui/layout/glance-card'
 import type { YearRecord } from '@/dal/features/year-records'
 
 interface YearOverviewProps {

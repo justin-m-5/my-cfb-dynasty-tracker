@@ -5,9 +5,9 @@ import { Plus, Trash2 } from 'lucide-react'
 
 import { RecruitService, type Recruit } from '@/dal/features/recruits'
 import { RecruitForm } from '@/components/forms/recruit-form'
-import { Button } from '@/components/ui/button'
-import { Modal } from '@/components/ui/modal'
-import { starsColor, starsDisplay } from '@/lib/recruit-config'
+import { Button } from '@/components/ui/display/button'
+import { Modal } from '@/components/ui/layout/modal'
+import { starsColor, starsDisplay } from '@/lib/config/recruit-config'
 
 interface CompactRecruitsProps {
     dynastyId: string

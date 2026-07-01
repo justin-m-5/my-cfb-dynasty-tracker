@@ -1,6 +1,6 @@
 // components/dashboard/dashboard-loading-state.tsx
 
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/layout/card'
 
 export function DashboardLoadingState() {
     return (

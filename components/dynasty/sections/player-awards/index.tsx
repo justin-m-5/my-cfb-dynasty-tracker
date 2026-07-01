@@ -8,10 +8,10 @@ import { Plus } from 'lucide-react'
 import { YearRecordService } from '@/dal/features/year-records'
 import { PlayerService, type Player } from '@/dal/features/players'
 import { AwardService, type Award } from '@/dal/features/awards'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { AwardForm } from '../../forms/award-form'
-import { AwardList } from './player-awards/award-list'
+import { Button } from '@/components/ui/display/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { AwardForm } from '../../../forms/award-form'
+import { AwardList } from './award-list'
 
 interface PlayerAwardsProps {
     dynastyId: string

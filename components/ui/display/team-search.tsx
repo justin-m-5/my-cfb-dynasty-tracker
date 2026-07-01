@@ -4,11 +4,11 @@
 
 import { useId, useMemo, useState } from 'react'
 
-import type { FbsTeam } from '@/lib/fbs-teams'
-import { getTeamLogo } from '@/lib/logos'
+import type { FbsTeam } from '@/lib/teams/fbs-teams'
+import { getTeamLogo } from '@/lib/teams/logos'
 import { cn } from '@/lib/utils'
-import { Input } from '@/components/ui/input'
-import { LogoImage } from '@/components/ui/logo-image'
+import { Input } from '@/components/ui/form/input'
+import { LogoImage } from '@/components/ui/display/logo-image'
 
 interface TeamSearchProps {
     value: string

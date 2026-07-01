@@ -8,12 +8,12 @@ import { Save } from 'lucide-react'
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
 import { Top25Service, type RankedTeam } from '@/dal/features/top25'
-import { fbsTeams } from '@/lib/fbs-teams'
+import { fbsTeams } from '@/lib/teams/fbs-teams'
 import { getWeekDisplayName, MAX_RANKINGS_WEEK } from '@/lib/game-utils'
-import { Button } from '@/components/ui/button'
-import { Select } from '@/components/ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { RankingRow } from './top25/ranking-row'
+import { Button } from '@/components/ui/display/button'
+import { Select } from '@/components/ui/form/select'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { RankingRow } from './ranking-row'
 
 const EMPTY_RANKINGS: RankedTeam[] = Array.from({ length: 25 }, () => ({ name: '', record: '' }))
 const COLUMN_BREAKS = [

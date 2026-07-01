@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { TeamSearch } from '@/components/ui/team-search'
-import { positions, devTraits } from '@/lib/player-config'
-import { fbsTeams } from '@/lib/fbs-teams'
+import { Button } from '@/components/ui/display/button'
+import { Input } from '@/components/ui/form/input'
+import { Select } from '@/components/ui/form/select'
+import { Label } from '@/components/ui/form/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { TeamSearch } from '@/components/ui/display/team-search'
+import { positions, devTraits } from '@/lib/config/player-config'
+import { fbsTeams } from '@/lib/teams/fbs-teams'
 import type { Transfer } from '@/dal/features/transfers'
 
 interface TransferFormProps {

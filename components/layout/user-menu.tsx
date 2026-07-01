@@ -9,7 +9,7 @@ import { LogOut, User, ChevronDown } from 'lucide-react'
 
 import { AuthContext } from '@/auth/auth-provider'
 import { supabase } from '@/supabase/client'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/display/button'
 
 export function UserMenu() {
     const { user, profile } = useContext(AuthContext)

@@ -2,10 +2,10 @@
 
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { RecruitPredictor } from './tools/recruit-predictor'
-import { RecruitingCalculator } from './tools/recruiting-calculator'
-import { PlayerNameGenerator } from './tools/player-name-generator'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { RecruitPredictor } from './recruit-predictor'
+import { RecruitingCalculator } from './recruiting-calculator'
+import { PlayerNameGenerator } from './player-name-generator'
 
 export function Tools() {
     return (

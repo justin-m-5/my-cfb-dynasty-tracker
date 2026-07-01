@@ -1,7 +1,7 @@
 // components/dynasty/sections/home/career-stats.tsx
 
 import { Trophy } from 'lucide-react'
-import { GlanceCard } from '@/components/ui/glance-card'
+import { GlanceCard } from '@/components/ui/layout/glance-card'
 import type { Dynasty } from '@/dal/features/dynasty'
 
 interface CareerStatsProps {

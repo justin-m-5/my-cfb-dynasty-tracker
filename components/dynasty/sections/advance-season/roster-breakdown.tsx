@@ -4,7 +4,7 @@ import type { Recruit } from '@/dal/features/recruits'
 import type { RosterPlayer } from '@/dal/features/players'
 import type { Transfer } from '@/dal/features/transfers'
 import type { DraftedPlayer } from '@/dal/features/drafted-players'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 
 interface RosterBreakdownProps {
     roster: RosterPlayer[]

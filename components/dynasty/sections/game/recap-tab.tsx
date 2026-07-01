@@ -2,8 +2,8 @@
 
 'use client'
 
-import { TextArea } from '@/components/ui/text-area'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { TextArea } from '@/components/ui/form/text-area'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 import type { Game } from '@/dal/features/games'
 
 interface RecapTabProps {

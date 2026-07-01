@@ -5,7 +5,7 @@
 import type { Game } from '@/dal/features/games'
 import type { Dynasty } from '@/dal/features/dynasty'
 import { getWeekDisplayName, getResultColor } from '@/lib/game-utils'
-import { DetailCard } from '@/components/ui/detail-card'
+import { DetailCard } from '@/components/ui/layout/detail-card'
 
 interface SeasonRecapProps {
     dynasty: Dynasty

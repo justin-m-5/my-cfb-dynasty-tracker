@@ -1,6 +1,6 @@
 // components/dynasty/sections/home/season-details.tsx
 
-import { DetailCard } from '@/components/ui/detail-card'
+import { DetailCard } from '@/components/ui/layout/detail-card'
 import type { YearRecord } from '@/dal/features/year-records'
 import type { Game } from '@/dal/features/games'
 

@@ -6,12 +6,12 @@ import type { DraftedPlayer } from '@/dal/features/drafted-players'
 import { PlayerService, type RosterPlayer } from '@/dal/features/players'
 import type { Recruit } from '@/dal/features/recruits'
 import type { Transfer } from '@/dal/features/transfers'
-import { Button } from '@/components/ui/button'
-import { FilterTabs } from '@/components/ui/filter-tabs'
-import { Input } from '@/components/ui/input'
-import { PlayerAvatar } from '@/components/ui/player-avatar'
-import { Select } from '@/components/ui/select'
-import { devTraitColors, positions, recruitPositionGroups, type DevTrait } from '@/lib/player-config'
+import { Button } from '@/components/ui/display/button'
+import { FilterTabs } from '@/components/ui/layout/filter-tabs'
+import { Input } from '@/components/ui/form/input'
+import { PlayerAvatar } from '@/components/ui/display/player-avatar'
+import { Select } from '@/components/ui/form/select'
+import { devTraitColors, positions, recruitPositionGroups, type DevTrait } from '@/lib/config/player-config'
 
 type PositionGroupKey = keyof typeof recruitPositionGroups
 

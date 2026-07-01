@@ -1,7 +1,7 @@
 // components/dynasty/sections/transfers/transfer-row.tsx
 
 import { Pencil, Trash2 } from 'lucide-react'
-import { starsDisplay, starsColor } from '@/lib/recruit-config'
+import { starsDisplay, starsColor } from '@/lib/config/recruit-config'
 import type { Transfer } from '@/dal/features/transfers'
 
 interface TransferRowProps {

@@ -5,11 +5,11 @@
 import { useState } from 'react'
 import type { Player } from '@/dal/features/players'
 import type { Award } from '@/dal/features/awards'
-import { predefinedAwards, teamAwards, teamDesignations } from '@/lib/award-config'
-import { Button } from '@/components/ui/button'
-import { Select } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { predefinedAwards, teamAwards, teamDesignations } from '@/lib/config/award-config'
+import { Button } from '@/components/ui/display/button'
+import { Select } from '@/components/ui/form/select'
+import { Label } from '@/components/ui/form/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 
 interface AwardFormProps {
     players: Player[]

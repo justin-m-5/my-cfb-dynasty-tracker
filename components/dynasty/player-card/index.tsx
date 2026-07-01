@@ -8,8 +8,8 @@ import { BarChart2, ListOrdered, Trophy, User, type LucideIcon } from 'lucide-re
 import { AwardService, type Award } from '@/dal/features/awards'
 import { PlayerService, type CareerSeason, type Player, type PlayerOrigin } from '@/dal/features/players'
 import { PlayerStatService, type CareerPlayerStat } from '@/dal/features/player-stats'
-import { Card, CardContent } from '@/components/ui/card'
-import { devTraitColors, type DevTrait } from '@/lib/player-config'
+import { Card, CardContent } from '@/components/ui/layout/card'
+import { devTraitColors, type DevTrait } from '@/lib/config/player-config'
 import { cn } from '@/lib/utils'
 
 import { AwardsTab } from './awards-tab'

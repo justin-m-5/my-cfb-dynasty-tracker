@@ -1,8 +1,8 @@
 // components/dynasty/sections/recruiting/recruit-row.tsx
 
 import { Pencil, Trash2 } from 'lucide-react'
-import { devTraitColors, type DevTrait } from '@/lib/player-config'
-import { starsDisplay, starsColor } from '@/lib/recruit-config'
+import { devTraitColors, type DevTrait } from '@/lib/config/player-config'
+import { starsDisplay, starsColor } from '@/lib/config/recruit-config'
 import type { Recruit } from '@/dal/features/recruits'
 
 interface RecruitRowProps {

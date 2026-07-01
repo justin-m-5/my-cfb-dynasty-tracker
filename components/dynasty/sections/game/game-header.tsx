@@ -1,7 +1,7 @@
 // components/dynasty/sections/game/game-header.tsx
 
-import { LogoImage } from '@/components/ui/logo-image'
-import { Card, CardContent } from '@/components/ui/card'
+import { LogoImage } from '@/components/ui/display/logo-image'
+import { Card, CardContent } from '@/components/ui/layout/card'
 import { getWeekFullName, parseScore } from '@/lib/game-utils'
 import type { Dynasty } from '@/dal/features/dynasty'
 import type { Game } from '@/dal/features/games'

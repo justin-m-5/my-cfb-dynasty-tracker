@@ -9,7 +9,7 @@ import type { Transfer } from '@/dal/features/transfers'
 import { TransferService } from '@/dal/features/transfers'
 import { DepthChart } from '@/components/dynasty/depth-chart'
 import { TransferForm } from '@/components/forms/transfer-form'
-import { Modal } from '@/components/ui/modal'
+import { Modal } from '@/components/ui/layout/modal'
 
 interface RosterManagementProps {
     roster: RosterPlayer[]

@@ -1,7 +1,7 @@
 // app/dashboard/dynasty/[id]/game/[gameId]/page.tsx
 
-import { GameDetail } from '@/components/dynasty/sections/game-detail'
-import { GameDetailReadOnly } from '@/components/dynasty/sections/game-detail-readonly'
+import { GameDetail } from '@/components/dynasty/sections/game/game-detail'
+import { GameDetailReadOnly } from '@/components/dynasty/sections/game/game-detail-readonly'
 
 interface GamePageProps {
     params: Promise<{ id: string; gameId: string }>

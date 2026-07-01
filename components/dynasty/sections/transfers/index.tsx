@@ -7,12 +7,12 @@ import { Plus } from 'lucide-react'
 
 import { YearRecordService } from '@/dal/features/year-records'
 import { TransferService, type Transfer } from '@/dal/features/transfers'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FilterTabs } from '@/components/ui/filter-tabs'
-import { TransferList } from './transfers/transfer-list'
-import { TransferForm } from '../../forms/transfer-form'
-import { Modal } from '@/components/ui/modal'
+import { Button } from '@/components/ui/display/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { FilterTabs } from '@/components/ui/layout/filter-tabs'
+import { TransferList } from './transfer-list'
+import { TransferForm } from '../../../forms/transfer-form'
+import { Modal } from '@/components/ui/layout/modal'
 
 interface TransfersProps {
     dynastyId: string

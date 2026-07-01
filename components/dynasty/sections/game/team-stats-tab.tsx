@@ -2,8 +2,8 @@
 
 'use client'
 
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/form/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 import type { Game } from '@/dal/features/games'
 
 const defaultTeamStats = {

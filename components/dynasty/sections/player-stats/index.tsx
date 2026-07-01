@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react'
 
 import { YearRecordService } from '@/dal/features/year-records'
 import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
-import { statCategories, type StatCategory } from '@/lib/stat-categories'
-import { Select } from '@/components/ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { StatsTable } from './player-stats/stats-table'
+import { statCategories, type StatCategory } from '@/lib/config/stat-categories'
+import { Select } from '@/components/ui/form/select'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { StatsTable } from './stats-table'
 
 interface PlayerStatsProps {
     dynastyId: string

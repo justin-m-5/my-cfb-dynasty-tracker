@@ -3,9 +3,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/form/input'
+import { Label } from '@/components/ui/form/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 
 export interface SeasonFinalizeData {
     conference_record: string

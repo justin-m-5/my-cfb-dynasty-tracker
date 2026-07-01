@@ -8,7 +8,7 @@ import { Eye } from 'lucide-react'
 
 import { GameService, type Game } from '@/dal/features/games'
 import type { YearRecord } from '@/dal/features/year-records'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 import { getLocationLabel, getWeekDisplayName, parseScore } from '@/lib/game-utils'
 import { buttonStyles } from '@/lib/button-utils'
 

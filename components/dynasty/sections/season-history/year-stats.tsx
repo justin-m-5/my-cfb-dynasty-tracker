@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react'
 
 import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
 import type { YearRecord } from '@/dal/features/year-records'
-import { statCategories, type StatCategory } from '@/lib/stat-categories'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Select } from '@/components/ui/select'
+import { statCategories, type StatCategory } from '@/lib/config/stat-categories'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { Select } from '@/components/ui/form/select'
 import { StatsTable } from '../player-stats/stats-table'
 
 interface YearStatsProps {

@@ -1,7 +1,7 @@
 // app/dashboard/dynasty/[id]/(with-nav)/page.tsx
 
 import { DynastyHeader } from '@/components/dynasty/dynasty-header'
-import { TeamHome } from '@/components/dynasty/sections/team-home'
+import { TeamHome } from '@/components/dynasty/sections/home'
 
 interface DynastyPageProps {
     params: Promise<{ id: string }>

@@ -7,11 +7,11 @@ import { Award as AwardIcon, Plus, Trash2 } from 'lucide-react'
 
 import { AwardService, type Award } from '@/dal/features/awards'
 import type { RosterPlayer } from '@/dal/features/players'
-import { predefinedAwards, teamAwards, teamDesignations } from '@/lib/award-config'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Modal } from '@/components/ui/modal'
-import { Select } from '@/components/ui/select'
+import { predefinedAwards, teamAwards, teamDesignations } from '@/lib/config/award-config'
+import { Button } from '@/components/ui/display/button'
+import { Label } from '@/components/ui/form/label'
+import { Modal } from '@/components/ui/layout/modal'
+import { Select } from '@/components/ui/form/select'
 
 interface CompactHonorsProps {
     dynastyId: string

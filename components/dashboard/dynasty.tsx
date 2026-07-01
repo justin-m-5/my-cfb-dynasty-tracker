@@ -7,9 +7,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Trash2, Trophy } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import { LogoImage } from '@/components/ui/logo-image'
-import { conferenceLogoByName, getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
+import { Button } from '@/components/ui/display/button'
+import { LogoImage } from '@/components/ui/display/logo-image'
+import { conferenceLogoByName, getSchoolLogoCandidates, getTeamLogo } from '@/lib/teams/logos'
 import type { DynastySummary } from '@/dal/features/dynasty'
 
 interface DynastyProps {

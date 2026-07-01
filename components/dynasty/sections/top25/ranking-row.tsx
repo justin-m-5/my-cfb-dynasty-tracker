@@ -3,13 +3,13 @@
 import { ArrowDown, ArrowUp, ChevronDown, ChevronUp, GripVertical, Minus } from 'lucide-react'
 
 import type { RankedTeam } from '@/dal/features/top25'
-import type { FbsTeam } from '@/lib/fbs-teams'
-import { fbsTeams } from '@/lib/fbs-teams'
-import { getTeamLogo } from '@/lib/logos'
+import type { FbsTeam } from '@/lib/teams/fbs-teams'
+import { fbsTeams } from '@/lib/teams/fbs-teams'
+import { getTeamLogo } from '@/lib/teams/logos'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { LogoImage } from '@/components/ui/logo-image'
-import { TeamSearch } from '@/components/ui/team-search'
+import { Button } from '@/components/ui/display/button'
+import { LogoImage } from '@/components/ui/display/logo-image'
+import { TeamSearch } from '@/components/ui/display/team-search'
 
 interface RankingRowProps {
     index: number

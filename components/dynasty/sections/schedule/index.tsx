@@ -9,11 +9,11 @@ import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
 import { GameService, type Game } from '@/dal/features/games'
 import { MAX_SCHEDULE_WEEK } from '@/lib/game-utils'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/display/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 
-import { RecordSummary } from './schedule/record-summary'
-import { GameRow } from './schedule/game-row'
+import { RecordSummary } from './record-summary'
+import { GameRow } from './game-row'
 
 interface ScheduleProps {
     dynastyId: string

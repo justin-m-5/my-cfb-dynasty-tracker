@@ -5,16 +5,16 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import { YearRecordService, type YearRecord } from '@/dal/features/year-records'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { MiniTabNav } from '@/components/ui/mini-tab-nav'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { MiniTabNav } from '@/components/ui/layout/mini-tab-nav'
 
-import { AllTimeOverview } from './season-history/all-time-overview'
-import { YearAwards } from './season-history/year-awards'
-import { YearOverview } from './season-history/year-overview'
-import { YearSchedule } from './season-history/year-schedule'
-import { YearStats } from './season-history/year-stats'
-import { YearTop25 } from './season-history/year-top25'
-import { YearPickerHeader } from './season-history/year-picker-header'
+import { AllTimeOverview } from './all-time-overview'
+import { YearAwards } from './year-awards'
+import { YearOverview } from './year-overview'
+import { YearSchedule } from './year-schedule'
+import { YearStats } from './year-stats'
+import { YearTop25 } from './year-top25'
+import { YearPickerHeader } from './year-picker-header'
 
 type HistoryTab = 'overview' | 'schedule' | 'top25' | 'stats' | 'awards'
 type YearSelection = 'all-time' | string

@@ -5,9 +5,9 @@ import { Plus, Trash2 } from 'lucide-react'
 
 import { TransferService, type Transfer } from '@/dal/features/transfers'
 import { TransferForm } from '@/components/forms/transfer-form'
-import { Button } from '@/components/ui/button'
-import { FilterTabs } from '@/components/ui/filter-tabs'
-import { Modal } from '@/components/ui/modal'
+import { Button } from '@/components/ui/display/button'
+import { FilterTabs } from '@/components/ui/layout/filter-tabs'
+import { Modal } from '@/components/ui/layout/modal'
 
 interface CompactTransfersProps {
     dynastyId: string

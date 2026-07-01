@@ -1,10 +1,10 @@
 // components/dynasty/sections/home/next-game-card.tsx
 
 import { Swords } from 'lucide-react'
-import { fbsTeams } from '@/lib/fbs-teams'
-import { getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
-import { LogoImage } from '@/components/ui/logo-image'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { fbsTeams } from '@/lib/teams/fbs-teams'
+import { getSchoolLogoCandidates, getTeamLogo } from '@/lib/teams/logos'
+import { LogoImage } from '@/components/ui/display/logo-image'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 import type { Game } from '@/dal/features/games'
 
 interface NextGameCardProps {

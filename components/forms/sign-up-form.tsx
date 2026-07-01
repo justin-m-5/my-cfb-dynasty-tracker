@@ -6,9 +6,9 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AuthService } from '@/auth'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/display/button'
+import { Input } from '@/components/ui/form/input'
+import { Label } from '@/components/ui/form/label'
 
 export function SignUpForm() {
     const [displayName, setDisplayName] = useState('')

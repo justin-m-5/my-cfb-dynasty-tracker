@@ -7,8 +7,8 @@ import { Trash2 } from 'lucide-react'
 
 import { DraftedPlayerService, type DraftedPlayer } from '@/dal/features/drafted-players'
 import type { RosterPlayer } from '@/dal/features/players'
-import { Button } from '@/components/ui/button'
-import { Select } from '@/components/ui/select'
+import { Button } from '@/components/ui/display/button'
+import { Select } from '@/components/ui/form/select'
 
 interface CompactDraftProps {
     dynastyId: string

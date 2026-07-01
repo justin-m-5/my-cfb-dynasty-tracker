@@ -1,9 +1,9 @@
 // components/dynasty/sections/season-history/year-picker-header.tsx
 
 import Image from 'next/image'
-import { Select } from '@/components/ui/select'
-import { LogoImage } from '@/components/ui/logo-image'
-import { conferenceLogoByName, getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
+import { Select } from '@/components/ui/form/select'
+import { LogoImage } from '@/components/ui/display/logo-image'
+import { conferenceLogoByName, getSchoolLogoCandidates, getTeamLogo } from '@/lib/teams/logos'
 import type { YearRecord } from '@/dal/features/year-records'
 
 interface YearPickerHeaderProps {

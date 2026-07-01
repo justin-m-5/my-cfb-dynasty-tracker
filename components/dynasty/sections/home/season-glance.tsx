@@ -1,7 +1,7 @@
 // components/dynasty/sections/home/season-glance.tsx
 
 import { Calendar, TrendingUp } from 'lucide-react'
-import { GlanceCard } from '@/components/ui/glance-card'
+import { GlanceCard } from '@/components/ui/layout/glance-card'
 import type { Dynasty } from '@/dal/features/dynasty'
 import type { YearRecord } from '@/dal/features/year-records'
 import type { Game } from '@/dal/features/games'
