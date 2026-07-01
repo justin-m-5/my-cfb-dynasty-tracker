@@ -32,7 +32,7 @@ export function LogoImage({ candidates, alt, size = 40, className }: LogoImagePr
             alt={alt}
             width={size}
             height={size}
-            className={`rounded-md border bg-background object-contain p-0.5 ${className ?? ''}`}
+            className={`rounded-md border bg-white dark:bg-white object-contain p-0.5 ${className ?? ''}`}
             style={{ width: size, height: size }}
             onError={() => setIndex((prev) => prev + 1)}
             unoptimized
