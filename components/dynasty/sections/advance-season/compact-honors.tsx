@@ -129,8 +129,7 @@ export function CompactHonors({ roster, onRosterUpdate }: CompactHonorsProps) {
                 </Select>
                 <Button
                     size="sm"
-                    bg="var(--green-600)"
-                    text="white"
+                    variant="save"
                     onClick={handleAdd}
                     disabled={saving || !selectedPlayerId || !selectedHonor}
                     className="h-8 text-base sm:text-xs font-semibold"

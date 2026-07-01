@@ -63,8 +63,7 @@ export function CoachingCarousel({ currentSchool, onSwitch, onStay }: CoachingCa
                 {!switching ? (
                     <div className="flex items-center gap-2">
                         <Button
-                            bg="var(--green-600)"
-                            text="white"
+                            variant="save"
                             size="sm"
                             onClick={onStay}
                             className="text-xs font-semibold"
@@ -108,8 +107,7 @@ export function CoachingCarousel({ currentSchool, onSwitch, onStay }: CoachingCa
 
                         <div className="flex items-center gap-2">
                             <Button
-                                bg="var(--green-600)"
-                                text="white"
+                                variant="save"
                                 size="sm"
                                 onClick={handleConfirmSwitch}
                                 disabled={!selectedTeam}
@@ -118,8 +116,7 @@ export function CoachingCarousel({ currentSchool, onSwitch, onStay }: CoachingCa
                                 Confirm Switch
                             </Button>
                             <Button
-                                bg="var(--orange-400)"
-                                text="white"
+                                variant="cancel"
                                 size="sm"
                                 onClick={() => { setSwitching(false); setSelectedSchool('') }}
                                 className="text-xs"

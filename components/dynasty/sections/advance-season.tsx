@@ -226,8 +226,7 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                                     </p>
                                     <div className="flex items-center gap-2">
                                         <Button
-                                            bg="var(--green-600)"
-                                            text="white"
+                                            variant="save"
                                             size="sm"
                                             onClick={handleAdvance}
                                             disabled={advancing}

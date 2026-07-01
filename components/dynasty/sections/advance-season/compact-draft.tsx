@@ -115,8 +115,7 @@ export function CompactDraft({
                 </Select>
                 <Button
                     size="sm"
-                    bg="var(--green-600)"
-                    text="white"
+                    variant="save"
                     onClick={handleAdd}
                     disabled={saving || !selectedPlayerId}
                     className="h-8 text-base sm:text-xs font-semibold"

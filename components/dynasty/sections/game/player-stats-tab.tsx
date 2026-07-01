@@ -259,8 +259,7 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
 
                         <div className="flex gap-2">
                             <Button
-                                bg="var(--green-600)"
-                                text="white"
+                                variant="save"
                                 size="sm"
                                 onClick={handleSave}
                                 disabled={saving || !formPlayerId}

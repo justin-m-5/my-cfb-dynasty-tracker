@@ -223,8 +223,7 @@ export function Top25({ dynastyId }: Top25Props) {
                             <div className="flex items-center gap-2">
                                 {saved && <span className="text-xs font-medium text-green-600">Saved!</span>}
                                 <Button
-                                    bg="var(--green-600)"
-                                    text="white"
+                                    variant="save"
                                     size="sm"
                                     onClick={handleSave}
                                     disabled={saving}

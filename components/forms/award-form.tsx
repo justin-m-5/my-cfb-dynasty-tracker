@@ -98,8 +98,7 @@ export function AwardForm({ players, editing, saving, onSave, onCancel }: AwardF
 
                 <div className="mt-3 flex items-center gap-2">
                     <Button
-                        bg="var(--green-600)"
-                        text="white"
+                        variant="save"
                         size="sm"
                         onClick={handleSubmit}
                         disabled={saving || !playerId || !awardName}
@@ -107,7 +106,7 @@ export function AwardForm({ players, editing, saving, onSave, onCancel }: AwardF
                     >
                         {saving ? 'Saving...' : editing ? 'Save Changes' : 'Add Award'}
                     </Button>
-                    <Button bg="var(--orange-400)" text="white" size="sm" onClick={onCancel} className="text-xs">
+                    <Button variant="cancel" size="sm" onClick={onCancel} className="text-xs">
                         Cancel
                     </Button>
                 </div>

@@ -134,8 +134,7 @@ export function CompactRecruits({ dynastyId, yearRecordId, recruits, onChange }:
                 </Select>
                 <Button
                     size="sm"
-                    bg="var(--green-600)"
-                    text="white"
+                    variant="save"
                     onClick={handleAdd}
                     disabled={saving || !form.name.trim() || !form.position}
                     className="h-8 text-base sm:text-xs font-semibold"

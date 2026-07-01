@@ -146,8 +146,7 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                 </div>
                 <Button
                     size="sm"
-                    bg="var(--green-600)"
-                    text="white"
+                    variant="save"
                     onClick={handleAdd}
                     disabled={saving || !form.player_name.trim() || !form.position || !form.school.trim()}
                     className="h-8 text-base sm:text-xs font-semibold"

@@ -92,8 +92,7 @@ export function Dynasty({ dynasty, onDelete }: DynastyProps) {
                             </Button>
                             <Button
                                 size="sm"
-                                bg="var(--secondary)"
-                                text="white"
+                                variant="cancel"
                                 className="text-xs"
                                 onClick={() => setIsConfirmingDelete(false)}
                             >

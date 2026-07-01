@@ -119,12 +119,12 @@ export function EditProfileForm() {
                 </CardContent>
 
                 <CardFooter className="flex gap-3">
-                    <Button type="submit" disabled={isSubmitting} bg="var(--green-600)" text="white" className="font-bold">
+                    <Button type="submit" disabled={isSubmitting} variant="save" className="font-bold">
                         {isSubmitting ? 'Saving...' : 'Save Changes'}
                     </Button>
                     <Button
                         type="button"
-                        bg="var(--orange-400)" text="white"
+                        variant="cancel"
                         onClick={() => router.push('/dashboard')}
                     >
                         Back

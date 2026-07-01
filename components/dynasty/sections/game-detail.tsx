@@ -156,8 +156,7 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
                 <div className="flex items-center gap-2">
                     {isDirty && <span className="text-xs font-medium text-amber-500">Unsaved</span>}
                     <Button
-                        bg="var(--green-600)"
-                        text="white"
+                        variant="save"
                         size="sm"
                         onClick={handleSave}
                         disabled={saving}
