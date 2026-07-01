@@ -3,7 +3,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, TrendingUp, Heart, Star, Share2, Repeat2 } from 'lucide-react'
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
@@ -231,30 +231,24 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
     }, [posts, filter])
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center py-12">
-                <p className="text-sm text-text/60">Loading social feed...</p>
-            </div>
-        )
+        return <div className="pt-10 text-sm text-text/60">Loading social feed...</div>
     }
 
     if (!dynasty) {
-        return (
-            <div className="flex items-center justify-center py-12">
-                <p className="text-sm text-red-500">Dynasty not found.</p>
-            </div>
-        )
+        return <div className="pt-10 text-sm text-red-500">Dynasty not found.</div>
     }
 
     return (
-        <div className="space-y-6">
-            <div className="text-center space-y-2">
-                <h1 className="text-2xl font-bold">Social Media Hub</h1>
-                <p className="text-sm text-text/60">Your dynasty&apos;s pulse on social media</p>
-            </div>
+        <div className="space-y-4 pt-10">
+            <Card>
+                <CardHeader className="pb-4">
+                    <CardTitle className="text-center text-xl">Social Media Hub</CardTitle>
+                    <p className="text-center text-sm text-text/60">Your dynasty&apos;s pulse on social media</p>
+                </CardHeader>
 
-            {/* Filters */}
-            <div className="flex justify-center gap-2 flex-wrap">
+                <CardContent className="space-y-4">
+                    {/* Filters */}
+                    <div className="flex justify-center gap-2 flex-wrap">
                 <Button
                     variant={filter === 'all' ? 'default' : 'outline'}
                     size="sm"
@@ -344,6 +338,8 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
                     </Card>
                 ))}
             </div>
+                </CardContent>
+            </Card>
         </div>
     )
 }
