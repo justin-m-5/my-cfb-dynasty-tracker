@@ -3,6 +3,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import Image from 'next/image'
 import { Camera, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -87,7 +88,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                         <div className="relative h-14 w-14 shrink-0 rounded-full border border-primary/20 bg-primary/5 flex items-center justify-center overflow-hidden">
                             {preview ? (
                                 <>
-                                    <img src={preview} alt="Headshot" className="h-full w-full object-cover" />
+                                    <Image src={preview} alt="Headshot" width={56} height={56} className="h-full w-full object-cover" unoptimized />
                                     <button
                                         type="button"
                                         onClick={handleRemoveImage}
