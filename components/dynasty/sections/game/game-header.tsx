@@ -15,9 +15,16 @@ interface GameHeaderProps {
 
 export function GameHeader({ dynasty, game, userLogos, oppLogos }: GameHeaderProps) {
     const { user: userScore, opp: oppScore } = parseScore(game.score)
-    const resultColor = game.result === 'W' ? 'text-green-600' : game.result === 'L' ? 'text-red-600' : 'text-text'
     const weekLabel = getWeekFullName(game.week)
     const locationLabel = getLocationLabel(game.location)
+    
+    // Color coding: green for higher score, red for lower, gray for tie or N/A
+    const userColor = game.result !== 'N/A' 
+        ? userScore > oppScore ? 'text-green-600' : userScore < oppScore ? 'text-red-600' : 'text-text'
+        : 'text-text/40'
+    const oppColor = game.result !== 'N/A'
+        ? oppScore > userScore ? 'text-green-600' : oppScore < userScore ? 'text-red-600' : 'text-text'
+        : 'text-text/40'
 
     return (
         <Card>
@@ -30,28 +37,17 @@ export function GameHeader({ dynasty, game, userLogos, oppLogos }: GameHeaderPro
                     <div className="flex flex-col items-center gap-1">
                         <LogoImage candidates={userLogos} alt={dynasty.school_name} size={40} />
                         <p className="text-xs font-semibold text-text sm:text-sm">{dynasty.school_abbrev ?? dynasty.school_name}</p>
+                        <p className={`text-2xl font-bold tabular-nums ${userColor}`}>{userScore}</p>
                     </div>
 
-                    {/* Score */}
-                    <div className="text-center">
-                        {game.result !== 'N/A' ? (
-                            <>
-                                <p className={`text-2xl font-bold sm:text-3xl ${resultColor}`}>
-                                    {userScore} - {oppScore}
-                                </p>
-                                <p className={`text-xs font-semibold ${resultColor}`}>
-                                    {game.result === 'W' ? 'WIN' : game.result === 'L' ? 'LOSS' : game.result === 'T' ? 'TIE' : ''}
-                                </p>
-                            </>
-                        ) : (
-                            <p className="text-xl font-bold text-text/40 sm:text-2xl">{locationLabel}</p>
-                        )}
-                    </div>
+                    {/* Separator */}
+                    <div className="text-3xl font-bold text-text/30">-</div>
 
                     {/* Opponent */}
                     <div className="flex flex-col items-center gap-1">
                         <LogoImage candidates={oppLogos} alt={game.opponent || 'TBD'} size={40} />
                         <p className="text-xs font-semibold text-text sm:text-sm">{game.opponent || 'TBD'}</p>
+                        <p className={`text-2xl font-bold tabular-nums ${oppColor}`}>{oppScore}</p>
                     </div>
                 </div>
             </CardContent>

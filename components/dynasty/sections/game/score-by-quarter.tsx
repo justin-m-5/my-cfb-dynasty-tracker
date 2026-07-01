@@ -56,97 +56,89 @@ export function ScoreByQuarter({ game, dynasty, updateGame, userLogos, oppLogos 
         updateGame('score_by_quarter', updated)
     }
 
+    const toggleOT = () => {
+        if (hasOT) {
+            // Remove all OT periods (keep only first 4 quarters)
+            updateGame('score_by_quarter', quarters.slice(0, 4))
+        } else {
+            // Add one OT period
+            updateGame('score_by_quarter', [...quarters, { home: 0, away: 0 }])
+        }
+    }
+
     const homeName = game.location === 'away' ? (game.opponent || 'Opponent') : (dynasty.school_abbrev ?? dynasty.school_name)
     const awayName = game.location === 'away' ? (dynasty.school_abbrev ?? dynasty.school_name) : (game.opponent || 'Opponent')
     const homeLogos = game.location === 'away' ? oppLogos : userLogos
     const awayLogos = game.location === 'away' ? userLogos : oppLogos
 
-    const [yourScore, oppScore] = game.score?.split('-').map(s => parseInt(s) || 0) ?? [0, 0]
-
     return (
-        <div className="space-y-4">
-            {/* Score by Quarter */}
-            <div>
-                <div className="mb-2 flex items-center justify-between">
-                    <Label className="text-xs">Score by Quarter</Label>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={addOT}
-                        className="h-7 text-xs"
-                        bg="var(--primary)" text="white"
-                    >
-                        <Plus className="h-3 w-3 mr-1" />
-                        Add OT
-                    </Button>
-                </div>
-                <div className="overflow-x-auto rounded-lg border border-primary/20 bg-background/50">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-primary/20 text-xs text-text/60">
-                                <th className="py-2 pl-2 pr-4 text-left font-medium">Team</th>
-                                {labels.map(l => <th key={l} className="px-2 py-2 text-center font-medium">{l}</th>)}
-                                {hasOT && quarters.slice(4).map((_, i) => (
-                                    <th key={`ot${i}`} className="px-2 py-2 text-center font-medium">
-                                        {i === 0 ? 'OT' : `${i + 1}OT`}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr className="border-b border-primary/10">
-                                <td className="py-2 pl-2">
-                                    <div className="flex items-center gap-2">
-                                        <LogoImage candidates={awayLogos} alt={awayName} size={32} />
-                                    </div>
-                                </td>
-                                {quarters.map((q, i) => (
-                                    <td key={i} className="px-1 py-2 text-center">
-                                        <Input
-                                            type="number"
-                                            min={0}
-                                            value={q.away}
-                                            onChange={(e) => updateQuarter(i, 'away', e.target.value)}
-                                            className="mx-auto h-10 w-16 min-w-16 text-center text-base tabular-nums sm:h-8 sm:w-14 sm:min-w-14 sm:text-sm px-2"
-                                        />
-                                    </td>
-                                ))}
-                            </tr>
-                            <tr>
-                                <td className="py-2 pl-2 pr-4">
-                                    <div className="flex items-center gap-2">
-                                        <LogoImage candidates={homeLogos} alt={homeName} size={32} />
-                                    </div>
-                                </td>
-                                {quarters.map((q, i) => (
-                                    <td key={i} className="px-1 py-2 text-center">
-                                        <Input
-                                            type="number"
-                                            min={0}
-                                            value={q.home}
-                                            onChange={(e) => updateQuarter(i, 'home', e.target.value)}
-                                            className="mx-auto h-10 w-16 min-w-16 text-center text-base tabular-nums sm:h-8 sm:w-14 sm:min-w-14 sm:text-sm px-2"
-                                        />
-                                    </td>
-                                ))}
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div>
+            <div className="mb-2 flex items-center justify-between">
+                <Label className="text-xs">Score by Quarter</Label>
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleOT}
+                    className="h-7 text-xs"
+                    bg="var(--primary)" text="white"
+                >
+                    <Plus className="h-3 w-3 mr-1" />
+                    {hasOT ? 'Remove OT' : 'Add OT'}
+                </Button>
             </div>
-
-            {/* Total Scores (read-only, at bottom) */}
-            <div className="flex items-center justify-center gap-8 rounded-lg border border-primary/20 bg-background/50 py-3">
-                <div className="text-center">
-                    <p className="text-xs text-text/60 mb-1">Your Score</p>
-                    <p className="text-2xl font-bold text-text tabular-nums">{yourScore}</p>
-                </div>
-                <div className="text-4xl font-bold text-text/30">-</div>
-                <div className="text-center">
-                    <p className="text-xs text-text/60 mb-1">Opp Score</p>
-                    <p className="text-2xl font-bold text-text tabular-nums">{oppScore}</p>
-                </div>
+            <div className="overflow-x-auto rounded-lg border border-primary/20 bg-background/50">
+                <table className="w-full text-sm">
+                    <thead>
+                        <tr className="border-b border-primary/20 text-xs text-text/60">
+                            <th className="py-2 pl-2 pr-4 text-left font-medium">Team</th>
+                            {labels.map(l => <th key={l} className="px-2 py-2 text-center font-medium">{l}</th>)}
+                            {hasOT && quarters.slice(4).map((_, i) => (
+                                <th key={`ot${i}`} className="px-2 py-2 text-center font-medium">
+                                    {i === 0 ? 'OT' : `${i + 1}OT`}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr className="border-b border-primary/10">
+                            <td className="py-2 pl-2">
+                                <div className="flex items-center gap-2">
+                                    <LogoImage candidates={awayLogos} alt={awayName} size={32} />
+                                </div>
+                            </td>
+                            {quarters.map((q, i) => (
+                                <td key={i} className="px-1 py-2 text-center">
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        value={q.away}
+                                        onChange={(e) => updateQuarter(i, 'away', e.target.value)}
+                                        className="mx-auto h-10 w-16 min-w-16 text-center text-base tabular-nums sm:h-8 sm:w-14 sm:min-w-14 sm:text-sm px-2"
+                                    />
+                                </td>
+                            ))}
+                        </tr>
+                        <tr>
+                            <td className="py-2 pl-2 pr-4">
+                                <div className="flex items-center gap-2">
+                                    <LogoImage candidates={homeLogos} alt={homeName} size={32} />
+                                </div>
+                            </td>
+                            {quarters.map((q, i) => (
+                                <td key={i} className="px-1 py-2 text-center">
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        value={q.home}
+                                        onChange={(e) => updateQuarter(i, 'home', e.target.value)}
+                                        className="mx-auto h-10 w-16 min-w-16 text-center text-base tabular-nums sm:h-8 sm:w-14 sm:min-w-14 sm:text-sm px-2"
+                                    />
+                                </td>
+                            ))}
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     )
