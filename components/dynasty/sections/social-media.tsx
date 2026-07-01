@@ -5,7 +5,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { MessageCircle, TrendingUp, Heart, Star, RefreshCw, Share2, Repeat2 } from 'lucide-react'
+import { MessageCircle, TrendingUp, Heart, Star, Share2, Repeat2 } from 'lucide-react'
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
 import { GameService, type Game } from '@/dal/features/games'
@@ -50,7 +50,6 @@ const FAN_ACCOUNTS = [
 export function SocialMedia({ dynastyId }: SocialMediaProps) {
     const [filter, setFilter] = useState<'all' | 'news' | 'recruiting'>('all')
     const [loading, setLoading] = useState(true)
-    const [refreshTrigger, setRefreshTrigger] = useState(0)
 
     const [dynasty, setDynasty] = useState<Dynasty | null>(null)
     const [games, setGames] = useState<Game[]>([])
@@ -89,11 +88,7 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
         }
 
         loadData()
-    }, [dynastyId, refreshTrigger])
-
-    const handleRefresh = () => {
-        setRefreshTrigger(prev => prev + 1)
-    }
+    }, [dynastyId])
 
     const posts = useMemo(() => {
         if (!dynasty) return []
@@ -286,15 +281,6 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
                 >
                     <Star className="h-4 w-4 mr-2" />
                     Recruiting
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRefresh}
-                    disabled={loading}
-                >
-                    <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                    Refresh
                 </Button>
             </div>
 
