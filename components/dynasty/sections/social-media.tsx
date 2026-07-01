@@ -48,10 +48,9 @@ const FAN_ACCOUNTS = [
 ]
 
 export function SocialMedia({ dynastyId }: SocialMediaProps) {
-    const [posts, setPosts] = useState<SocialPost[]>([])
     const [filter, setFilter] = useState<'all' | 'news' | 'recruiting'>('all')
-    const [isGenerating, setIsGenerating] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [refreshTrigger, setRefreshTrigger] = useState(0)
 
     const [dynasty, setDynasty] = useState<Dynasty | null>(null)
     const [games, setGames] = useState<Game[]>([])
@@ -90,12 +89,15 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
         }
 
         loadData()
-    }, [dynastyId])
+    }, [dynastyId, refreshTrigger])
 
-    const generatePosts = () => {
-        if (!dynasty) return
+    const handleRefresh = () => {
+        setRefreshTrigger(prev => prev + 1)
+    }
 
-        setIsGenerating(true)
+    const posts = useMemo(() => {
+        if (!dynasty) return []
+
         const generated: SocialPost[] = []
         const now = new Date()
 
@@ -111,7 +113,7 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
         if (latestGame) {
             const isWin = latestGame.result === 'W'
             const content = isWin
-                ? `🎉 That's a W! Final: ${dynasty.school_name} ${latestGame.score} vs ${latestGame.opponent}!\n\n#Go${dynasty.school_name.replace(/\s+/g, '')}`
+                ? `🎉 That&apos;s a W! Final: ${dynasty.school_name} ${latestGame.score} vs ${latestGame.opponent}!\n\n#Go${dynasty.school_name.replace(/\s+/g, '')}`
                 : `Tough battle today. ${dynasty.school_name} falls to ${latestGame.opponent}, ${latestGame.score}. We'll be back stronger. 💪`
 
             generated.push({
@@ -220,16 +222,8 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
             verified: true,
         })
 
-        setPosts(generated.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()))
-        setIsGenerating(false)
-    }
-
-    useEffect(() => {
-        if (!loading && dynasty) {
-            generatePosts()
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loading, dynasty, games, roster, recruits, transfers])
+        return generated.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+    }, [dynasty, games, roster, recruits, transfers])
 
     const filteredPosts = useMemo(() => {
         if (filter === 'all') return posts
@@ -296,10 +290,10 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={generatePosts}
-                    disabled={isGenerating}
+                    onClick={handleRefresh}
+                    disabled={loading}
                 >
-                    <RefreshCw className={`h-4 w-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
+                    <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                     Refresh
                 </Button>
             </div>
