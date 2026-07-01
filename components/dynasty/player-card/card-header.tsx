@@ -10,8 +10,17 @@ import { CardHeader as UiCardHeader } from '@/components/ui/card'
 import { LogoImage } from '@/components/ui/logo-image'
 import { PlayerAvatar } from '@/components/ui/player-avatar'
 import { getTeamLogo } from '@/lib/logos'
+import { cn } from '@/lib/utils'
 
 import type { SchoolColors } from './types'
+
+// Stronger colors for on-gradient visibility
+const headerTraitColors: Record<string, string> = {
+    Elite: 'bg-purple-600 text-white',
+    Star: 'bg-yellow-500 text-yellow-950',
+    Impact: 'bg-blue-600 text-white',
+    Normal: 'bg-gray-600 text-white',
+}
 
 interface PlayerCardHeaderProps {
     player: Player | null
@@ -66,7 +75,7 @@ export function PlayerCardHeader({ player, currentSeason, schoolColors, schoolNa
                         </div>
                         <div className="flex flex-wrap gap-2 text-xs">
                             {currentSeason?.dev_trait && (
-                                <span className="rounded-full border border-white/30 bg-black/40 px-2.5 py-1 font-semibold text-white backdrop-blur-sm">
+                                <span className={cn('rounded-full border border-white/30 px-2.5 py-1 font-semibold shadow-sm', headerTraitColors[currentSeason.dev_trait] ?? headerTraitColors.Normal)}>
                                     {currentSeason.dev_trait}
                                 </span>
                             )}
