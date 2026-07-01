@@ -115,22 +115,14 @@ export function DynastyHeader({ dynastyId }: DynastyHeaderProps) {
                                 )}
                             </div>
                         )}
-
                     </div>
-
                 </div>
             </CardContent>
         </Card>
     )
 }
 
-function InfoRow({
-    label,
-    value,
-}: {
-    label: string
-    value: string
-}) {
+function InfoRow({ label, value } : { label: string; value: string }) {
     return (
         <div className="flex items-center gap-1 whitespace-nowrap">
             <dt 
