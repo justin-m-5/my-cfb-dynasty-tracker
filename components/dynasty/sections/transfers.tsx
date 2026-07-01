@@ -9,6 +9,7 @@ import { YearRecordService } from '@/dal/features/year-records'
 import { TransferService, type Transfer } from '@/dal/features/transfers'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { FilterTabs } from '@/components/ui/filter-tabs'
 import { TransferList } from './transfers/transfer-list'
 import { TransferForm } from '../../forms/transfer-form'
 import { Modal } from '@/components/ui/modal'
@@ -144,25 +145,16 @@ export function Transfers({ dynastyId }: TransfersProps) {
                     </div>
 
                     {/* Filter tabs — equal 3-column grid */}
-                    <div className="mt-3 grid grid-cols-3 overflow-hidden rounded-lg border border-primary/15">
-                        {([
+                    <FilterTabs
+                        tabs={[
                             { key: 'All' as const, label: `All (${transfers.length})` },
                             { key: 'From' as const, label: `In (${inCount})` },
                             { key: 'To' as const, label: `Out (${outCount})` },
-                        ]).map((tab, i) => {
-                            const active = filter === tab.key
-                            return (
-                                <button
-                                    key={tab.key}
-                                    type="button"
-                                    onClick={() => setFilter(tab.key)}
-                                    className={`py-2 text-xs font-semibold transition-colors ${i > 0 ? 'border-l border-primary/15' : ''} ${active ? 'bg-primary/10 text-primary' : 'text-text/60 hover:bg-primary/5 hover:text-text'}`}
-                                >
-                                    {tab.label}
-                                </button>
-                            )
-                        })}
-                    </div>
+                        ]}
+                        active={filter}
+                        onChange={setFilter}
+                        className="mt-3"
+                    />
                 </CardHeader>
                 <CardContent>
                     <TransferList

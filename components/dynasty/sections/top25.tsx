@@ -188,9 +188,7 @@ export function Top25({ dynastyId }: Top25Props) {
 
     const unrankedTeams = useMemo(() => {
         const rankedNames = new Set(rankings.map(t => t.name).filter(Boolean))
-        return fbsTeams
-            .filter(team => !rankedNames.has(team.name))
-            .sort((a, b) => a.name.localeCompare(b.name))
+        return fbsTeams.filter(team => !rankedNames.has(team.name)).sort((a, b) => a.name.localeCompare(b.name))
     }, [rankings])
 
     const weekOptions = useMemo(

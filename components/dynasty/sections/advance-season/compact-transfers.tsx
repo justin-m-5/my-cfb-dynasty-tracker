@@ -6,6 +6,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import { TransferService, type Transfer } from '@/dal/features/transfers'
 import { TransferForm } from '@/components/forms/transfer-form'
 import { Button } from '@/components/ui/button'
+import { FilterTabs } from '@/components/ui/filter-tabs'
 import { Modal } from '@/components/ui/modal'
 
 interface CompactTransfersProps {
@@ -104,27 +105,16 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                             Add Transfer
                         </Button>
                     </div>
-                    <div className="mt-2 flex flex-wrap gap-1">
-                        {[
-                            { key: 'All' as const, label: 'All' },
-                            { key: 'From' as const, label: 'In' },
-                            { key: 'To' as const, label: 'Out' },
-                        ].map((option) => {
-                            const isActive = filter === option.key
-
-                            return (
-                                <Button
-                                    key={option.key}
-                                    type="button"
-                                    variant={isActive ? 'default' : 'ghost'}
-                                    size="sm"
-                                    onClick={() => setFilter(option.key)}
-                                    className="h-7 px-2.5 text-xs font-semibold"
-                                >
-                                    {option.label}
-                                </Button>
-                            )
-                        })}
+                    <div className="mt-2">
+                        <FilterTabs
+                            tabs={[
+                                { key: 'All' as const, label: 'All' },
+                                { key: 'From' as const, label: 'In' },
+                                { key: 'To' as const, label: 'Out' },
+                            ]}
+                            active={filter}
+                            onChange={setFilter}
+                        />
                     </div>
                 </div>
 
