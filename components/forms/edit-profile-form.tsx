@@ -4,8 +4,10 @@
 
 import { useContext, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Sun, Moon, Monitor } from 'lucide-react'
 import { AuthContext } from '@/auth/auth-provider'
 import { ProfileService } from '@/auth/profile'
+import { useTheme, type Theme } from '@/components/theme/theme-provider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,6 +16,7 @@ import { AvatarInput } from '../ui/avatar-input'
 
 export function EditProfileForm() {
     const { user, profile } = useContext(AuthContext)
+    const { theme, setTheme } = useTheme()
     const router = useRouter()
 
     const [displayName, setDisplayName] = useState(profile?.display_name ?? '')
@@ -64,19 +67,14 @@ export function EditProfileForm() {
                 </CardHeader>
 
                 <CardContent className="space-y-6">
-                    {/* AVATAR DROPZONE SECTION */}
-                    <div className="flex flex-col gap-3">
+                    {/* AVATAR SECTION */}
+                    <div>
                         <Label>Avatar</Label>
-                        
-                        {/* The new component replaces all the previous markup! */}
-                        <div>
-                            <Label>Avatar</Label>
-                            <div className="mt-1">
-                                <AvatarInput 
-                                    previewUrl={avatarPreview} 
-                                    onChange={handleAvatarChange} 
-                                />
-                            </div>
+                        <div className="mt-1">
+                            <AvatarInput 
+                                previewUrl={avatarPreview} 
+                                onChange={handleAvatarChange} 
+                            />
                         </div>
                     </div>
 
@@ -88,6 +86,32 @@ export function EditProfileForm() {
                             onChange={(e) => setDisplayName(e.target.value)}
                             className="mt-1"
                         />
+                    </div>
+
+                    {/* Theme Toggle */}
+                    <div>
+                        <Label>Theme</Label>
+                        <div className="mt-2 flex gap-2">
+                            {([
+                                { value: 'light' as Theme, icon: Sun, label: 'Light' },
+                                { value: 'dark' as Theme, icon: Moon, label: 'Dark' },
+                                { value: 'system' as Theme, icon: Monitor, label: 'System' },
+                            ]).map(({ value, icon: Icon, label }) => (
+                                <button
+                                    key={value}
+                                    type="button"
+                                    onClick={() => setTheme(value)}
+                                    className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
+                                        theme === value
+                                            ? 'border-primary bg-primary/10 text-primary'
+                                            : 'border-primary/20 text-text/60 hover:border-primary/40 hover:text-text'
+                                    }`}
+                                >
+                                    <Icon className="h-4 w-4" />
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     {error && <p className="text-sm text-red-500">{error}</p>}

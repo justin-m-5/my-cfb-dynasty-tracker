@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/auth/auth-provider";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import { getServerAuthSession } from "@/dal/features/auth/server";
 import { robotoMono, robotoSans } from "./fonts";
 
@@ -21,11 +22,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       className={`${robotoSans.variable} ${robotoMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-background">
-        <AuthProvider serverSession={serverSession}>
-          <main className="flex-1 bg-background text-foreground">
-            {children}
-          </main>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider serverSession={serverSession}>
+            <main className="flex-1 bg-background text-foreground">
+              {children}
+            </main>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

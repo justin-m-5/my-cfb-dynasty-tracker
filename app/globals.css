@@ -87,7 +87,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --text-50: #070b12;
       --text-100: #0e1725;
       --text-200: #1d2d49;
@@ -155,6 +155,76 @@
       --accent: var(--accent-600);
       --primary5: hsl(221 61% 54% / 0.14);
     }
+  }
+
+  /* Forced dark mode via toggle */
+  :root[data-theme="dark"] {
+    --text-50: #070b12;
+    --text-100: #0e1725;
+    --text-200: #1d2d49;
+    --text-300: #2b446e;
+    --text-400: #395a93;
+    --text-500: #4771b8;
+    --text-600: #6c8dc6;
+    --text-700: #91aad4;
+    --text-800: #b6c6e2;
+    --text-900: #dae3f1;
+    --text-950: #edf1f8;
+
+    --background-50: #080d12;
+    --background-100: #0f1924;
+    --background-200: #1f3347;
+    --background-300: #2e4c6b;
+    --background-400: #3d668f;
+    --background-500: #4d7fb3;
+    --background-600: #7099c2;
+    --background-700: #94b2d1;
+    --background-800: #b8cce0;
+    --background-900: #dbe6f0;
+    --background-950: #edf2f7;
+
+    --primary-50: #050a15;
+    --primary-100: #0a1429;
+    --primary-200: #142852;
+    --primary-300: #1e3b7b;
+    --primary-400: #284fa4;
+    --primary-500: #3263cd;
+    --primary-600: #5b82d7;
+    --primary-700: #84a1e1;
+    --primary-800: #adc1eb;
+    --primary-900: #d6e0f5;
+    --primary-950: #eaeffa;
+
+    --secondary-50: #040916;
+    --secondary-100: #07132c;
+    --secondary-200: #0f2657;
+    --secondary-300: #163983;
+    --secondary-400: #1e4bae;
+    --secondary-500: #255eda;
+    --secondary-600: #517ee1;
+    --secondary-700: #7c9fe9;
+    --secondary-800: #a8bff0;
+    --secondary-900: #d3dff8;
+    --secondary-950: #e9effb;
+
+    --accent-50: #020917;
+    --accent-100: #05122e;
+    --accent-200: #0a245c;
+    --accent-300: #0f368a;
+    --accent-400: #1348b9;
+    --accent-500: #185ae7;
+    --accent-600: #467bec;
+    --accent-700: #759cf0;
+    --accent-800: #a3bdf5;
+    --accent-900: #d1defa;
+    --accent-950: #e8eefd;
+
+    --text: var(--text-900);
+    --background: var(--background-100);
+    --primary: var(--primary-600);
+    --secondary: var(--secondary-500);
+    --accent: var(--accent-600);
+    --primary5: hsl(221 61% 54% / 0.14);
   }
 
   body {
