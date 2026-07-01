@@ -8,12 +8,13 @@ import { PlayerRow } from './player-row'
 interface RosterListProps {
     players: RosterPlayer[]
     totalCount: number
+    onSelect: (player: RosterPlayer) => void
     onEdit: (player: RosterPlayer) => void
     onDelete: (id: string) => void
     onToggleRedshirt: (player: RosterPlayer) => void
 }
 
-export function RosterList({ players, totalCount, onEdit, onDelete, onToggleRedshirt }: RosterListProps) {
+export function RosterList({ players, totalCount, onSelect, onEdit, onDelete, onToggleRedshirt }: RosterListProps) {
     if (players.length === 0) {
         return (
             <p className="text-sm text-text/60 py-4 text-center">
@@ -39,6 +40,7 @@ export function RosterList({ players, totalCount, onEdit, onDelete, onToggleReds
                 <PlayerRow
                     key={player.id}
                     player={player}
+                    onSelect={onSelect}
                     onEdit={onEdit}
                     onDelete={onDelete}
                     onToggleRedshirt={onToggleRedshirt}

@@ -44,6 +44,11 @@ export interface PlayerStat {
     pr_long: number
 }
 
+export interface CareerPlayerStat extends PlayerStat {
+    game_week: number
+    game_year: number
+}
+
 export const PlayerStatService = {
     async getStatsForGame(gameId: string): Promise<PlayerStat[]> {
         const { data, error } = await supabase.from('player_stats').select('*').eq('game_id', gameId)
@@ -94,6 +99,37 @@ export const PlayerStatService = {
                 position: players?.position ?? '',
             }
         }) as (PlayerStat & { player_name: string; position: string })[]
+    },
+
+    async getCareerStats(playerId: string): Promise<CareerPlayerStat[]> {
+        const { data, error } = await supabase
+            .from('player_stats')
+            .select('*, games!inner(week, year_records!inner(year))')
+            .eq('player_id', playerId)
+
+        if (error) {
+            console.error('Get career stats error:', error.message)
+            return []
+        }
+
+        const rows = (data ?? []) as (PlayerStat & {
+            games?: {
+                week?: number | null
+                year_records?: { year?: number | null } | { year?: number | null }[] | null
+            } | null
+        })[]
+
+        return rows.map((row) => {
+            const game = row.games as { week?: number | null; year_records?: { year?: number | null } | { year?: number | null }[] | null } | undefined
+            const yearRecord = Array.isArray(game?.year_records) ? game?.year_records[0] : game?.year_records
+            const { games: _games, ...statRow } = row
+
+            return {
+                ...statRow,
+                game_week: game?.week ?? 0,
+                game_year: yearRecord?.year ?? 0,
+            }
+        })
     },
 
     async upsertStat(stat: Omit<PlayerStat, 'id'> & { id?: string }): Promise<PlayerStat | null> {

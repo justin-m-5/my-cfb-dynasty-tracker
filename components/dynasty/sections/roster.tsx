@@ -10,6 +10,7 @@ import { PlayerService, type RosterPlayer } from '@/dal/features/players'
 import { uploadPlayerImage, deletePlayerImage } from '@/lib/upload-player-image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { PlayerCard } from '@/components/dynasty/player-card'
 import { RosterFilters } from './roster/roster-filters'
 import { RosterList } from './roster/roster-list'
 import { PlayerForm, type PlayerFormData } from '../../forms/player-form'
@@ -25,8 +26,13 @@ export function Roster({ dynastyId }: RosterProps) {
     const [saving, setSaving] = useState(false)
     const [showForm, setShowForm] = useState(false)
     const [editing, setEditing] = useState<RosterPlayer | null>(null)
+    const [selectedPlayer, setSelectedPlayer] = useState<RosterPlayer | null>(null)
     const [search, setSearch] = useState('')
     const [posFilter, setPosFilter] = useState('ALL')
+    const [schoolColors, setSchoolColors] = useState({
+        primary: 'var(--color-primary)',
+        secondary: 'var(--color-secondary)',
+    })
 
     useEffect(() => {
         const load = async () => {
@@ -34,6 +40,10 @@ export function Roster({ dynastyId }: RosterProps) {
                 const yr = await YearRecordService.getCurrentYearRecord(dynastyId)
                 if (yr) {
                     setYearRecordId(yr.id)
+                    setSchoolColors({
+                        primary: yr.primary_color ?? 'var(--color-primary)',
+                        secondary: yr.secondary_color ?? 'var(--color-secondary)',
+                    })
                     const roster = await PlayerService.getRoster(dynastyId, yr.id)
                     setPlayers(roster)
                 }
@@ -86,15 +96,15 @@ export function Roster({ dynastyId }: RosterProps) {
                     notes: form.notes,
                     dev_trait: form.dev_trait,
                 })
-                setPlayers(prev => prev.map(p => p.id === editing.id ? {
-                    ...p,
+                const updatedPlayer = {
+                    ...editing,
                     name: form.name,
                     position: form.position,
                     height: form.height,
                     weight: form.weight,
                     avatar_url: avatarUrl,
                     season: {
-                        ...p.season,
+                        ...editing.season,
                         year: form.year,
                         rating: form.rating,
                         jersey_number: form.jersey_number,
@@ -102,7 +112,9 @@ export function Roster({ dynastyId }: RosterProps) {
                         notes: form.notes,
                         dev_trait: form.dev_trait,
                     },
-                } : p))
+                }
+                setPlayers(prev => prev.map(p => p.id === editing.id ? updatedPlayer : p))
+                setSelectedPlayer(prev => prev?.id === editing.id ? updatedPlayer : prev)
             } else {
                 const created = await PlayerService.createPlayer(
                     {
@@ -148,6 +160,7 @@ export function Roster({ dynastyId }: RosterProps) {
         try {
             await PlayerService.deletePlayer(id)
             setPlayers(prev => prev.filter(p => p.id !== id))
+            setSelectedPlayer(prev => prev?.id === id ? null : prev)
         } catch (err) {
             console.error('Failed to delete player:', err)
         }
@@ -157,10 +170,12 @@ export function Roster({ dynastyId }: RosterProps) {
         const updated = !player.season.is_redshirted
         try {
             await PlayerService.updatePlayerSeason(player.season.id, { is_redshirted: updated })
-            setPlayers(prev => prev.map(p => p.id === player.id ? {
-                ...p,
-                season: { ...p.season, is_redshirted: updated },
-            } : p))
+            const updatedPlayer = {
+                ...player,
+                season: { ...player.season, is_redshirted: updated },
+            }
+            setPlayers(prev => prev.map(p => p.id === player.id ? updatedPlayer : p))
+            setSelectedPlayer(prev => prev?.id === player.id ? updatedPlayer : prev)
         } catch (err) {
             console.error('Failed to toggle redshirt:', err)
         }
@@ -224,12 +239,23 @@ export function Roster({ dynastyId }: RosterProps) {
                     <RosterList
                         players={filtered}
                         totalCount={players.length}
+                        onSelect={setSelectedPlayer}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                         onToggleRedshirt={handleToggleRedshirt}
                     />
                 </CardContent>
             </Card>
+
+            {selectedPlayer && (
+                <PlayerCard
+                    playerId={selectedPlayer.id}
+                    dynastyId={dynastyId}
+                    isOpen={!!selectedPlayer}
+                    onClose={() => setSelectedPlayer(null)}
+                    schoolColors={schoolColors}
+                />
+            )}
         </div>
     )
 }

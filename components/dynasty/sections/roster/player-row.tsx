@@ -7,12 +7,13 @@ import type { RosterPlayer } from '@/dal/features/players'
 
 interface PlayerRowProps {
     player: RosterPlayer
+    onSelect: (player: RosterPlayer) => void
     onEdit: (player: RosterPlayer) => void
     onDelete: (id: string) => void
     onToggleRedshirt: (player: RosterPlayer) => void
 }
 
-export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: PlayerRowProps) {
+export function PlayerRow({ player, onSelect, onEdit, onDelete, onToggleRedshirt }: PlayerRowProps) {
     const traitColor = player.season.dev_trait ? devTraitColors[player.season.dev_trait as DevTrait] ?? '' : ''
 
     return (
@@ -27,7 +28,13 @@ export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: Player
 
             {/* Name + Position + mobile badges */}
             <div className="flex-1 min-w-0">
-                <span className="text-xs font-semibold text-text block truncate">{player.name}</span>
+                <button
+                    type="button"
+                    onClick={() => onSelect(player)}
+                    className="block truncate text-left text-xs font-semibold text-text transition-colors hover:text-primary hover:underline cursor-pointer"
+                >
+                    {player.name}
+                </button>
                 <div className="flex items-center gap-1.5 text-[10px] text-text/50">
                     <span>{player.position}</span>
                     {/* Year + Dev Trait inline on small screens */}
