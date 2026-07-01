@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { PositionOptions } from '@/components/ui/position-options'
 import { positions, years, devTraits } from '@/lib/player-config'
 import type { RosterPlayer } from '@/dal/features/players'
 
@@ -139,7 +140,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                             className="mt-1 h-8"
                         >
                             <option value="">Select</option>
-                            {positions.map(p => <option key={p} value={p}>{p}</option>)}
+                            <PositionOptions />
                         </Select>
                     </div>
                     <div>

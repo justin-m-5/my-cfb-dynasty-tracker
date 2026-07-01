@@ -4,7 +4,7 @@
 
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
-import { positions } from '@/lib/player-config'
+import { PositionOptions } from '@/components/ui/position-options'
 
 interface RosterFiltersProps {
     search: string
@@ -28,7 +28,7 @@ export function RosterFilters({ search, onSearchChange, posFilter, onPosFilterCh
                 className="h-8 w-24 text-base sm:text-xs"
             >
                 <option value="ALL">All</option>
-                {positions.map(p => <option key={p} value={p}>{p}</option>)}
+                <PositionOptions />
             </Select>
         </div>
     )

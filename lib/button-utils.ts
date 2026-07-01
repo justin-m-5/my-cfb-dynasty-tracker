@@ -15,6 +15,7 @@ export const buttonVariants = cva(
                 save: "bg-(--green-600) text-white hover:opacity-80",
                 delete: "bg-red-600 text-white hover:bg-red-700",
                 ghost: "hover:bg-accent hover:text-accent-foreground",
+                tile: "flex-col gap-2 rounded-xl border border-primary/20 bg-background text-text shadow-sm hover:border-primary/40 hover:shadow-md transition-all",
                 custom: "",
             },
             size: {

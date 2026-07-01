@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { PositionOptions } from '@/components/ui/position-options'
 import { positions } from '@/lib/player-config'
 import { devTraits } from '@/lib/player-config'
 import { usStates } from '@/lib/recruit-config'
@@ -63,7 +64,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                             className="mt-1 h-8"
                         >
                             <option value="">Select</option>
-                            {positions.map(p => <option key={p} value={p}>{p}</option>)}
+                            <PositionOptions />
                         </Select>
                     </div>
 

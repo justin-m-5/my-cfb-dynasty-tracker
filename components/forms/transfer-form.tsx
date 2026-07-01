@@ -9,6 +9,7 @@ import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { positions, devTraits } from '@/lib/player-config'
+import { PositionOptions } from '@/components/ui/position-options'
 import { fbsTeams } from '@/lib/fbs-teams'
 import type { Transfer } from '@/dal/features/transfers'
 
@@ -64,7 +65,7 @@ export function TransferForm({ initial, onSave, onCancel, saving }: TransferForm
                             className="mt-1 h-8"
                         >
                             <option value="">Select</option>
-                            {positions.map(p => <option key={p} value={p}>{p}</option>)}
+                            <PositionOptions />
                         </Select>
                     </div>
 

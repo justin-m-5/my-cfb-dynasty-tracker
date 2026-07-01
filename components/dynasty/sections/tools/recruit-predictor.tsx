@@ -8,19 +8,23 @@ import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 
-const positions = [
+const predictorPositions = [
     { label: 'QB', value: 'QB', modifier: 2.42, stdError: 0.61 },
     { label: 'HB', value: 'HB', modifier: 1.29, stdError: 0.57 },
     { label: 'FB', value: 'FB', modifier: 2.60, stdError: 1.44 },
     { label: 'WR', value: 'WR', modifier: 0.18, stdError: 0.57 },
     { label: 'TE', value: 'TE', modifier: 0.88, stdError: 0.64 },
-    { label: 'OT', value: 'OT', modifier: 2.01, stdError: 0.58 },
-    { label: 'OG', value: 'OG', modifier: 2.07, stdError: 0.60 },
+    { label: 'LT', value: 'LT', modifier: 2.01, stdError: 0.58 },
+    { label: 'LG', value: 'LG', modifier: 2.07, stdError: 0.60 },
     { label: 'C', value: 'C', modifier: 0, stdError: 0.70 },
-    { label: 'DE', value: 'DE', modifier: 2.07, stdError: 0.56 },
+    { label: 'RG', value: 'RG', modifier: 2.07, stdError: 0.60 },
+    { label: 'RT', value: 'RT', modifier: 2.01, stdError: 0.58 },
+    { label: 'LEDG', value: 'LEDG', modifier: 2.07, stdError: 0.56 },
+    { label: 'REDG', value: 'REDG', modifier: 2.07, stdError: 0.56 },
     { label: 'DT', value: 'DT', modifier: 1.95, stdError: 0.62 },
-    { label: 'OLB', value: 'OLB', modifier: 2.12, stdError: 0.58 },
-    { label: 'MLB', value: 'MLB', modifier: 1.54, stdError: 0.65 },
+    { label: 'SAM', value: 'SAM', modifier: 2.12, stdError: 0.58 },
+    { label: 'MIKE', value: 'MIKE', modifier: 1.54, stdError: 0.65 },
+    { label: 'WILL', value: 'WILL', modifier: 2.12, stdError: 0.58 },
     { label: 'CB', value: 'CB', modifier: 2.74, stdError: 0.58 },
     { label: 'FS', value: 'FS', modifier: 1.92, stdError: 0.62 },
     { label: 'SS', value: 'SS', modifier: 2.10, stdError: 0.66 },
@@ -44,7 +48,7 @@ export function RecruitPredictor() {
     const calculate = () => {
         if (!position || !starRating) return
 
-        const pos = positions.find(p => p.value === position)
+        const pos = predictorPositions.find(p => p.value === position)
         const star = stars.find(s => s.value.toString() === starRating)
         if (!pos || !star) return
 
@@ -75,7 +79,7 @@ export function RecruitPredictor() {
                         className="mt-1 h-8"
                     >
                         <option value="">Select</option>
-                        {positions.map(p => (
+                        {predictorPositions.map(p => (
                             <option key={p.value} value={p.value}>{p.label}</option>
                         ))}
                     </Select>
