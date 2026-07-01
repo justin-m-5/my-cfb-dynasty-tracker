@@ -1,8 +1,10 @@
 // components/dynasty/sections/schedule/record-summary.tsx
 
 import { useMemo, useCallback } from 'react'
+import Image from 'next/image'
 import { DetailCard } from '@/components/ui/detail-card'
 import { fbsTeams } from '@/lib/fbs-teams'
+import { conferenceLogoByName } from '@/lib/logos'
 import type { Dynasty } from '@/dal/features/dynasty'
 import type { Game } from '@/dal/features/games'
 
@@ -45,8 +47,10 @@ export function RecordSummary({ dynasty, games }: RecordSummaryProps) {
     const away = locationRecord('away')
     const neutral = locationRecord('neutral')
 
+    const conferenceLogo = dynasty.conference ? conferenceLogoByName[dynasty.conference] ?? null : null
+
     return (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-5 gap-3">
             <DetailCard
                 label="Overall"
                 value={`${record.wins}-${record.losses}${record.ties > 0 ? `-${record.ties}` : ''}`}
@@ -56,6 +60,18 @@ export function RecordSummary({ dynasty, games }: RecordSummaryProps) {
                     label={dynasty.conference!}
                     value={`${confRecord.wins}-${confRecord.losses}`}
                     color="var(--amber-600)"
+                    icon={
+                        conferenceLogo ? (
+                            <Image
+                                src={conferenceLogo}
+                                alt=""
+                                width={12}
+                                height={12}
+                                className="rounded"
+                                unoptimized
+                            />
+                        ) : undefined
+                    }
                 />
             )}
             <DetailCard label="Home" value={`${home.wins}-${home.losses}`} color="var(--blue-600)" />
