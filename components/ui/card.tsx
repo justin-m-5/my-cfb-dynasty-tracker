@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 
 // Base card container
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("rounded-2xl border border-primary/25 bg-(--primary5) text-text shadow-sm backdrop-blur-sm transition-all hover:shadow-md", className )}
+    <div ref={ref} className={cn("rounded-2xl border border-primary/25 bg-(--primary5) text-text shadow-sm transition-shadow hover:shadow-md", className )}
         {...props}
     />
 ))
