@@ -70,6 +70,9 @@ export function PlayerNameGenerator() {
                     onChange={(e) => setNumNames(Math.min(MAX_NAMES, Math.max(1, Number(e.target.value) || 1)))}
                     className="h-8 w-16"
                 />
+            </div>
+
+            <div className="flex items-center gap-2">
                 <Button
                     size="sm"
                     bg="var(--primary)"
