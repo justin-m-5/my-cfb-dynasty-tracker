@@ -17,6 +17,7 @@ import { MiniTabNav } from '@/components/ui/mini-tab-nav'
 import { Save } from 'lucide-react'
 
 import { GameHeader } from './game/game-header'
+import { ScoreByQuarter } from './game/score-by-quarter'
 import { QuickEditRow } from './game/quick-edit-row'
 import { TeamStatsTab } from './game/team-stats-tab'
 import { PlayerStatsTab } from './game/player-stats-tab'
@@ -159,7 +160,8 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
             </div>
 
             <GameHeader dynasty={dynasty} game={game} userLogos={userLogos} oppLogos={oppLogos} />
-            <QuickEditRow game={game} dynasty={dynasty} updateGame={updateGame} userLogos={userLogos} oppLogos={oppLogos} />
+            <ScoreByQuarter game={game} dynasty={dynasty} updateGame={updateGame} userLogos={userLogos} oppLogos={oppLogos} />
+            <QuickEditRow game={game} dynasty={dynasty} updateGame={updateGame} />
 
             {/* Tab picker — vertical on mobile, horizontal on desktop */}
             <MiniTabNav tabs={tabItems} active={activeTab} onChange={(t) => setActiveTab(t as TabKey)} />
