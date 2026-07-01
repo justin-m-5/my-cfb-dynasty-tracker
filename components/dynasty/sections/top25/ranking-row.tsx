@@ -9,7 +9,7 @@ import { getTeamLogo } from '@/lib/logos'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { LogoImage } from '@/components/ui/logo-image'
-import { TeamSearch } from './team-search'
+import { TeamSearch } from '@/components/ui/team-search'
 
 interface RankingRowProps {
     index: number

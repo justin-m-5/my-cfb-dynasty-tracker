@@ -2,7 +2,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Plus } from 'lucide-react'
 
 import { YearRecordService } from '@/dal/features/year-records'
@@ -11,10 +11,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { TransferList } from './transfers/transfer-list'
 import { TransferForm } from '../../forms/transfer-form'
+import { Modal } from '@/components/ui/modal'
 
 interface TransfersProps {
     dynastyId: string
 }
+
+type TransferFilter = 'All' | 'From' | 'To'
 
 export function Transfers({ dynastyId }: TransfersProps) {
     const [transfers, setTransfers] = useState<Transfer[]>([])
@@ -23,6 +26,15 @@ export function Transfers({ dynastyId }: TransfersProps) {
     const [saving, setSaving] = useState(false)
     const [showForm, setShowForm] = useState(false)
     const [editing, setEditing] = useState<Transfer | null>(null)
+    const [filter, setFilter] = useState<TransferFilter>('All')
+
+    const filteredTransfers = useMemo(() => {
+        if (filter === 'All') return transfers
+        return transfers.filter(t => t.transfer_direction === filter)
+    }, [transfers, filter])
+
+    const inCount = transfers.filter(t => t.transfer_direction === 'From').length
+    const outCount = transfers.filter(t => t.transfer_direction === 'To').length
 
     useEffect(() => {
         const load = async () => {
@@ -98,14 +110,20 @@ export function Transfers({ dynastyId }: TransfersProps) {
 
     return (
         <div className="space-y-4 pt-10">
-            {showForm && (
+            <Modal
+                isOpen={showForm}
+                onClose={handleCancel}
+                title={editing?.id ? 'Edit Transfer' : 'Add Transfer'}
+                maxWidth="max-w-xl"
+            >
                 <TransferForm
                     initial={editing ?? undefined}
                     onSave={handleSave}
                     onCancel={handleCancel}
                     saving={saving}
+                    embedded
                 />
-            )}
+            </Modal>
 
             <Card>
                 <CardHeader className="pb-2">
@@ -113,23 +131,42 @@ export function Transfers({ dynastyId }: TransfersProps) {
                         <CardTitle className="text-base">
                             Transfer Portal ({transfers.length})
                         </CardTitle>
-                        {!showForm && (
-                            <Button
-                                bg="var(--primary)"
-                                text="white"
-                                size="sm"
-                                onClick={() => { setEditing(null); setShowForm(true) }}
-                                className="flex items-center gap-1 text-xs font-semibold"
-                            >
-                                <Plus className="h-3.5 w-3.5" />
-                                Add Transfer
-                            </Button>
-                        )}
+                        <Button
+                            bg="var(--primary)"
+                            text="white"
+                            size="sm"
+                            onClick={() => { setEditing(null); setShowForm(true) }}
+                            className="flex items-center gap-1 text-xs font-semibold"
+                        >
+                            <Plus className="h-3.5 w-3.5" />
+                            Add Transfer
+                        </Button>
+                    </div>
+
+                    {/* Filter tabs — equal 3-column grid */}
+                    <div className="mt-3 grid grid-cols-3 overflow-hidden rounded-lg border border-primary/15">
+                        {([
+                            { key: 'All' as const, label: `All (${transfers.length})` },
+                            { key: 'From' as const, label: `In (${inCount})` },
+                            { key: 'To' as const, label: `Out (${outCount})` },
+                        ]).map((tab, i) => {
+                            const active = filter === tab.key
+                            return (
+                                <button
+                                    key={tab.key}
+                                    type="button"
+                                    onClick={() => setFilter(tab.key)}
+                                    className={`py-2 text-xs font-semibold transition-colors ${i > 0 ? 'border-l border-primary/15' : ''} ${active ? 'bg-primary/10 text-primary' : 'text-text/60 hover:bg-primary/5 hover:text-text'}`}
+                                >
+                                    {tab.label}
+                                </button>
+                            )
+                        })}
                     </div>
                 </CardHeader>
                 <CardContent>
                     <TransferList
-                        transfers={transfers}
+                        transfers={filteredTransfers}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                     />

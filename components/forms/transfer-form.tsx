@@ -1,12 +1,13 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { TeamSearch } from '@/components/ui/team-search'
 import { positions, devTraits } from '@/lib/player-config'
 import { fbsTeams } from '@/lib/fbs-teams'
 import type { Transfer } from '@/dal/features/transfers'
@@ -32,10 +33,6 @@ export function TransferForm({ initial, onSave, onCancel, saving, embedded = fal
     })
 
     const update = (field: string, value: unknown) => setForm(prev => ({ ...prev, [field]: value }))
-
-    const schoolOptions = useMemo(() => {
-        return [...fbsTeams].sort((a, b) => a.name.localeCompare(b.name))
-    }, [])
 
     const fields = (
         <>
@@ -88,18 +85,14 @@ export function TransferForm({ initial, onSave, onCancel, saving, embedded = fal
 
                 <div className="col-span-2 sm:col-span-1">
                     <Label className="text-xs">School *</Label>
-                    <Select
-                        value={form.school ?? ''}
-                        onChange={(e) => update('school', e.target.value)}
-                        className="mt-1 h-8"
-                    >
-                        <option value="">Select school</option>
-                        {schoolOptions.map(t => (
-                            <option key={t.name} value={t.name}>
-                                {t.name} ({t.conference})
-                            </option>
-                        ))}
-                    </Select>
+                    <div className="mt-1">
+                        <TeamSearch
+                            value={form.school ?? ''}
+                            teams={fbsTeams}
+                            onChange={(name) => update('school', name)}
+                            inputClassName="h-8"
+                        />
+                    </div>
                 </div>
 
                 <div>

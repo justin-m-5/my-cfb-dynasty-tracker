@@ -1,4 +1,4 @@
-// components/dynasty/sections/top25/team-search.tsx
+// components/ui/team-search.tsx
 
 'use client'
 
