@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { Trash2, Award } from 'lucide-react'
 
 import { PlayerService, type RosterPlayer } from '@/dal/features/players'
-import { HONOR_CATEGORIES, getHonorLabel, type HonorKey } from '@/lib/honors-config'
+import { HONOR_CATEGORIES, type HonorKey } from '@/lib/honors-config'
 import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/select'
 

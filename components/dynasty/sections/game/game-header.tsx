@@ -2,7 +2,7 @@
 
 import { LogoImage } from '@/components/ui/logo-image'
 import { Card, CardContent } from '@/components/ui/card'
-import { getWeekFullName, getLocationLabel, parseScore } from '@/lib/game-utils'
+import { getWeekFullName, parseScore } from '@/lib/game-utils'
 import type { Dynasty } from '@/dal/features/dynasty'
 import type { Game } from '@/dal/features/games'
 
@@ -16,7 +16,6 @@ interface GameHeaderProps {
 export function GameHeader({ dynasty, game, userLogos, oppLogos }: GameHeaderProps) {
     const { user: userScore, opp: oppScore } = parseScore(game.score)
     const weekLabel = getWeekFullName(game.week)
-    const locationLabel = getLocationLabel(game.location)
     
     // Color coding: green for higher score, red for lower, gray for tie or N/A
     const userColor = game.result !== 'N/A' 

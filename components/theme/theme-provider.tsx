@@ -30,16 +30,16 @@ function applyTheme(theme: Theme) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [theme, setThemeState] = useState<Theme>('system')
-
-    // Load from localStorage on mount
-    useEffect(() => {
+    const [theme, setThemeState] = useState<Theme>(() => {
+        if (typeof window === 'undefined') return 'system'
         const stored = localStorage.getItem('theme') as Theme | null
-        if (stored && ['light', 'dark', 'system'].includes(stored)) {
-            setThemeState(stored)
-            applyTheme(stored)
-        }
-    }, [])
+        return stored && ['light', 'dark', 'system'].includes(stored) ? stored : 'system'
+    })
+
+    // Apply theme on mount and when it changes
+    useEffect(() => {
+        applyTheme(theme)
+    }, [theme])
 
     const setTheme = useCallback((newTheme: Theme) => {
         setThemeState(newTheme)
