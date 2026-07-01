@@ -152,67 +152,6 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                 </Button>
             </div>
 
-            <Card>
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b border-primary/20 bg-background/50">
-                                    <th className="px-3 py-2 text-left text-xs font-semibold text-text/60 whitespace-nowrap">Player</th>
-                                    {columns.map(col => (
-                                        <th key={col.field} className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">
-                                            {col.label}
-                                        </th>
-                                    ))}
-                                    <th className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {categoryStats.length > 0 ? (
-                                    categoryStats.map((stat) => (
-                                        <tr key={stat.id} className="border-b border-primary/10 hover:bg-primary/5">
-                                            <td className="px-3 py-2 font-medium text-text">
-                                                {playerName(stat.player_id)}
-                                            </td>
-                                            {columns.map(col => (
-                                                <td key={col.field} className="px-2 py-2 text-center text-text/80">
-                                                    {computeStatValue(stat as unknown as Record<string, unknown>, col.field)}
-                                                </td>
-                                            ))}
-                                            <td className="px-2 py-2 text-center">
-                                                <div className="flex items-center justify-center gap-1">
-                                                    <button
-                                                        onClick={() => openEditForm(stat)}
-                                                        className="rounded p-1 text-text/50 hover:bg-primary/10 hover:text-primary"
-                                                    >
-                                                        <Pencil className="h-3.5 w-3.5" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(stat.id)}
-                                                        className="rounded p-1 text-text/50 hover:bg-red-500/10 hover:text-red-600"
-                                                    >
-                                                        <Trash2 className="h-3.5 w-3.5" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td
-                                            colSpan={columns.length + 2}
-                                            className="px-3 py-6 text-center text-sm text-text/50"
-                                        >
-                                            No {selectedCategory.toLowerCase()} stats yet
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </CardContent>
-            </Card>
-
             {showForm && (
                 <Card>
                     <CardHeader className="pb-3">
@@ -278,6 +217,69 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                     </CardContent>
                 </Card>
             )}
+
+            <Card>
+                <CardContent className="p-0">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b border-primary/20 bg-background/50">
+                                    <th className="px-3 py-2 text-left text-xs font-semibold text-text/60 whitespace-nowrap">Player</th>
+                                    {columns.map(col => (
+                                        <th key={col.field} className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">
+                                            {col.label}
+                                        </th>
+                                    ))}
+                                    <th className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {categoryStats.length > 0 ? (
+                                    categoryStats.map((stat) => (
+                                        <tr key={stat.id} className="border-b border-primary/10 hover:bg-primary/5">
+                                            <td className="px-3 py-2 font-medium text-text">
+                                                {playerName(stat.player_id)}
+                                            </td>
+                                            {columns.map(col => (
+                                                <td key={col.field} className="px-2 py-2 text-center text-text/80">
+                                                    {computeStatValue(stat as unknown as Record<string, unknown>, col.field)}
+                                                </td>
+                                            ))}
+                                            <td className="px-2 py-2 text-center">
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <button
+                                                        onClick={() => openEditForm(stat)}
+                                                        className="rounded p-1 text-text/50 hover:bg-primary/10 hover:text-primary"
+                                                    >
+                                                        <Pencil className="h-3.5 w-3.5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(stat.id)}
+                                                        className="rounded p-1 text-text/50 hover:bg-red-500/10 hover:text-red-600"
+                                                    >
+                                                        <Trash2 className="h-3.5 w-3.5" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan={columns.length + 2}
+                                            className="px-3 py-6 text-center text-sm text-text/50"
+                                        >
+                                            No {selectedCategory.toLowerCase()} stats yet
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </CardContent>
+            </Card>
+
+            
         </div>
     )
 }

@@ -102,10 +102,7 @@ export const PlayerStatService = {
     },
 
     async getCareerStats(playerId: string): Promise<CareerPlayerStat[]> {
-        const { data, error } = await supabase
-            .from('player_stats')
-            .select('*, games!inner(week, year_records!inner(year))')
-            .eq('player_id', playerId)
+        const { data, error } = await supabase.from('player_stats').select('*, games!inner(week, year_records!inner(year))').eq('player_id', playerId)
 
         if (error) {
             console.error('Get career stats error:', error.message)

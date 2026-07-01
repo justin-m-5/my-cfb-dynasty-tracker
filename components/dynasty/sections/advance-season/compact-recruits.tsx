@@ -9,7 +9,7 @@ import { RecruitService, type Recruit } from '@/dal/features/recruits'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
-import { PositionOptions } from '@/components/ui/position-options'
+import { RecruitPositionOptions } from '@/components/ui/position-options'
 import { starsColor, starsDisplay, usStates } from '@/lib/recruit-config'
 
 interface CompactRecruitsProps {
@@ -111,7 +111,7 @@ export function CompactRecruits({ dynastyId, yearRecordId, recruits, onChange }:
                     className="h-8 text-base sm:text-xs"
                 >
                     <option value="">Position</option>
-                    <PositionOptions />
+                    <RecruitPositionOptions />
                 </Select>
                 <Select
                     value={form.stars}

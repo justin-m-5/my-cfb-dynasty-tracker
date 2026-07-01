@@ -7,6 +7,8 @@ export const positions = [
     'CB', 'DT', 'FS', 'LEDG', 'MIKE', 'REDG', 'SAM', 'SS', 'WILL',
     // Special Teams
     'K', 'P',
+    // Recruiting only
+    'ATH',
 ] as const
 
 export type Position = (typeof positions)[number]
@@ -15,6 +17,14 @@ export const positionGroups: Record<string, readonly string[]> = {
     Offense: ['QB', 'HB', 'FB', 'WR', 'TE', 'LT', 'LG', 'C', 'RG', 'RT'],
     Defense: ['CB', 'DT', 'FS', 'LEDG', 'MIKE', 'REDG', 'SAM', 'SS', 'WILL'],
     'Special Teams': ['K', 'P'],
+}
+
+// Includes ATH for recruit/transfer forms
+export const recruitPositionGroups: Record<string, readonly string[]> = {
+    Offense: ['QB', 'HB', 'FB', 'WR', 'TE', 'LT', 'LG', 'C', 'RG', 'RT'],
+    Defense: ['CB', 'DT', 'FS', 'LEDG', 'MIKE', 'REDG', 'SAM', 'SS', 'WILL'],
+    'Special Teams': ['K', 'P'],
+    Other: ['ATH'],
 }
 
 export const positionLabels: Record<Position, string> = {
@@ -39,6 +49,7 @@ export const positionLabels: Record<Position, string> = {
     WILL: 'Will Backer',
     K: 'Kicker',
     P: 'Punter',
+    ATH: 'Athlete',
 }
 
 export const years = ['FR', 'FR (RS)', 'SO', 'SO (RS)', 'JR', 'JR (RS)', 'SR', 'SR (RS)'] as const

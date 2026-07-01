@@ -30,6 +30,7 @@ const predictorPositions = [
     { label: 'SS', value: 'SS', modifier: 2.10, stdError: 0.66 },
     { label: 'K', value: 'K', modifier: 2.23, stdError: 1.22 },
     { label: 'P', value: 'P', modifier: 3.23, stdError: 1.22 },
+    { label: 'ATH', value: 'ATH', modifier: 1.80, stdError: 0.70 },
 ]
 
 const stars = [

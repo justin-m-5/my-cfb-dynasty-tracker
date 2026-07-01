@@ -9,7 +9,7 @@ import { TransferService, type Transfer } from '@/dal/features/transfers'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
-import { PositionOptions } from '@/components/ui/position-options'
+import { RecruitPositionOptions } from '@/components/ui/position-options'
 
 interface CompactTransfersProps {
     dynastyId: string
@@ -117,7 +117,7 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                     className="h-8 text-base sm:text-xs"
                 >
                     <option value="">Position</option>
-                    <PositionOptions />
+                    <RecruitPositionOptions />
                 </Select>
                 <Input
                     value={form.school}

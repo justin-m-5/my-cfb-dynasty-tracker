@@ -191,13 +191,7 @@ export const PlayerService = {
     },
 
     async getPlayerOrigin(dynastyId: string, playerName: string): Promise<PlayerOrigin | null> {
-        const { data: recruit, error: recruitError } = await supabase
-            .from('recruits')
-            .select('*')
-            .eq('dynasty_id', dynastyId)
-            .eq('name', playerName)
-            .limit(1)
-            .maybeSingle()
+        const { data: recruit, error: recruitError } = await supabase.from('recruits').select('*').eq('dynasty_id', dynastyId).eq('name', playerName).limit(1).maybeSingle()
 
         if (recruitError) {
             console.error('Get player recruit origin error:', recruitError.message)
@@ -205,13 +199,7 @@ export const PlayerService = {
             return { type: 'recruit', data: recruit as Recruit }
         }
 
-        const { data: transfer, error: transferError } = await supabase
-            .from('transfers')
-            .select('*')
-            .eq('dynasty_id', dynastyId)
-            .eq('player_name', playerName)
-            .limit(1)
-            .maybeSingle()
+        const { data: transfer, error: transferError } = await supabase.from('transfers').select('*').eq('dynasty_id', dynastyId).eq('player_name', playerName).limit(1).maybeSingle()
 
         if (transferError) {
             console.error('Get player transfer origin error:', transferError.message)
