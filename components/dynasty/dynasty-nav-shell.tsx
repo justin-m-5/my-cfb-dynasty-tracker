@@ -18,6 +18,8 @@ const segments = [
     // career things
     { name: 'Season History', segment: 'season-history' },
     { name: 'Social Media', segment: 'social-media' },
+    // tools
+    { name: 'Tools', segment: 'tools' },
 ]
 
 interface DynastyNavShellProps {
