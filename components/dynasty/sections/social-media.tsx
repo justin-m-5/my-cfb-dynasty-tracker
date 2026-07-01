@@ -3,11 +3,9 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, TrendingUp, Heart, Star, Share2, Repeat2 } from 'lucide-react'
-import { buttonStyles } from '@/lib/button-utils'
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { YearRecordService } from '@/dal/features/year-records'
 import { GameService, type Game } from '@/dal/features/games'
@@ -249,17 +247,7 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
     }
 
     return (
-        <div className="space-y-5">
-            {/* Back button */}
-            <div>
-                <Link
-                    href={`/dashboard/dynasty/${dynastyId}`}
-                    {...buttonStyles({ bg: 'var(--orange-400)', text: 'white', className: 'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold' })}
-                >
-                    ← Team Home
-                </Link>
-            </div>
-
+        <div className="space-y-6">
             <div className="text-center space-y-2">
                 <h1 className="text-2xl font-bold">Social Media Hub</h1>
                 <p className="text-sm text-text/60">Your dynasty&apos;s pulse on social media</p>
