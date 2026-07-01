@@ -15,22 +15,14 @@ interface RosterBreakdownProps {
 
 export function RosterBreakdown({ roster, transfers, recruits, draftedPlayers }: RosterBreakdownProps) {
     const graduatingNames = new Set(
-        roster
-            .filter((player) => player.season.year === 'SR' || player.season.year === 'SR (RS)')
-            .map((player) => player.name)
+        roster.filter((player) => player.season.year === 'SR' || player.season.year === 'SR (RS)').map((player) => player.name)
     )
     const transferOutNames = new Set(
-        transfers
-            .filter((transfer) => transfer.transfer_direction === 'To')
-            .map((transfer) => transfer.player_name)
+        transfers.filter((transfer) => transfer.transfer_direction === 'To').map((transfer) => transfer.player_name)
     )
     const declaredNames = new Set(draftedPlayers.map((player) => player.player_name))
 
-    const returningCount = roster.filter((player) => (
-        !graduatingNames.has(player.name)
-        && !transferOutNames.has(player.name)
-        && !declaredNames.has(player.name)
-    )).length
+    const returningCount = roster.filter((player) => (!graduatingNames.has(player.name) && !transferOutNames.has(player.name) && !declaredNames.has(player.name))).length
 
     const breakdownItems = [
         { label: 'Returning', value: returningCount, tone: 'text-text' },

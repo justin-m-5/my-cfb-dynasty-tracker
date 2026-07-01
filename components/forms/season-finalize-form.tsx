@@ -62,7 +62,7 @@ export function SeasonFinalizeForm({ year, initialData, onChange }: SeasonFinali
                         <Input
                             value={data.heisman}
                             onChange={(e) => update('heisman', e.target.value)}
-                            placeholder="Player name (if your player won)"
+                            placeholder="Player name"
                             className="mt-1 h-8 text-base sm:text-xs"
                         />
                     </div>
@@ -71,7 +71,7 @@ export function SeasonFinalizeForm({ year, initialData, onChange }: SeasonFinali
                         <Input
                             value={data.nat_champ}
                             onChange={(e) => update('nat_champ', e.target.value)}
-                            placeholder="Team name (if you won)"
+                            placeholder="Team name"
                             className="mt-1 h-8 text-base sm:text-xs"
                         />
                     </div>

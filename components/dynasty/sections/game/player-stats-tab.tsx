@@ -171,7 +171,7 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                                 <option value="">Select Player</option>
                                 {roster.map((p) => (
                                     <option key={p.id} value={p.id}>
-                                        {p.name} – {p.position} #{p.season.jersey_number ?? ''}
+                                        {p.name} - {p.position} #{p.season.jersey_number ?? ''}
                                     </option>
                                 ))}
                             </Select>

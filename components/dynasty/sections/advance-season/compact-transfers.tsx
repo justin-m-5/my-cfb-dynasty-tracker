@@ -125,25 +125,14 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                     placeholder="School"
                     className="h-8 text-base sm:text-xs"
                 />
-                <div className="flex overflow-hidden rounded-md border border-primary/15">
-                    {(['From', 'To'] as TransferDirection[]).map((direction) => {
-                        const active = form.transfer_direction === direction
-                        const palette = direction === 'From'
-                            ? active ? 'bg-green-600 text-white' : 'text-green-700 hover:bg-green-50'
-                            : active ? 'bg-red-600 text-white' : 'text-red-600 hover:bg-red-50'
-
-                        return (
-                            <button
-                                key={direction}
-                                type="button"
-                                onClick={() => update('transfer_direction', direction)}
-                                className={`px-2 text-[10px] font-semibold transition-colors ${palette}`}
-                            >
-                                {direction}
-                            </button>
-                        )
-                    })}
-                </div>
+                <Select
+                    value={form.transfer_direction}
+                    onChange={(event) => update('transfer_direction', event.target.value as TransferDirection)}
+                    className="h-8 text-base sm:text-xs"
+                >
+                    <option value="From">From (In)</option>
+                    <option value="To">To (Out)</option>
+                </Select>
                 <Button
                     size="sm"
                     variant="save"
