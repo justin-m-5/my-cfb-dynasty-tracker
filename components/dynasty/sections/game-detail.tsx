@@ -13,6 +13,7 @@ import { getSchoolLogoCandidates } from '@/lib/logos'
 import { fbsTeams } from '@/lib/fbs-teams'
 import { Button } from '@/components/ui/button'
 import { buttonStyles } from '@/lib/button-utils'
+import { MiniTabNav } from '@/components/ui/mini-tab-nav'
 import { Save } from 'lucide-react'
 
 import { GameHeader } from './game/game-header'
@@ -160,21 +161,8 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
             <GameHeader dynasty={dynasty} game={game} userLogos={userLogos} oppLogos={oppLogos} />
             <QuickEditRow game={game} updateGame={updateGame} />
 
-            <div className="flex gap-2 overflow-x-auto border-b border-primary/20 sm:gap-4">
-                {tabItems.map((tab) => (
-                    <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`whitespace-nowrap pb-2 px-1 text-xs font-medium transition-colors sm:text-sm ${
-                            activeTab === tab
-                                ? 'border-b-2 border-primary text-primary'
-                                : 'text-text/60 hover:text-primary'
-                        }`}
-                    >
-                        {tab}
-                    </button>
-                ))}
-            </div>
+            {/* Tab picker — vertical on mobile, horizontal on desktop */}
+            <MiniTabNav tabs={tabItems} active={activeTab} onChange={(t) => setActiveTab(t as TabKey)} />
 
             {activeTab === 'Box Score' && <BoxScoreTab game={game} dynasty={dynasty} updateGame={updateGame} userLogos={userLogos} oppLogos={oppLogos} />}
             {activeTab === 'Team Stats' && <TeamStatsTab game={game} updateGame={updateGame} />}
