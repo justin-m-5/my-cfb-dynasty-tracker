@@ -10,7 +10,6 @@ import { CardHeader as UiCardHeader } from '@/components/ui/card'
 import { LogoImage } from '@/components/ui/logo-image'
 import { PlayerAvatar } from '@/components/ui/player-avatar'
 import { getTeamLogo } from '@/lib/logos'
-import { cn } from '@/lib/utils'
 
 import type { SchoolColors } from './types'
 
@@ -20,11 +19,11 @@ interface PlayerCardHeaderProps {
     schoolColors: SchoolColors
     schoolName?: string
     headerTextColor: string
-    traitColor: string
+    traitColor?: string
     onClose: () => void
 }
 
-export function PlayerCardHeader({ player, currentSeason, schoolColors, schoolName, headerTextColor, traitColor, onClose }: PlayerCardHeaderProps) {
+export function PlayerCardHeader({ player, currentSeason, schoolColors, schoolName, headerTextColor, onClose }: PlayerCardHeaderProps) {
     const logo = schoolName ? getTeamLogo(schoolName) : ''
 
     return (
@@ -67,7 +66,7 @@ export function PlayerCardHeader({ player, currentSeason, schoolColors, schoolNa
                         </div>
                         <div className="flex flex-wrap gap-2 text-xs">
                             {currentSeason?.dev_trait && (
-                                <span className={cn('rounded-full border border-white/25 px-2.5 py-1 font-semibold', traitColor)}>
+                                <span className="rounded-full border border-white/30 bg-black/40 px-2.5 py-1 font-semibold text-white backdrop-blur-sm">
                                     {currentSeason.dev_trait}
                                 </span>
                             )}
