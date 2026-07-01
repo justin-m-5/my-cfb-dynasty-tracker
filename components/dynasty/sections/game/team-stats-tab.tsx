@@ -58,13 +58,13 @@ export function TeamStatsTab({ game, updateGame }: TeamStatsTabProps) {
                             <Input
                                 value={stats[key]?.user ?? ''}
                                 onChange={(e) => updateStat(key, 'user', e.target.value)}
-                                className="h-8 text-center text-xs sm:text-sm"
+                                className="h-8 text-center text-base sm:text-sm"
                             />
                             <p className="text-center text-[11px] font-medium text-text/70 sm:text-xs">{teamStatLabels[key]}</p>
                             <Input
                                 value={stats[key]?.opp ?? ''}
                                 onChange={(e) => updateStat(key, 'opp', e.target.value)}
-                                className="h-8 text-center text-xs sm:text-sm"
+                                className="h-8 text-center text-base sm:text-sm"
                             />
                         </div>
                     ))}

@@ -148,7 +148,7 @@ export function Top25({ dynastyId }: Top25Props) {
                             <Select
                                 value={String(week)}
                                 onChange={(e) => setWeek(Number(e.target.value))}
-                                className="h-8 w-40 text-xs"
+                                className="h-8 w-40 text-base sm:text-xs"
                             >
                                 {weekOptions.map(opt => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>

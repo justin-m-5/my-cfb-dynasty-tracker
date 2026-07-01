@@ -51,7 +51,7 @@ export function TransferForm({ initial, onSave, onCancel, saving }: TransferForm
                             value={form.player_name ?? ''}
                             onChange={(e) => update('player_name', e.target.value)}
                             placeholder="Player name"
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
 
@@ -61,7 +61,7 @@ export function TransferForm({ initial, onSave, onCancel, saving }: TransferForm
                         <Select
                             value={form.position ?? ''}
                             onChange={(e) => update('position', e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="">Select</option>
                             {positions.map(p => <option key={p} value={p}>{p}</option>)}
@@ -74,7 +74,7 @@ export function TransferForm({ initial, onSave, onCancel, saving }: TransferForm
                         <Select
                             value={form.stars?.toString() ?? ''}
                             onChange={(e) => update('stars', e.target.value ? Number(e.target.value) : null)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="">—</option>
                             {[5, 4, 3, 2, 1].map(s => <option key={s} value={s}>{s} ★</option>)}
@@ -87,7 +87,7 @@ export function TransferForm({ initial, onSave, onCancel, saving }: TransferForm
                         <Select
                             value={form.transfer_direction ?? 'From'}
                             onChange={(e) => update('transfer_direction', e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="From">From (incoming)</option>
                             <option value="To">To (outgoing)</option>
@@ -100,7 +100,7 @@ export function TransferForm({ initial, onSave, onCancel, saving }: TransferForm
                         <Select
                             value={form.school ?? ''}
                             onChange={(e) => update('school', e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="">Select school</option>
                             {schoolOptions.map(t => (
@@ -117,7 +117,7 @@ export function TransferForm({ initial, onSave, onCancel, saving }: TransferForm
                         <Select
                             value={form.dev_trait ?? 'Normal'}
                             onChange={(e) => update('dev_trait', e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             {devTraits.map(t => <option key={t} value={t}>{t}</option>)}
                         </Select>
@@ -130,7 +130,7 @@ export function TransferForm({ initial, onSave, onCancel, saving }: TransferForm
                             value={form.height ?? ''}
                             onChange={(e) => update('height', e.target.value || null)}
                             placeholder={`6'2"`}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
 
@@ -144,7 +144,7 @@ export function TransferForm({ initial, onSave, onCancel, saving }: TransferForm
                             value={form.weight ?? ''}
                             onChange={(e) => update('weight', e.target.value ? Number(e.target.value) : null)}
                             placeholder="lbs"
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
                 </div>

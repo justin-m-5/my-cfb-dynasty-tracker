@@ -20,12 +20,12 @@ export function RosterFilters({ search, onSearchChange, posFilter, onPosFilterCh
                 placeholder="Search name..."
                 value={search}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="h-8 flex-1 text-xs"
+                className="h-8 flex-1 text-base sm:text-xs"
             />
             <Select
                 value={posFilter}
                 onChange={(e) => onPosFilterChange(e.target.value)}
-                className="h-8 w-24 text-xs"
+                className="h-8 w-24 text-base sm:text-xs"
             >
                 <option value="ALL">All</option>
                 {positions.map(p => <option key={p} value={p}>{p}</option>)}

@@ -127,7 +127,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                             value={form.name ?? ''}
                             onChange={(e) => update('name', e.target.value)}
                             placeholder="Player name"
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
                     <div>
@@ -135,7 +135,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                         <Select
                             value={form.position ?? ''}
                             onChange={(e) => update('position', e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="">Select</option>
                             {positions.map(p => <option key={p} value={p}>{p}</option>)}
@@ -149,7 +149,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                             max={99}
                             value={form.jersey_number ?? ''}
                             onChange={(e) => update('jersey_number', e.target.value ? Number(e.target.value) : null)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
                     <div>
@@ -157,7 +157,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                         <Select
                             value={form.year ?? ''}
                             onChange={(e) => update('year', e.target.value || null)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="">—</option>
                             {years.map(y => <option key={y} value={y}>{y}</option>)}
@@ -171,7 +171,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                             max={99}
                             value={form.rating ?? ''}
                             onChange={(e) => update('rating', e.target.value ? Number(e.target.value) : null)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
                     <div>
@@ -179,7 +179,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                         <Select
                             value={form.dev_trait ?? 'Normal'}
                             onChange={(e) => update('dev_trait', e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             {devTraits.map(t => <option key={t} value={t}>{t}</option>)}
                         </Select>
@@ -190,7 +190,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                             value={form.height ?? ''}
                             onChange={(e) => update('height', e.target.value || null)}
                             placeholder={`6'2"`}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
                     <div>
@@ -202,7 +202,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                             value={form.weight ?? ''}
                             onChange={(e) => update('weight', e.target.value ? Number(e.target.value) : null)}
                             placeholder="lbs"
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
                     <div className="col-span-2 sm:col-span-3">
@@ -211,7 +211,7 @@ export function PlayerForm({ initial, onSave, onCancel, saving }: PlayerFormProp
                             value={form.notes ?? ''}
                             onChange={(e) => update('notes', e.target.value)}
                             placeholder="Optional notes"
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
                 </div>

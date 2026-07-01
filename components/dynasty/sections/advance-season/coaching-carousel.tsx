@@ -88,7 +88,7 @@ export function CoachingCarousel({ currentSchool, onSwitch, onStay }: CoachingCa
                             <Select
                                 value={selectedSchool}
                                 onChange={(e) => setSelectedSchool(e.target.value)}
-                                className="mt-1 h-8 text-sm"
+                                className="mt-1 h-8"
                             >
                                 <option value="">Select new school...</option>
                                 {schoolOptions.map(t => (

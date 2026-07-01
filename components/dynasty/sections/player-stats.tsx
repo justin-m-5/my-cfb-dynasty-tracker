@@ -50,7 +50,7 @@ export function PlayerStats({ dynastyId }: PlayerStatsProps) {
                         <Select
                             value={category}
                             onChange={(e) => setCategory(e.target.value as StatCategory)}
-                            className="h-8 w-32 text-xs"
+                            className="h-8 w-32 text-base sm:text-xs"
                         >
                             {statCategories.map(c => (
                                 <option key={c} value={c}>{c}</option>

@@ -50,7 +50,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                             value={form.name ?? ''}
                             onChange={(e) => update('name', e.target.value)}
                             placeholder="Player name"
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
 
@@ -60,7 +60,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                         <Select
                             value={form.position ?? ''}
                             onChange={(e) => update('position', e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="">Select</option>
                             {positions.map(p => <option key={p} value={p}>{p}</option>)}
@@ -73,7 +73,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                         <Select
                             value={form.stars?.toString() ?? ''}
                             onChange={(e) => update('stars', e.target.value ? Number(e.target.value) : null)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="">—</option>
                             {[5, 4, 3, 2, 1].map(s => <option key={s} value={s}>{s} ★</option>)}
@@ -86,7 +86,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                         <Select
                             value={form.state ?? ''}
                             onChange={(e) => update('state', e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="">—</option>
                             {usStates.map(s => <option key={s} value={s}>{s}</option>)}
@@ -99,7 +99,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                         <Select
                             value={form.dev_trait ?? 'Normal'}
                             onChange={(e) => update('dev_trait', e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             {devTraits.map(t => <option key={t} value={t}>{t}</option>)}
                         </Select>
@@ -114,7 +114,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                             value={form.national_rank ?? ''}
                             onChange={(e) => update('national_rank', e.target.value ? Number(e.target.value) : null)}
                             placeholder="#"
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
 
@@ -127,7 +127,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                             value={form.state_rank ?? ''}
                             onChange={(e) => update('state_rank', e.target.value ? Number(e.target.value) : null)}
                             placeholder="#"
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
 
@@ -140,7 +140,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                             value={form.position_rank ?? ''}
                             onChange={(e) => update('position_rank', e.target.value ? Number(e.target.value) : null)}
                             placeholder="#"
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
 
@@ -151,7 +151,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                             value={form.height ?? ''}
                             onChange={(e) => update('height', e.target.value || null)}
                             placeholder={`6'2"`}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
 
@@ -165,7 +165,7 @@ export function RecruitForm({ initial, onSave, onCancel, saving }: RecruitFormPr
                             value={form.weight ?? ''}
                             onChange={(e) => update('weight', e.target.value ? Number(e.target.value) : null)}
                             placeholder="lbs"
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         />
                     </div>
                 </div>

@@ -42,7 +42,7 @@ export function SeasonFinalizeForm({ year, initialData, onChange }: SeasonFinali
                             value={data.conference_record}
                             onChange={(e) => update('conference_record', e.target.value)}
                             placeholder="e.g. 7-2"
-                            className="mt-1 h-8 text-xs"
+                            className="mt-1 h-8 text-base sm:text-xs"
                         />
                     </div>
                     <div>
@@ -52,7 +52,7 @@ export function SeasonFinalizeForm({ year, initialData, onChange }: SeasonFinali
                             value={data.final_ranking ?? ''}
                             onChange={(e) => update('final_ranking', e.target.value ? Number(e.target.value) : null)}
                             placeholder="e.g. 4 (blank if unranked)"
-                            className="mt-1 h-8 text-xs"
+                            className="mt-1 h-8 text-base sm:text-xs"
                             min={1}
                             max={25}
                         />
@@ -63,7 +63,7 @@ export function SeasonFinalizeForm({ year, initialData, onChange }: SeasonFinali
                             value={data.heisman}
                             onChange={(e) => update('heisman', e.target.value)}
                             placeholder="Player name (if your player won)"
-                            className="mt-1 h-8 text-xs"
+                            className="mt-1 h-8 text-base sm:text-xs"
                         />
                     </div>
                     <div>
@@ -72,7 +72,7 @@ export function SeasonFinalizeForm({ year, initialData, onChange }: SeasonFinali
                             value={data.nat_champ}
                             onChange={(e) => update('nat_champ', e.target.value)}
                             placeholder="Team name (if you won)"
-                            className="mt-1 h-8 text-xs"
+                            className="mt-1 h-8 text-base sm:text-xs"
                         />
                     </div>
                 </div>

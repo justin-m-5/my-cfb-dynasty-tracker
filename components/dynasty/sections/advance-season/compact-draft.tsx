@@ -104,7 +104,7 @@ export function CompactDraft({
                 <Select
                     value={selectedPlayerId}
                     onChange={(event) => setSelectedPlayerId(event.target.value)}
-                    className="h-8 text-xs"
+                    className="h-8 text-base sm:text-xs"
                 >
                     <option value="">Select player</option>
                     {availablePlayers.map((player) => (
@@ -119,7 +119,7 @@ export function CompactDraft({
                     text="white"
                     onClick={handleAdd}
                     disabled={saving || !selectedPlayerId}
-                    className="h-8 text-xs font-semibold"
+                    className="h-8 text-base sm:text-xs font-semibold"
                 >
                     {saving ? 'Adding...' : 'Add'}
                 </Button>

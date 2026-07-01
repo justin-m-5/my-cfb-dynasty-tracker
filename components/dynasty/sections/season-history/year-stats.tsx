@@ -65,7 +65,7 @@ export function YearStats({ dynastyId, yearRecords, yearRecordId, isAllTime = fa
                     <Select
                         value={category}
                         onChange={(event) => setCategory(event.target.value as StatCategory)}
-                        className="h-8 w-full bg-background/80 text-xs sm:w-36"
+                        className="h-8 w-full bg-background/80 text-base sm:text-xs sm:w-36"
                     >
                         {statCategories.map((statCategory) => (
                             <option key={statCategory} value={statCategory}>

@@ -107,12 +107,12 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                     value={form.player_name}
                     onChange={(event) => update('player_name', event.target.value)}
                     placeholder="Player name"
-                    className="h-8 text-xs"
+                    className="h-8 text-base sm:text-xs"
                 />
                 <Select
                     value={form.position}
                     onChange={(event) => update('position', event.target.value)}
-                    className="h-8 text-xs"
+                    className="h-8 text-base sm:text-xs"
                 >
                     <option value="">Position</option>
                     {positions.map((position) => (
@@ -123,7 +123,7 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                     value={form.school}
                     onChange={(event) => update('school', event.target.value)}
                     placeholder="School"
-                    className="h-8 text-xs"
+                    className="h-8 text-base sm:text-xs"
                 />
                 <div className="flex overflow-hidden rounded-md border border-primary/15">
                     {(['From', 'To'] as TransferDirection[]).map((direction) => {
@@ -150,7 +150,7 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                     text="white"
                     onClick={handleAdd}
                     disabled={saving || !form.player_name.trim() || !form.position || !form.school.trim()}
-                    className="h-8 text-xs font-semibold"
+                    className="h-8 text-base sm:text-xs font-semibold"
                 >
                     {saving ? 'Adding...' : 'Add'}
                 </Button>

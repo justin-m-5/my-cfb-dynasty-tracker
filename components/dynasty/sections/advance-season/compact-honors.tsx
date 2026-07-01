@@ -106,7 +106,7 @@ export function CompactHonors({ roster, onRosterUpdate }: CompactHonorsProps) {
                 <Select
                     value={selectedPlayerId}
                     onChange={(e) => setSelectedPlayerId(e.target.value)}
-                    className="h-8 text-xs"
+                    className="h-8 text-base sm:text-xs"
                 >
                     <option value="">Select player</option>
                     {roster.map(player => (
@@ -118,7 +118,7 @@ export function CompactHonors({ roster, onRosterUpdate }: CompactHonorsProps) {
                 <Select
                     value={selectedHonor}
                     onChange={(e) => setSelectedHonor(e.target.value as HonorKey | '')}
-                    className="h-8 text-xs"
+                    className="h-8 text-base sm:text-xs"
                 >
                     <option value="">Select honor</option>
                     {HONOR_CATEGORIES.map(cat => (
@@ -133,7 +133,7 @@ export function CompactHonors({ roster, onRosterUpdate }: CompactHonorsProps) {
                     text="white"
                     onClick={handleAdd}
                     disabled={saving || !selectedPlayerId || !selectedHonor}
-                    className="h-8 text-xs font-semibold"
+                    className="h-8 text-base sm:text-xs font-semibold"
                 >
                     {saving ? 'Adding...' : 'Add'}
                 </Button>

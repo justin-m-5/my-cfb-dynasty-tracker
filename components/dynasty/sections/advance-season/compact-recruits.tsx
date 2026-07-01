@@ -101,12 +101,12 @@ export function CompactRecruits({ dynastyId, yearRecordId, recruits, onChange }:
                     value={form.name}
                     onChange={(event) => update('name', event.target.value)}
                     placeholder="Player name"
-                    className="h-8 text-xs"
+                    className="h-8 text-base sm:text-xs"
                 />
                 <Select
                     value={form.position}
                     onChange={(event) => update('position', event.target.value)}
-                    className="h-8 text-xs"
+                    className="h-8 text-base sm:text-xs"
                 >
                     <option value="">Position</option>
                     {positions.map((position) => (
@@ -116,7 +116,7 @@ export function CompactRecruits({ dynastyId, yearRecordId, recruits, onChange }:
                 <Select
                     value={form.stars}
                     onChange={(event) => update('stars', event.target.value)}
-                    className="h-8 text-xs"
+                    className="h-8 text-base sm:text-xs"
                 >
                     {[5, 4, 3, 2, 1].map((stars) => (
                         <option key={stars} value={stars}>{stars} ★</option>
@@ -125,7 +125,7 @@ export function CompactRecruits({ dynastyId, yearRecordId, recruits, onChange }:
                 <Select
                     value={form.state}
                     onChange={(event) => update('state', event.target.value)}
-                    className="h-8 text-xs"
+                    className="h-8 text-base sm:text-xs"
                 >
                     <option value="">State</option>
                     {usStates.map((state) => (
@@ -138,7 +138,7 @@ export function CompactRecruits({ dynastyId, yearRecordId, recruits, onChange }:
                     text="white"
                     onClick={handleAdd}
                     disabled={saving || !form.name.trim() || !form.position}
-                    className="h-8 text-xs font-semibold"
+                    className="h-8 text-base sm:text-xs font-semibold"
                 >
                     {saving ? 'Adding...' : 'Add'}
                 </Button>

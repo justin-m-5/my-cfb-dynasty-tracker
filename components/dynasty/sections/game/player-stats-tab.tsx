@@ -251,7 +251,7 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                                                 [field]: e.target.value === '' ? 0 : Number(e.target.value),
                                             }))
                                         }
-                                        className="mt-1 h-8 text-sm"
+                                        className="mt-1 h-8"
                                     />
                                 </div>
                             ))}

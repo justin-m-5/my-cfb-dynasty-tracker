@@ -60,7 +60,7 @@ export function RankingRow({ rank, team, previousRankings, unrankedTeams, onTeam
             <Select
                 value={team.name || '__unranked__'}
                 onChange={(e) => onTeamChange(rank - 1, e.target.value === '__unranked__' ? '' : e.target.value)}
-                className="h-8 flex-1 text-xs"
+                className="h-8 flex-1 text-base sm:text-xs"
             >
                 <option value="__unranked__">— Unranked —</option>
                 {/* Show current team as option if selected */}

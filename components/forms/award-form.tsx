@@ -52,7 +52,7 @@ export function AwardForm({ players, editing, saving, onSave, onCancel }: AwardF
                         <Select
                             value={playerId}
                             onChange={(e) => setPlayerId(e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="">Select Player</option>
                             {players.map(p => (
@@ -69,7 +69,7 @@ export function AwardForm({ players, editing, saving, onSave, onCancel }: AwardF
                         <Select
                             value={awardName}
                             onChange={(e) => setAwardName(e.target.value)}
-                            className="mt-1 h-8 text-sm"
+                            className="mt-1 h-8"
                         >
                             <option value="">Select Award</option>
                             {predefinedAwards.map(a => (
@@ -85,7 +85,7 @@ export function AwardForm({ players, editing, saving, onSave, onCancel }: AwardF
                             <Select
                                 value={team}
                                 onChange={(e) => setTeam(e.target.value)}
-                                className="mt-1 h-8 text-sm"
+                                className="mt-1 h-8"
                             >
                                 <option value="">—</option>
                                 {teamDesignations.map(t => (
