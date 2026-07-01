@@ -18,7 +18,12 @@ import { Select } from '@/components/ui/select'
 import { LogoImage } from '@/components/ui/logo-image'
 
 function getTeamLogoCandidates(team: FbsTeam): string[] {
-    return getSchoolLogoCandidates(team.name, team.nickName)
+    return Array.from(
+        new Set([
+            team.logo,
+            ...getSchoolLogoCandidates(team.name, team.nickName),
+        ].filter(Boolean))
+    )
 }
 
 export function CreateDynastyForm() {

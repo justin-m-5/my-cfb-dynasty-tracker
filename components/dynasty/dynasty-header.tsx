@@ -8,7 +8,7 @@ import Image from 'next/image'
 import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { LogoImage } from '@/components/ui/logo-image'
 import { Card, CardContent } from '@/components/ui/card'
-import { conferenceLogoByName, getSchoolLogoCandidates } from '@/lib/logos'
+import { conferenceLogoByName, getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
 
 interface DynastyHeaderProps {
     dynastyId: string
@@ -30,7 +30,12 @@ export function DynastyHeader({ dynastyId }: DynastyHeaderProps) {
     }
 
     const conferenceLogo = dynasty.conference ? conferenceLogoByName[dynasty.conference] ?? null : null
-    const schoolLogos = getSchoolLogoCandidates(dynasty.school_name, dynasty.school_nickname)
+    const schoolLogos = Array.from(
+        new Set([
+            getTeamLogo(dynasty.school_name),
+            ...getSchoolLogoCandidates(dynasty.school_name, dynasty.school_nickname),
+        ].filter(Boolean))
+    )
 
     return (
         <Card className="my-4">

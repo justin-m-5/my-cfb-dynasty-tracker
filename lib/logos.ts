@@ -1,5 +1,7 @@
 // lib/logos.ts
 
+import { fbsTeams } from './fbs-teams'
+
 export const conferenceLogoByName: Record<string, string> = {
     SEC: '/logos/conferences/SEC_logo_300x300.png',
     ACC: '/logos/conferences/ACC_logo_300x300.png',
@@ -12,6 +14,11 @@ export const conferenceLogoByName: Record<string, string> = {
     'Big Ten': '/logos/conferences/Big_Ten_logo_300x300.png',
     'C-USA': '/logos/conferences/CUSA_logo_300x300.png',
     Independents: '/logos/conferences/Independents_logo_300x300.png',
+}
+
+export function getTeamLogo(schoolName: string): string {
+    const team = fbsTeams.find(t => t.name === schoolName)
+    return team?.logo ?? ''
 }
 
 function toLogoToken(value: string) {

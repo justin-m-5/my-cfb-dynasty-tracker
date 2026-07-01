@@ -2,7 +2,7 @@
 
 import { Swords } from 'lucide-react'
 import { fbsTeams } from '@/lib/fbs-teams'
-import { getSchoolLogoCandidates } from '@/lib/logos'
+import { getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
 import { LogoImage } from '@/components/ui/logo-image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Game } from '@/dal/features/games'
@@ -17,7 +17,12 @@ export function NextGameCard({ games }: NextGameCardProps) {
     if (!nextGame || !nextGame.opponent) return null
 
     const oppTeam = fbsTeams.find(t => t.name === nextGame.opponent)
-    const oppLogos = getSchoolLogoCandidates(nextGame.opponent, oppTeam?.nickName ?? null)
+    const oppLogos = Array.from(
+        new Set([
+            getTeamLogo(nextGame.opponent),
+            ...getSchoolLogoCandidates(nextGame.opponent, oppTeam?.nickName ?? null),
+        ].filter(Boolean))
+    )
     const locLabel = nextGame.location === 'home' ? 'vs' : nextGame.location === 'away' ? '@' : 'vs'
 
     return (

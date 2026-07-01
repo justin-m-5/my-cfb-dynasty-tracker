@@ -9,7 +9,7 @@ import { DynastyService, type Dynasty } from '@/dal/features/dynasty'
 import { GameService, type Game } from '@/dal/features/games'
 import { PlayerService, type RosterPlayer } from '@/dal/features/players'
 import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
-import { getSchoolLogoCandidates } from '@/lib/logos'
+import { getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
 import { fbsTeams } from '@/lib/fbs-teams'
 import { Button } from '@/components/ui/button'
 import { buttonStyles } from '@/lib/button-utils'
@@ -128,8 +128,18 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
     }
 
     const oppTeam = fbsTeams.find(t => t.name === game.opponent)
-    const userLogos = getSchoolLogoCandidates(dynasty.school_name, dynasty.school_nickname)
-    const oppLogos = game.opponent ? getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null) : []
+    const userLogos = Array.from(
+        new Set([
+            getTeamLogo(dynasty.school_name),
+            ...getSchoolLogoCandidates(dynasty.school_name, dynasty.school_nickname),
+        ].filter(Boolean))
+    )
+    const oppLogos = game.opponent ? Array.from(
+        new Set([
+            getTeamLogo(game.opponent),
+            ...getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null),
+        ].filter(Boolean))
+    ) : []
 
     return (
         <div className="space-y-5">

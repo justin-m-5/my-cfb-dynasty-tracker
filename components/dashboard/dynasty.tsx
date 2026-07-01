@@ -9,7 +9,7 @@ import { Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { LogoImage } from '@/components/ui/logo-image'
-import { conferenceLogoByName, getSchoolLogoCandidates } from '@/lib/logos'
+import { conferenceLogoByName, getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
 import type { DynastySummary } from '@/dal/features/dynasty'
 
 interface DynastyProps {
@@ -32,7 +32,12 @@ export function Dynasty({ dynasty, onDelete }: DynastyProps) {
     }
 
     const conferenceLogo = dynasty.conference ? conferenceLogoByName[dynasty.conference] ?? null : null
-    const schoolLogos = getSchoolLogoCandidates(dynasty.school_name, dynasty.school_nickname)
+    const schoolLogos = Array.from(
+        new Set([
+            getTeamLogo(dynasty.school_name),
+            ...getSchoolLogoCandidates(dynasty.school_name, dynasty.school_nickname),
+        ].filter(Boolean))
+    )
 
     return (
         <div className="group relative rounded-xl border border-primary/20 bg-background/70 transition-all hover:border-primary/40 hover:shadow-md">

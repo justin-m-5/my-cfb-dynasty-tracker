@@ -3,7 +3,7 @@
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react'
 import { fbsTeams } from '@/lib/fbs-teams'
 import { LogoImage } from '@/components/ui/logo-image'
-import { getSchoolLogoCandidates } from '@/lib/logos'
+import { getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
 import { Select } from '@/components/ui/select'
 import type { RankedTeam } from '@/dal/features/top25'
 
@@ -17,7 +17,12 @@ interface RankingRowProps {
 
 export function RankingRow({ rank, team, previousRankings, unrankedTeams, onTeamChange }: RankingRowProps) {
     const oppTeam = fbsTeams.find(t => t.name === team.name)
-    const logos = team.name ? getSchoolLogoCandidates(team.name, oppTeam?.nickName ?? null) : []
+    const logos = team.name ? Array.from(
+        new Set([
+            getTeamLogo(team.name),
+            ...getSchoolLogoCandidates(team.name, oppTeam?.nickName ?? null),
+        ].filter(Boolean))
+    ) : []
 
     // Compute rank change from previous week
     const renderChange = () => {

@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { Select } from '@/components/ui/select'
 import { LogoImage } from '@/components/ui/logo-image'
-import { conferenceLogoByName, getSchoolLogoCandidates } from '@/lib/logos'
+import { conferenceLogoByName, getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
 import type { YearRecord } from '@/dal/features/year-records'
 
 interface YearPickerHeaderProps {
@@ -26,7 +26,12 @@ export function YearPickerHeader({
         : null
 
     const schoolLogos = selectedYearRecord 
-        ? getSchoolLogoCandidates(selectedYearRecord.school_name, selectedYearRecord.school_nickname ?? '')
+        ? Array.from(
+            new Set([
+                getTeamLogo(selectedYearRecord.school_name),
+                ...getSchoolLogoCandidates(selectedYearRecord.school_name, selectedYearRecord.school_nickname ?? ''),
+            ].filter(Boolean))
+        )
         : []
 
     return (

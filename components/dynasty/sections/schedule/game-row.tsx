@@ -6,7 +6,7 @@ import { Trophy, TrendingDown, Minus, Calendar, Pencil, Gamepad2 } from 'lucide-
 import { fbsTeams } from '@/lib/fbs-teams'
 import { getWeekDisplayName, getResultColor, parseScore } from '@/lib/game-utils'
 import { LogoImage } from '@/components/ui/logo-image'
-import { getSchoolLogoCandidates } from '@/lib/logos'
+import { getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
 import type { Game } from '@/dal/features/games'
 import { buttonStyles } from '@/lib/button-utils'
 
@@ -43,7 +43,12 @@ interface GameRowProps {
 
 export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
     const oppTeam = fbsTeams.find(t => t.name === game.opponent)
-    const oppLogos = game.opponent && game.opponent !== 'BYE' ? getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null) : []
+    const oppLogos = game.opponent && game.opponent !== 'BYE' ? Array.from(
+        new Set([
+            getTeamLogo(game.opponent),
+            ...getSchoolLogoCandidates(game.opponent, oppTeam?.nickName ?? null),
+        ].filter(Boolean))
+    ) : []
     const isConf = oppTeam?.conference === dynastyConference
     const { user, opp } = parseScore(game.score)
 

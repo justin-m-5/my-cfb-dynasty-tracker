@@ -17,6 +17,7 @@ export interface FbsTeam {
     stadium: string;
     abbrev: string;
     colors: SchoolColors;
+    logo: string;
 }
 
 export const fbsTeams: FbsTeam[] = [
@@ -33,6 +34,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#00308f",
             secondary: "#a6a6a8",
         },
+        logo: "/logos/Air_Force_Falcons_logo_300x300.png",
     },
     {
         id: "akr",
@@ -47,6 +49,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#002147",
             secondary: "#918b4c",
         },
+        logo: "/logos/Akron_Zips_logo_300x300.png",
     },
     {
         id: "bama",
@@ -61,6 +64,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#9e1b32",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Alabama_Crimson_Tide_logo_300x300.png",
     },
     {
         id: "app",
@@ -75,6 +79,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#222222",
             secondary: "#ffcc00",
         },
+        logo: "/logos/Appalachian_State_Mountaineers_logo_300x300.png",
     },
     {
         id: "ariz",
@@ -89,6 +94,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#AB0520",
             secondary: "#0C234B",
         },
+        logo: "/logos/Arizona_Wildcats_logo_300x300.png",
     },
     {
         id: "asu",
@@ -103,6 +109,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#990033",
             secondary: "#FFB310",
         },
+        logo: "/logos/Arizona_State_Sun_Devils_logo_300x300.png",
     },
     {
         id: "ark",
@@ -117,6 +124,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#9D2235",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Arkansas_Razorbacks_logo_300x300.png",
     },
     {
         id: "arst",
@@ -132,6 +140,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#000000",
             accent: "#FFFFFF",
         },
+        logo: "/logos/Arkansas_State_Red_Wolves_logo_300x300.png",
     },
     {
         id: "army",
@@ -146,6 +155,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#d3bc8d",
         },
+        logo: "/logos/Army_Black_Knights_logo_300x300.png",
     },
     {
         id: "aub",
@@ -160,6 +170,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#0C2340",
             secondary: "#F26522",
         },
+        logo: "/logos/Auburn_Tigers_logo_300x300.png",
     },
     {
         id: "ball",
@@ -174,6 +185,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#BA0C2F",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Ball_State_Cardinals_logo_300x300.png",
     },
     {
         id: "bay",
@@ -188,6 +200,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#003015",
             secondary: "#fecb00",
         },
+        logo: "/logos/Baylor_Bears_logo_300x300.png",
     },
     {
         id: "bsu",
@@ -202,6 +215,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#09347A",
             secondary: "#F1632A",
         },
+        logo: "/logos/Boise_State_Broncos_Logo_300x300.png",
     },
     {
         id: "bc",
@@ -216,6 +230,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#910039",
             secondary: "#B38F59",
         },
+        logo: "/logos/Boston_College_Eagles_logo_300x300.png",
     },
     {
         id: "bgsu",
@@ -230,6 +245,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#4F2C1D",
             secondary: "#FE5000",
         },
+        logo: "/logos/Bowling_Green_Falcons_logo_300x300.png",
     },
     {
         id: "buff",
@@ -244,6 +260,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#005bbb",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Buffalo_Bulls_logo_300x300.png",
     },
     {
         id: "byu",
@@ -258,6 +275,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#002255",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/BYU_Cougars_logo_300x300.png",
     },
     {
         id: "cal",
@@ -272,6 +290,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#041E42",
             secondary: "#FFC72C",
         },
+        logo: "/logos/California_Golden_Bears_logo_300x300.png",
     },
     {
         id: "cmu",
@@ -286,6 +305,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#6a0032",
             secondary: "#ffc82e",
         },
+        logo: "/logos/Central_Michigan_Chippewas_logo_300x300.png",
     },
     {
         id: "char",
@@ -300,6 +320,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#046a38",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Charlotte_49ers_logo_300x300.png",
     },
     {
         id: "cin",
@@ -314,6 +335,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#E00122",
         },
+        logo: "/logos/Cincinnati_Bearcats_logo_300x300.png",
     },
     {
         id: "clem",
@@ -328,6 +350,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#F56600",
             secondary: "#522D80",
         },
+        logo: "/logos/Clemson_Tigers_logo_300x300.png",
     },
     {
         id: "ccar",
@@ -342,6 +365,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#007c89",
             secondary: "#231f20",
         },
+        logo: "/logos/Coastal_Carolina_Chanticleers_logo_300x300.png",
     },
     {
         id: "colo",
@@ -357,6 +381,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#CFB87C",
             accent: "#A2A4A3",
         },
+        logo: "/logos/Colorado_Buffaloes_logo_300x300.png",
     },
     {
         id: "csu",
@@ -371,6 +396,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#1E4D2B",
             secondary: "#C8C372",
         },
+        logo: "/logos/Colorado_State_Rams_logo_300x300.png",
     },
     {
         id: "du",
@@ -386,6 +412,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#FFDD31",
             accent: "#ffd200",
         },
+        logo: "/logos/Delaware_Blue_Hens_logo_300x300.png",
     },
     {
         id: "duke",
@@ -400,6 +427,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#001A57",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Duke_Blue_Devils_logo_300x300.png",
     },
     {
         id: "ecu",
@@ -414,6 +442,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#592A8A",
             secondary: "#FDC82F",
         },
+        logo: "/logos/East_Carolina_Pirates_logo_300x300.png",
     },
     {
         id: "emu",
@@ -428,6 +457,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#006633",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Eastern_Michigan_Eagles_logo_300x300.png",
     },
     {
         id: "fiu",
@@ -442,6 +472,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#081E3F",
             secondary: "#B6862C",
         },
+        logo: "/logos/FIU_Panthers_Logo_300x300.png",
     },
     {
         id: "fla",
@@ -456,6 +487,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#0021a5",
             secondary: "#FA4616",
         },
+        logo: "/logos/Florida_Gators_logo_300x300.png",
     },
     {
         id: "fau",
@@ -470,6 +502,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#003366",
             secondary: "#CC0000",
         },
+        logo: "/logos/Florida_Atlantic_Owls_logo_300x300.png",
     },
     {
         id: "fsu",
@@ -484,6 +517,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#782F40",
             secondary: "#CEB888",
         },
+        logo: "/logos/Florida_State_Seminoles_logo_300x300.png",
     },
     {
         id: "fres",
@@ -498,6 +532,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#C41230",
             secondary: "#002C76",
         },
+        logo: "/logos/Fresno_State_Bulldogs_logo_300x300.png",
     },
     {
         id: "uga",
@@ -512,6 +547,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#DA291C",
             secondary: "#000000",
         },
+        logo: "/logos/Georgia_Bulldogs_logo_300x300.png",
     },
     {
         id: "gaso",
@@ -526,6 +562,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#011e41",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Georgia_Southern_Eagles_logo_300x300.png",
     },
     {
         id: "gsu",
@@ -540,6 +577,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#0039A6",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Georgia_State_Panthers_logo_300x300.png",
     },
     {
         id: "gt",
@@ -554,6 +592,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#C59353",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Georgia_Tech_Yellow_Jackets_logo_300x300.png",
     },
     {
         id: "haw",
@@ -570,6 +609,7 @@ export const fbsTeams: FbsTeam[] = [
             accent: "#000000",
             extra: "#C0C0C0",
         },
+        logo: "/logos/Hawaii_Rainbow_Warriors_logo_300x300.png",
     },
     {
         id: "hou",
@@ -584,6 +624,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#C92839",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Houston_Cougars_logo_300x300.png",
     },
     {
         id: "ill",
@@ -598,6 +639,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#e04e39",
             secondary: "#13294b",
         },
+        logo: "/logos/Illinois_Fighting_Illini_logo_300x300.png",
     },
     {
         id: "ind",
@@ -612,6 +654,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#990000",
             secondary: "#EEEDEB",
         },
+        logo: "/logos/Indiana_Hoosiers_logo_300x300.png",
     },
     {
         id: "iowa",
@@ -626,6 +669,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#FFE100",
         },
+        logo: "/logos/Iowa_Hawkeyes_logo_300x300.png",
     },
     {
         id: "isu",
@@ -640,6 +684,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#a6192e",
             secondary: "#FDC82F",
         },
+        logo: "/logos/Iowa_State_Cyclones_logo_300x300.png",
     },
     {
         id: "jvst",
@@ -654,6 +699,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#a6192e",
             secondary: "#000000",
         },
+        logo: "/logos/Jacksonville_State_Gamecocks_logo_300x300.png",
     },
     {
         id: "jmu",
@@ -668,6 +714,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#450084",
             secondary: "#f4c800",
         },
+        logo: "/logos/James_Madison_Dukes_logo_300x300.png",
     },
     {
         id: "ku",
@@ -682,6 +729,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#0051BA",
             secondary: "#E8000D",
         },
+        logo: "/logos/Kansas_Jayhawks_logo_300x300.png",
     },
     {
         id: "ksu",
@@ -696,6 +744,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#512888",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Kansas_State_Wildcats_logo_300x300.png",
     },
     {
         id: "kenn",
@@ -710,6 +759,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Kennesaw_State_Owls_logo_300x300.png",
     },
     {
         id: "kent",
@@ -724,6 +774,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#002664",
             secondary: "#EAAB00",
         },
+        logo: "/logos/Kent_State_Golden_Flashes_300x300.png",
     },
     {
         id: "uk",
@@ -738,6 +789,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#0033A0",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Kentucky_Wildcats_logo_300x300.png",
     },
     {
         id: "lib",
@@ -752,6 +804,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#041e42",
             secondary: "#be1e2d",
         },
+        logo: "/logos/Liberty_Flames_logo_300x300.png",
     },
     {
         id: "ull",
@@ -766,6 +819,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#ce181e",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Louisiana_Ragin_Cajuns_logo_300x300.png",
     },
     {
         id: "lt",
@@ -780,6 +834,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#003087",
             secondary: "#CB333B",
         },
+        logo: "/logos/Louisiana_Tech_Bulldogs_logo_300x300.png",
     },
     {
         id: "ulm",
@@ -794,6 +849,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#800029",
             secondary: "#bd955a",
         },
+        logo: "/logos/Louisiana-Monroe_Warhawks_300x300.png",
     },
     {
         id: "lou",
@@ -808,6 +864,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#AD0000",
             secondary: "#000000",
         },
+        logo: "/logos/Louisville_Cardinals_logo_300x300.png",
     },
     {
         id: "lsu",
@@ -822,6 +879,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#582c83",
             secondary: "#ffc72c",
         },
+        logo: "/logos/LSU_Tigers_300x300.png",
     },
     {
         id: "mrsh",
@@ -836,6 +894,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#006140",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Marshall_Thundering_Herd_logo_300x300.png",
     },
     {
         id: "umd",
@@ -852,6 +911,7 @@ export const fbsTeams: FbsTeam[] = [
             accent: "#000000",
             extra: "#FFCD00",
         },
+        logo: "/logos/Maryland_Terrapins_logo_300x300.png",
     },
     {
         id: "mem",
@@ -866,6 +926,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#0D3182",
             secondary: "#888C8F",
         },
+        logo: "/logos/Memphis_Tigers_logo_300x300.png",
     },
     {
         id: "mia",
@@ -880,6 +941,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#005030",
             secondary: "#f47321",
         },
+        logo: "/logos/Miami_FL_Hurricanes_logo_300x300.png",
     },
     {
         id: "m-oh",
@@ -894,6 +956,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#B61E2E",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Miami_OH_Redhawks_logo_300x300.png",
     },
     {
         id: "mich",
@@ -908,6 +971,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#ffcb05",
             secondary: "#00274c",
         },
+        logo: "/logos/Michigan_Wolverines_logo_300x300.png",
     },
     {
         id: "msu",
@@ -922,6 +986,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#18453B",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Michigan_State_Spartans_logo_300x300.png",
     },
     {
         id: "mtsu",
@@ -936,6 +1001,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#0066CC",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Middle_Tennessee_Blue_Raiders_logo_300x300.png",
     },
     {
         id: "minn",
@@ -950,6 +1016,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#7a0019",
             secondary: "#ffcc33",
         },
+        logo: "/logos/Minnesota_Golden_Gophers_logo_300x300.png",
     },
     {
         id: "msst",
@@ -964,6 +1031,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#660000",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Mississippi_State_Bulldogs_logo_300x300.png",
     },
     {
         id: "mizz",
@@ -978,6 +1046,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#F1B82D",
         },
+        logo: "/logos/Missouri_Tigers_logo_300x300.png",
     },
     {
         id: "mist",
@@ -993,6 +1062,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#FFFFFF",
             accent: "#000000",
         },
+        logo: "/logos/Missouri_State_Bears_logo_300x300.png",
     },
     {
         id: "navy",
@@ -1007,6 +1077,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#00205b",
             secondary: "#c5b783",
         },
+        logo: "/logos/Navy_Midshipmen_logo_300x300.png",
     },
     {
         id: "ncst",
@@ -1022,6 +1093,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#000000",
             accent: "#FFFFFF",
         },
+        logo: "/logos/NC_State_Wolfpack_logo_300x300.png",
     },
     {
         id: "neb",
@@ -1036,6 +1108,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#e41c38",
             secondary: "#fdf2d9",
         },
+        logo: "/logos/Nebraska_Cornhuskers_logo_300x300.png",
     },
     {
         id: "nev",
@@ -1050,6 +1123,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#003366",
             secondary: "#807f84",
         },
+        logo: "/logos/Nevada_Wolf_Pack_logo_300x300.png",
     },
     {
         id: "unm",
@@ -1064,6 +1138,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#B71234",
             secondary: "#C3C8C8",
         },
+        logo: "/logos/New_Mexico_Lobos_logo_300x300.png",
     },
     {
         id: "nmsu",
@@ -1078,6 +1153,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#8c0b42",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/New_Mexico_State_Aggies_logo_300x300.png",
     },
     {
         id: "unc",
@@ -1092,6 +1168,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#7BAFD4",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/North_Carolina_Tar_Heels_logo_300x300.png",
     },
     {
         id: "unt",
@@ -1106,6 +1183,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#00853E",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/North_Texas_Mean_Green_logo_300x300.png",
     },
     {
         id: "niu",
@@ -1120,6 +1198,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#ba0c2f",
             secondary: "#000000",
         },
+        logo: "/logos/Northern_Illinois_Huskies_300x300.png",
     },
     {
         id: "nw",
@@ -1134,6 +1213,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#4E2A84",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Northwestern_Wildcats_logo_300x300.png",
     },
     {
         id: "nd",
@@ -1148,6 +1228,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#0C2340",
             secondary: "#C99700",
         },
+        logo: "/logos/Notre_Dame_Fighting_Irish_logo_300x300.png",
     },
     {
         id: "ohio",
@@ -1162,6 +1243,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#00694E",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Ohio_Bobcats_logo_300x300.png",
     },
     {
         id: "osu",
@@ -1176,6 +1258,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#bb0000",
             secondary: "#666666",
         },
+        logo: "/logos/Ohio_State_Buckeyes_logo_300x300.png",
     },
     {
         id: "ou",
@@ -1190,6 +1273,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#841617",
             secondary: "#FDF9D8",
         },
+        logo: "/logos/Oklahoma_Sooners_logo_300x300.png",
     },
     {
         id: "okst",
@@ -1204,6 +1288,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#FF7300",
             secondary: "#000000",
         },
+        logo: "/logos/Oklahoma_State_Cowboys_logo_300x300.png",
     },
     {
         id: "odu",
@@ -1219,6 +1304,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#7c878e",
             accent: "#92c1e9",
         },
+        logo: "/logos/Old_Dominion_Monarchs_logo_300x300.png",
     },
     {
         id: "miss",
@@ -1233,6 +1319,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#00205b",
             secondary: "#c8102e",
         },
+        logo: "/logos/Ole_Miss_Rebels_logo_300x300.png",
     },
     {
         id: "ore",
@@ -1247,6 +1334,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#154733",
             secondary: "#FEE123",
         },
+        logo: "/logos/Oregon_Ducks_logo_300x300.png",
     },
     {
         id: "orst",
@@ -1261,6 +1349,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#C34500",
             secondary: "#000000",
         },
+        logo: "/logos/Oregon_State_Beavers_logo_300x300.png",
     },
     {
         id: "psu",
@@ -1275,6 +1364,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#041e42",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Penn_State_Nittany_Lions_logo_300x300.png",
     },
     {
         id: "pitt",
@@ -1289,6 +1379,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#1c2957",
             secondary: "#cdb87d",
         },
+        logo: "/logos/Pittsburgh_Panthers_logo_300x300.png",
     },
     {
         id: "pur",
@@ -1303,6 +1394,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#CEB888",
         },
+        logo: "/logos/Purdue_Boilermakers_logo_300x300.png",
     },
     {
         id: "rice",
@@ -1317,6 +1409,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#002469",
             secondary: "#5e6062",
         },
+        logo: "/logos/Rice_Owls_logo_300x300.png",
     },
     {
         id: "rutg",
@@ -1331,6 +1424,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#d21034",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Rutgers_Scarlet_Knights_logo_300x300.png",
     },
     {
         id: "sam",
@@ -1345,6 +1439,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#f37021",
             secondary: "#00539f",
         },
+        logo: "/logos/Sam_Houston_Bearkats_logo_300x300.png",
     },
     {
         id: "sdsu",
@@ -1359,6 +1454,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#C41230",
             secondary: "#000000",
         },
+        logo: "/logos/San_Diego_State_Aztecs_logo_300x300.png",
     },
     {
         id: "sjsu",
@@ -1374,6 +1470,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#FFFFFF",
             accent: "#E5A823",
         },
+        logo: "/logos/San_Jose_State_Spartans_logo_300x300.png",
     },
     {
         id: "smu",
@@ -1388,6 +1485,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#354ca1",
             secondary: "#cd2027",
         },
+        logo: "/logos/SMU_Mustangs_logo_300x300.png",
     },
     {
         id: "usa",
@@ -1403,6 +1501,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#FFFFFF",
             accent: "#BF0D3E",
         },
+        logo: "/logos/South_Alabama_Jaguars_logo_300x300.png",
     },
     {
         id: "scar",
@@ -1417,6 +1516,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#73000A",
             secondary: "#000000",
         },
+        logo: "/logos/South_Carolina_Gamecocks_logo_300x300.png",
     },
     {
         id: "usf",
@@ -1431,6 +1531,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#006747",
             secondary: "#CFC493",
         },
+        logo: "/logos/South_Florida_Bulls_logo_300x300.png",
     },
     {
         id: "usm",
@@ -1445,6 +1546,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#FDC737",
         },
+        logo: "/logos/Southern_Miss_Golden_Eagles_logo_300x300.png",
     },
     {
         id: "stan",
@@ -1459,6 +1561,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#8C1515",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Stanford_Cardinal_logo_300x300.png",
     },
     {
         id: "syr",
@@ -1473,6 +1576,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#D44500",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Syracuse_Orange_logo_300x300.png",
     },
     {
         id: "tcu",
@@ -1487,6 +1591,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#4d1979",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/TCU_Horned_Frogs_logo_300x300.png",
     },
     {
         id: "tem",
@@ -1501,6 +1606,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#990033",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Temple_Owls_logo_300x300.png",
     },
     {
         id: "tenn",
@@ -1515,6 +1621,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#FF8200",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Tennessee_Volunteers_logo_300x300.png",
     },
     {
         id: "tex",
@@ -1529,6 +1636,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#BF5700",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Texas_Longhorns_logo_300x300.png",
     },
     {
         id: "tamu",
@@ -1543,6 +1651,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#500000",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Texas_A&M_Aggies_logo_300x300.png",
     },
     {
         id: "txst",
@@ -1557,6 +1666,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#501214",
             secondary: "#8D734A",
         },
+        logo: "/logos/Texas_State_Bobcats_logo_300x300.png",
     },
     {
         id: "ttu",
@@ -1571,6 +1681,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#CC0000",
             secondary: "#000000",
         },
+        logo: "/logos/Texas_Tech_Red_Raiders_logo_300x300.png",
     },
     {
         id: "tol",
@@ -1585,6 +1696,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#002569",
             secondary: "#ffce00",
         },
+        logo: "/logos/Toledo_Rockets_logo_300x300.png",
     },
     {
         id: "troy",
@@ -1600,6 +1712,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#8a8d8f",
             accent: "#000000",
         },
+        logo: "/logos/Troy_Trojans_logo_300x300.png",
     },
     {
         id: "tuln",
@@ -1616,6 +1729,7 @@ export const fbsTeams: FbsTeam[] = [
             accent: "#418FDE",
             extra: "#FFFFFF",
         },
+        logo: "/logos/Tulane_Green_Wave_logo_300x300.png",
     },
     {
         id: "tlsa",
@@ -1631,6 +1745,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#002d72",
             accent: "#c8102e",
         },
+        logo: "/logos/Tulsa_Golden_Hurricane_logo_300x300.png",
     },
     {
         id: "uab",
@@ -1645,6 +1760,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/UAB_Blazers_logo_300x300.png",
     },
     {
         id: "ucf",
@@ -1659,6 +1775,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#BA9B37",
         },
+        logo: "/logos/UCF_Knights_logo_300x300.png",
     },
     {
         id: "ucla",
@@ -1673,6 +1790,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#0072ce",
             secondary: "#ffc72c",
         },
+        logo: "/logos/UCLA_Bruins_300x300.png",
     },
     {
         id: "conn",
@@ -1687,6 +1805,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000E2F",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/UConn_Huskies_logo_300x300.png",
     },
     {
         id: "umass",
@@ -1701,6 +1820,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#881c1c",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/UMass_Minuteman_logo_300x300.png",
     },
     {
         id: "unlv",
@@ -1715,6 +1835,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#B10202",
             secondary: "#666666",
         },
+        logo: "/logos/UNLV_Rebels_logo_300x300.png",
     },
     {
         id: "usc",
@@ -1730,6 +1851,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#FFCC00",
             accent: "#FFFFFF",
         },
+        logo: "/logos/USC_Trojans_logo_300x300.png",
     },
     {
         id: "utep",
@@ -1745,6 +1867,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#FF5600",
             accent: "#B2B4B3",
         },
+        logo: "/logos/UTEP_Miners_logo_300x300.png",
     },
     {
         id: "utsa",
@@ -1760,6 +1883,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#FFFFFF",
             accent: "#f15a22",
         },
+        logo: "/logos/UTSA_Roadrunners_logo_300x300.png",
     },
     {
         id: "utah",
@@ -1774,6 +1898,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#CC0000",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Utah_Utes_logo_300x300.png",
     },
     {
         id: "usu",
@@ -1789,6 +1914,7 @@ export const fbsTeams: FbsTeam[] = [
             secondary: "#FFFFFF",
             accent: "#9D968D",
         },
+        logo: "/logos/Utah_State_Aggies_logo_300x300.png",
     },
     {
         id: "van",
@@ -1803,6 +1929,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#997F3D",
         },
+        logo: "/logos/Vanderbilt_Commodores_logo_300x300.png",
     },
     {
         id: "uva",
@@ -1817,6 +1944,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#041e42",
             secondary: "#fa4616",
         },
+        logo: "/logos/Virginia_Cavaliers_logo_300x300.png",
     },
     {
         id: "vt",
@@ -1831,6 +1959,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#660000",
             secondary: "#FF6600",
         },
+        logo: "/logos/Virginia_Tech_Hokies_logo_300x300.png",
     },
     {
         id: "wake",
@@ -1845,6 +1974,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#000000",
             secondary: "#9E7E38",
         },
+        logo: "/logos/Wake_Forest_Demon_Deacons_logo_300x300.png",
     },
     {
         id: "uw",
@@ -1859,6 +1989,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#363c74",
             secondary: "#e8d3a2",
         },
+        logo: "/logos/Washington_Huskies_logo_300x300.png",
     },
     {
         id: "wsu",
@@ -1873,6 +2004,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#981e32",
             secondary: "#5e6a71",
         },
+        logo: "/logos/Washington_State_Cougars_logo_300x300.png",
     },
     {
         id: "wvu",
@@ -1887,6 +2019,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#002855",
             secondary: "#EAAA00",
         },
+        logo: "/logos/West_Virginia_Mountaineers_logo_300x300.png",
     },
     {
         id: "wku",
@@ -1901,6 +2034,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#B01E24",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Western_Kentucky_Hilltoppers_logo_300x300.png",
     },
     {
         id: "wmu",
@@ -1915,6 +2049,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#6c4023",
             secondary: "#b5a167",
         },
+        logo: "/logos/Western_Michigan_Broncos_logo_300x300.png",
     },
     {
         id: "wis",
@@ -1929,6 +2064,7 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#c5050c",
             secondary: "#FFFFFF",
         },
+        logo: "/logos/Wisconsin_Badgers_logo_300x300.png",
     },
     {
         id: "wyo",
@@ -1943,5 +2079,6 @@ export const fbsTeams: FbsTeam[] = [
             primary: "#492f24",
             secondary: "#ffc425",
         },
+        logo: "/logos/Wyoming_Cowboys_logo_300x300.png",
     },
 ];
