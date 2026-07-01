@@ -25,10 +25,19 @@ export function PlayerRow({ player, onEdit, onDelete, onToggleRedshirt }: Player
                 {player.season.jersey_number ?? '—'}
             </span>
 
-            {/* Name + Position */}
+            {/* Name + Position + mobile badges */}
             <div className="flex-1 min-w-0">
                 <span className="text-xs font-semibold text-text block truncate">{player.name}</span>
-                <span className="text-[10px] text-text/50">{player.position}</span>
+                <div className="flex items-center gap-1.5 text-[10px] text-text/50">
+                    <span>{player.position}</span>
+                    {/* Year + Dev Trait inline on small screens */}
+                    <span className="sm:hidden">{player.season.year ?? ''}</span>
+                    {player.season.dev_trait && player.season.dev_trait !== 'Normal' && (
+                        <span className={`sm:hidden rounded-full px-1.5 py-0 font-semibold ${traitColor}`}>
+                            {player.season.dev_trait}
+                        </span>
+                    )}
+                </div>
             </div>
 
             {/* Year */}

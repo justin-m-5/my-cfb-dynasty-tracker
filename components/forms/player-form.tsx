@@ -11,7 +11,7 @@ import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PositionOptions } from '@/components/ui/position-options'
-import { positions, years, devTraits } from '@/lib/player-config'
+import { years, devTraits } from '@/lib/player-config'
 import type { RosterPlayer } from '@/dal/features/players'
 
 // Combined form data for both player identity + season fields
