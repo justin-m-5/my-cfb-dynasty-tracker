@@ -10,6 +10,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { RecruitPositionOptions } from '@/components/ui/position-options'
+import { TeamSearch } from '@/components/dynasty/sections/top25/team-search'
+import { fbsTeams } from '@/lib/fbs-teams'
+import { cn } from '@/lib/utils'
 
 interface CompactTransfersProps {
     dynastyId: string
@@ -19,6 +22,7 @@ interface CompactTransfersProps {
 }
 
 type TransferDirection = Transfer['transfer_direction']
+type FilterTab = 'All' | 'In' | 'Out'
 
 function sortTransfers(items: Transfer[]) {
     return [...items].sort((a, b) => {
@@ -38,10 +42,17 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
     })
     const [saving, setSaving] = useState(false)
     const [deletingId, setDeletingId] = useState<string | null>(null)
+    const [filter, setFilter] = useState<FilterTab>('All')
 
     const orderedTransfers = useMemo(() => sortTransfers(transfers), [transfers])
-    const incomingCount = transfers.filter((transfer) => transfer.transfer_direction === 'From').length
-    const outgoingCount = transfers.filter((transfer) => transfer.transfer_direction === 'To').length
+    const incomingCount = transfers.filter((t) => t.transfer_direction === 'From').length
+    const outgoingCount = transfers.filter((t) => t.transfer_direction === 'To').length
+
+    const filteredTransfers = useMemo(() => {
+        if (filter === 'In') return orderedTransfers.filter((t) => t.transfer_direction === 'From')
+        if (filter === 'Out') return orderedTransfers.filter((t) => t.transfer_direction === 'To')
+        return orderedTransfers
+    }, [orderedTransfers, filter])
 
     const update = (field: keyof typeof form, value: string) => {
         setForm((prev) => ({ ...prev, [field]: value }))
@@ -93,18 +104,21 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
         }
     }
 
+    const filterTabs: { key: FilterTab; label: string }[] = [
+        { key: 'All', label: `All (${transfers.length})` },
+        { key: 'In', label: `In (${incomingCount})` },
+        { key: 'Out', label: `Out (${outgoingCount})` },
+    ]
+
     return (
         <div className="overflow-hidden rounded-2xl border border-primary/15 bg-background/80">
             <div className="border-b border-primary/10 px-3 py-2">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                        <h3 className="text-sm font-semibold text-text">Transfers</h3>
-                        <p className="text-[10px] text-text/55">{incomingCount} in • {outgoingCount} out</p>
-                    </div>
-                </div>
+                <h3 className="text-sm font-semibold text-text">Transfers</h3>
+                <p className="text-[10px] text-text/55">{incomingCount} in • {outgoingCount} out</p>
             </div>
 
-            <div className="grid gap-2 border-b border-primary/10 p-2 md:grid-cols-[minmax(0,1.5fr)_96px_minmax(0,1.2fr)_auto_auto]">
+            {/* Add form */}
+            <div className="grid gap-2 border-b border-primary/10 p-2 md:grid-cols-[minmax(0,1.5fr)_96px_80px_minmax(0,1.2fr)_auto]">
                 <Input
                     value={form.player_name}
                     onChange={(event) => update('player_name', event.target.value)}
@@ -119,20 +133,19 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                     <option value="">Position</option>
                     <RecruitPositionOptions />
                 </Select>
-                <Input
-                    value={form.school}
-                    onChange={(event) => update('school', event.target.value)}
-                    placeholder="School"
-                    className="h-8 text-base sm:text-xs"
-                />
                 <Select
                     value={form.transfer_direction}
                     onChange={(event) => update('transfer_direction', event.target.value as TransferDirection)}
                     className="h-8 text-base sm:text-xs"
                 >
-                    <option value="From">From (In)</option>
-                    <option value="To">To (Out)</option>
+                    <option value="From">In</option>
+                    <option value="To">Out</option>
                 </Select>
+                <TeamSearch
+                    value={form.school}
+                    teams={fbsTeams}
+                    onChange={(name) => update('school', name)}
+                />
                 <Button
                     size="sm"
                     variant="save"
@@ -140,12 +153,32 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                     disabled={saving || !form.player_name.trim() || !form.position || !form.school.trim()}
                     className="h-8 text-base sm:text-xs font-semibold"
                 >
-                    {saving ? 'Adding...' : 'Add'}
+                    {saving ? '...' : 'Add'}
                 </Button>
             </div>
 
+            {/* Filter tabs */}
+            <div className="flex border-b border-primary/10">
+                {filterTabs.map(({ key, label }) => (
+                    <button
+                        key={key}
+                        type="button"
+                        onClick={() => setFilter(key)}
+                        className={cn(
+                            'flex-1 px-3 py-1.5 text-xs font-medium transition-colors',
+                            filter === key
+                                ? 'border-b-2 border-primary text-primary'
+                                : 'text-text/50 hover:text-text/80'
+                        )}
+                    >
+                        {label}
+                    </button>
+                ))}
+            </div>
+
+            {/* List */}
             <div>
-                {orderedTransfers.length > 0 ? orderedTransfers.map((transfer) => {
+                {filteredTransfers.length > 0 ? filteredTransfers.map((transfer) => {
                     const isIncoming = transfer.transfer_direction === 'From'
 
                     return (
@@ -157,10 +190,10 @@ export function CompactTransfers({ dynastyId, yearRecordId, transfers, onChange 
                                 <p className="truncate font-semibold text-text">{transfer.player_name}</p>
                                 <p className="text-[10px] text-text/50 md:hidden">{transfer.position} • {transfer.school}</p>
                             </div>
-                            <span className="text-[10px] text-text/60 md:text-xs">{transfer.position}</span>
-                            <span className="truncate text-[10px] text-text/60 md:text-xs">{transfer.school}</span>
+                            <span className="hidden text-text/60 md:block">{transfer.position}</span>
+                            <span className="hidden truncate text-text/60 md:block">{transfer.school}</span>
                             <span className={`text-[10px] font-semibold md:text-right ${isIncoming ? 'text-green-600' : 'text-red-500'}`}>
-                                {transfer.transfer_direction}
+                                {isIncoming ? 'In' : 'Out'}
                             </span>
                             <button
                                 type="button"
