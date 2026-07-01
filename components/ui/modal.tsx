@@ -1,3 +1,5 @@
+// components/ui/modal.tsx
+
 'use client'
 
 import { type ReactNode, useEffect } from 'react'

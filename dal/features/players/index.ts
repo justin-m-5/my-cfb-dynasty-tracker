@@ -1,8 +1,6 @@
 // dal/features/players/index.ts
 
 import { supabase } from '@/supabase/client'
-import type { Recruit } from '@/dal/features/recruits'
-import type { Transfer } from '@/dal/features/transfers'
 
 // Player identity (permanent, never duplicated)
 export interface Player {
@@ -28,6 +26,7 @@ export interface PlayerSeason {
     notes: string | null
     honors: string[]
     dev_trait: string | null
+    depth_chart_order: number | null
 }
 
 export interface CareerSeason extends PlayerSeason {
@@ -40,8 +39,8 @@ export interface RosterPlayer extends Player {
 }
 
 export type PlayerOrigin =
-    | { type: 'recruit'; data: Recruit }
-    | { type: 'transfer'; data: Transfer }
+    | { type: 'recruit'; data: import('@/dal/features/recruits').Recruit }
+    | { type: 'transfer'; data: import('@/dal/features/transfers').Transfer }
 
 export interface CreatePlayerInput {
     dynasty_id: string
@@ -62,12 +61,45 @@ export interface CreatePlayerSeasonInput {
     is_redshirted?: boolean
     notes?: string | null
     dev_trait?: string | null
+    depth_chart_order?: number | null
+}
+
+function mapPlayerSeason(row: Record<string, unknown>): PlayerSeason {
+    return {
+        id: row.id as string,
+        player_id: row.player_id as string,
+        year_record_id: row.year_record_id as string,
+        dynasty_id: row.dynasty_id as string,
+        year: row.year as string | null,
+        rating: row.rating as number | null,
+        jersey_number: row.jersey_number as number | null,
+        is_redshirted: row.is_redshirted as boolean,
+        notes: row.notes as string | null,
+        honors: (row.honors as string[] | null) ?? [],
+        dev_trait: row.dev_trait as string | null,
+        depth_chart_order: row.depth_chart_order as number | null,
+    }
+}
+
+function mapCareerSeason(row: Record<string, unknown>): CareerSeason {
+    const yearRecord = row.year_records as { year?: number | null } | { year?: number | null }[] | undefined
+    const recordYear = Array.isArray(yearRecord) ? yearRecord[0]?.year : yearRecord?.year
+
+    return {
+        ...mapPlayerSeason(row),
+        record_year: recordYear ?? null,
+    }
 }
 
 export const PlayerService = {
     // Get full roster for a season (player identity + season snapshot)
     async getRoster(dynastyId: string, yearRecordId: string): Promise<RosterPlayer[]> {
-        const { data, error } = await supabase.from('player_seasons').select('*, players!inner(*)').eq('dynasty_id', dynastyId).eq('year_record_id', yearRecordId).order('player_id')
+        const { data, error } = await supabase
+            .from('player_seasons')
+            .select('*, players!inner(*)')
+            .eq('dynasty_id', dynastyId)
+            .eq('year_record_id', yearRecordId)
+            .order('player_id')
 
         if (error) {
             console.error('Get roster error:', error.message)
@@ -76,19 +108,7 @@ export const PlayerService = {
 
         return (data ?? []).map((row: Record<string, unknown>) => {
             const player = row.players as Player
-            const season: PlayerSeason = {
-                id: row.id as string,
-                player_id: row.player_id as string,
-                year_record_id: row.year_record_id as string,
-                dynasty_id: row.dynasty_id as string,
-                year: row.year as string | null,
-                rating: row.rating as number | null,
-                jersey_number: row.jersey_number as number | null,
-                is_redshirted: row.is_redshirted as boolean,
-                notes: row.notes as string | null,
-                honors: (row.honors as string[] | null) ?? [],
-                dev_trait: row.dev_trait as string | null,
-            }
+            const season = mapPlayerSeason(row)
             return { ...player, season }
         }).sort((a, b) => a.position.localeCompare(b.position) || a.name.localeCompare(b.name))
     },
@@ -121,6 +141,7 @@ export const PlayerService = {
             is_redshirted: seasonInput.is_redshirted ?? false,
             notes: seasonInput.notes ?? null,
             dev_trait: seasonInput.dev_trait ?? null,
+            depth_chart_order: seasonInput.depth_chart_order ?? null,
         }).select().single()
 
         if (sErr || !season) {
@@ -128,24 +149,13 @@ export const PlayerService = {
             return null
         }
 
-        return { ...(player as Player), season: season as PlayerSeason }
+        return { ...(player as Player), season: mapPlayerSeason(season as Record<string, unknown>) }
     },
 
     // Update player identity fields
     async updatePlayer(id: string, updates: Partial<CreatePlayerInput>): Promise<void> {
         const { error } = await supabase.from('players').update(updates).eq('id', id)
         if (error) throw error
-    },
-
-    async getPlayer(playerId: string): Promise<Player | null> {
-        const { data, error } = await supabase.from('players').select('*').eq('id', playerId).maybeSingle()
-
-        if (error) {
-            console.error('Get player error:', error.message)
-            return null
-        }
-
-        return data as Player | null
     },
 
     // Update season-specific fields
@@ -162,32 +172,30 @@ export const PlayerService = {
 
     // Get a player's career (all seasons)
     async getPlayerCareer(playerId: string): Promise<CareerSeason[]> {
-        const { data, error } = await supabase.from('player_seasons').select('*, year_records!inner(year)').eq('player_id', playerId).order('year_record_id')
+        const { data, error } = await supabase
+            .from('player_seasons')
+            .select('*, year_records!inner(year)')
+            .eq('player_id', playerId)
+            .order('year_record_id')
 
         if (error) {
             console.error('Get player career error:', error.message)
             return []
         }
 
-        return (data ?? []).map((row: Record<string, unknown>) => {
-            const yearRecord = row.year_records as { year?: number | null } | { year?: number | null }[] | undefined
-            const recordYear = Array.isArray(yearRecord) ? yearRecord[0]?.year : yearRecord?.year
+        return (data ?? []).map((row: Record<string, unknown>) => mapCareerSeason(row))
+            .sort((a, b) => (a.record_year ?? 0) - (b.record_year ?? 0))
+    },
 
-            return {
-                id: row.id as string,
-                player_id: row.player_id as string,
-                year_record_id: row.year_record_id as string,
-                dynasty_id: row.dynasty_id as string,
-                year: row.year as string | null,
-                rating: row.rating as number | null,
-                jersey_number: row.jersey_number as number | null,
-                is_redshirted: row.is_redshirted as boolean,
-                notes: row.notes as string | null,
-                honors: (row.honors as string[] | null) ?? [],
-                dev_trait: row.dev_trait as string | null,
-                record_year: recordYear ?? null,
-            }
-        }).sort((a, b) => (a.record_year ?? 0) - (b.record_year ?? 0))
+    async getPlayer(playerId: string): Promise<Player | null> {
+        const { data, error } = await supabase.from('players').select('*').eq('id', playerId).maybeSingle()
+
+        if (error) {
+            console.error('Get player error:', error.message)
+            return null
+        }
+
+        return data as Player | null
     },
 
     async getPlayerOrigin(dynastyId: string, playerName: string): Promise<PlayerOrigin | null> {
@@ -196,7 +204,7 @@ export const PlayerService = {
         if (recruitError) {
             console.error('Get player recruit origin error:', recruitError.message)
         } else if (recruit) {
-            return { type: 'recruit', data: recruit as Recruit }
+            return { type: 'recruit', data: recruit }
         }
 
         const { data: transfer, error: transferError } = await supabase.from('transfers').select('*').eq('dynasty_id', dynastyId).eq('player_name', playerName).limit(1).maybeSingle()
@@ -207,7 +215,7 @@ export const PlayerService = {
         }
 
         if (transfer) {
-            return { type: 'transfer', data: transfer as Transfer }
+            return { type: 'transfer', data: transfer }
         }
 
         return null

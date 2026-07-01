@@ -270,7 +270,10 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                     transfers={transfers}
                     recruits={recruits}
                     draftedPlayers={draftedPlayers}
+                    dynastyId={dynastyId}
+                    yearRecordId={yearRecordId!}
                     onRosterUpdate={setRoster}
+                    onTransfersUpdate={setTransfers}
                 />
             )}
 
