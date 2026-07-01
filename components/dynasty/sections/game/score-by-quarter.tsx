@@ -51,11 +51,6 @@ export function ScoreByQuarter({ game, dynasty, updateGame, userLogos, oppLogos 
         }
     }
 
-    const addOT = () => {
-        const updated = [...quarters, { home: 0, away: 0 }]
-        updateGame('score_by_quarter', updated)
-    }
-
     const toggleOT = () => {
         if (hasOT) {
             // Remove all OT periods (keep only first 4 quarters)
