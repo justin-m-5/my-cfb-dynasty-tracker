@@ -18,12 +18,11 @@ import { Save } from 'lucide-react'
 
 import { GameHeader } from './game/game-header'
 import { QuickEditRow } from './game/quick-edit-row'
-import { BoxScoreTab } from './game/box-score-tab'
 import { TeamStatsTab } from './game/team-stats-tab'
 import { PlayerStatsTab } from './game/player-stats-tab'
 import { RecapTab } from './game/recap-tab'
 
-const tabItems = ['Box Score', 'Team Stats', 'Player Stats', 'Recap'] as const
+const tabItems = ['Team Stats', 'Player Stats', 'Recap'] as const
 type TabKey = (typeof tabItems)[number]
 
 interface GameDetailProps {
@@ -37,7 +36,7 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [isDirty, setIsDirty] = useState(false)
-    const [activeTab, setActiveTab] = useState<TabKey>('Box Score')
+    const [activeTab, setActiveTab] = useState<TabKey>('Team Stats')
     const [roster, setRoster] = useState<RosterPlayer[]>([])
     const [playerStats, setPlayerStats] = useState<PlayerStat[]>([])
 
@@ -159,12 +158,11 @@ export function GameDetail({ dynastyId, gameId }: GameDetailProps) {
             </div>
 
             <GameHeader dynasty={dynasty} game={game} userLogos={userLogos} oppLogos={oppLogos} />
-            <QuickEditRow game={game} updateGame={updateGame} />
+            <QuickEditRow game={game} dynasty={dynasty} updateGame={updateGame} userLogos={userLogos} oppLogos={oppLogos} />
 
             {/* Tab picker — vertical on mobile, horizontal on desktop */}
             <MiniTabNav tabs={tabItems} active={activeTab} onChange={(t) => setActiveTab(t as TabKey)} />
 
-            {activeTab === 'Box Score' && <BoxScoreTab game={game} dynasty={dynasty} updateGame={updateGame} userLogos={userLogos} oppLogos={oppLogos} />}
             {activeTab === 'Team Stats' && <TeamStatsTab game={game} updateGame={updateGame} />}
             {activeTab === 'Player Stats' && (
                 <PlayerStatsTab gameId={game.id} roster={roster} stats={playerStats} onStatsChange={setPlayerStats} />

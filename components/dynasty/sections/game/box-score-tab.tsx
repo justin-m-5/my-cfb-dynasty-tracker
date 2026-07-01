@@ -33,8 +33,8 @@ export function BoxScoreTab({ game, dynasty, updateGame, userLogos, oppLogos }: 
 
     return (
         <Card>
-            <CardHeader><CardTitle className="text-base">Score by Quarter</CardTitle></CardHeader>
-            <CardContent>
+            <CardHeader className="p-2"><CardTitle className="text-base">Score by Quarter</CardTitle></CardHeader>
+            <CardContent className="p-2">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
@@ -57,7 +57,7 @@ export function BoxScoreTab({ game, dynasty, updateGame, userLogos, oppLogos }: 
                                             min={0}
                                             value={q.away}
                                             onChange={(e) => updateQuarter(i, 'away', e.target.value)}
-                                            className="mx-auto h-10 w-16 min-w-16 text-center text-base tabular-nums sm:h-8 sm:w-14 sm:min-w-14 sm:text-sm"
+                                            className="mx-auto h-10 w-16 min-w-16 text-center text-base tabular-nums sm:h-8 sm:w-14 sm:min-w-14 sm:text-sm px-2"
                                         />
                                     </td>
                                 ))}
@@ -75,7 +75,7 @@ export function BoxScoreTab({ game, dynasty, updateGame, userLogos, oppLogos }: 
                                             min={0}
                                             value={q.home}
                                             onChange={(e) => updateQuarter(i, 'home', e.target.value)}
-                                            className="mx-auto h-10 w-16 min-w-16 text-center text-base tabular-nums sm:h-8 sm:w-14 sm:min-w-14 sm:text-sm"
+                                            className="mx-auto h-10 w-16 min-w-16 text-center text-base tabular-nums sm:h-8 sm:w-14 sm:min-w-14 sm:text-sm px-2"
                                         />
                                     </td>
                                 ))}
