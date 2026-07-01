@@ -80,7 +80,7 @@ export function GameRow({ game, dynastyId, dynastyConference }: GameRowProps) {
                             {game.opponent || <span className="text-text/40 italic">TBD</span>}
                         </span>
                         {/* Conference + stadium on sm+ */}
-                        <span className="hidden sm:block text-[11px] text-text/50 truncate">
+                        <span className="hidden sm:block text-[11px] text-text truncate">
                             {oppTeam?.conference}
                             {isConf && <span className="ml-1 text-amber-600 font-semibold">• Conf</span>}
                             {game.stadium && <span className="ml-2 inline-flex items-center gap-0.5"><MapPin className="h-3 w-3 inline" />{game.stadium}</span>}
