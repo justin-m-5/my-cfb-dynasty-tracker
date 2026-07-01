@@ -109,16 +109,14 @@ export function PlayerAwards({ dynastyId }: PlayerAwardsProps) {
     return (
         <div className="space-y-4 pt-10">
             {showForm && (
-                <div className="p-4 rounded-lg border border-primary/15 bg-primary/5">
-                    <AwardForm
-                        key={editing?.id ?? 'new'}
-                        players={players}
-                        editing={editing}
-                        saving={saving}
-                        onSave={handleSave}
-                        onCancel={handleCancel}
-                    />
-                </div>
+                <AwardForm
+                    key={editing?.id ?? 'new'}
+                    players={players}
+                    editing={editing}
+                    saving={saving}
+                    onSave={handleSave}
+                    onCancel={handleCancel}
+                />
             )}
 
             <Card>

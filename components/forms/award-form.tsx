@@ -1,4 +1,4 @@
-// components/forms/player-awards/award-form.tsx
+// components/forms/award-form.tsx
 
 'use client'
 
@@ -8,6 +8,8 @@ import type { Award } from '@/dal/features/awards'
 import { predefinedAwards, teamAwards, teamDesignations } from '@/lib/award-config'
 import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface AwardFormProps {
     players: Player[]
@@ -38,54 +40,78 @@ export function AwardForm({ players, editing, saving, onSave, onCancel }: AwardF
     }
 
     return (
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-3">
-            <Select
-                value={playerId}
-                onChange={(e) => setPlayerId(e.target.value)}
-                className="h-8 text-xs flex-1"
-            >
-                <option value="">Select Player</option>
-                {players.map(p => (
-                    <option key={p.id} value={p.id}>
-                        {p.name} — {p.position}
-                    </option>
-                ))}
-            </Select>
+        <Card>
+            <CardHeader className="pb-2">
+                <CardTitle className="text-base">{editing ? 'Edit Award' : 'Add Award'}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    {/* Player */}
+                    <div>
+                        <Label className="text-xs">Player *</Label>
+                        <Select
+                            value={playerId}
+                            onChange={(e) => setPlayerId(e.target.value)}
+                            className="mt-1 h-8 text-sm"
+                        >
+                            <option value="">Select Player</option>
+                            {players.map(p => (
+                                <option key={p.id} value={p.id}>
+                                    {p.name} — {p.position}
+                                </option>
+                            ))}
+                        </Select>
+                    </div>
 
-            <Select
-                value={awardName}
-                onChange={(e) => setAwardName(e.target.value)}
-                className="h-8 text-xs flex-1"
-            >
-                <option value="">Select Award</option>
-                {predefinedAwards.map(a => (
-                    <option key={a} value={a}>{a}</option>
-                ))}
-            </Select>
+                    {/* Award */}
+                    <div>
+                        <Label className="text-xs">Award *</Label>
+                        <Select
+                            value={awardName}
+                            onChange={(e) => setAwardName(e.target.value)}
+                            className="mt-1 h-8 text-sm"
+                        >
+                            <option value="">Select Award</option>
+                            {predefinedAwards.map(a => (
+                                <option key={a} value={a}>{a}</option>
+                            ))}
+                        </Select>
+                    </div>
 
-            {showTeamSelect && (
-                <Select
-                    value={team}
-                    onChange={(e) => setTeam(e.target.value)}
-                    className="h-8 text-xs w-28"
-                >
-                    <option value="">Team</option>
-                    {teamDesignations.map(t => (
-                        <option key={t} value={t}>{t}</option>
-                    ))}
-                </Select>
-            )}
+                    {/* Team (conditional) */}
+                    {showTeamSelect && (
+                        <div>
+                            <Label className="text-xs">Team</Label>
+                            <Select
+                                value={team}
+                                onChange={(e) => setTeam(e.target.value)}
+                                className="mt-1 h-8 text-sm"
+                            >
+                                <option value="">—</option>
+                                {teamDesignations.map(t => (
+                                    <option key={t} value={t}>{t}</option>
+                                ))}
+                            </Select>
+                        </div>
+                    )}
+                </div>
 
-            <div className="flex gap-2">
-                <Button size="sm" bg="var(--primary)" text="white" onClick={handleSubmit} disabled={saving || !playerId || !awardName}>
-                    {editing ? 'Save' : 'Add'}
-                </Button>
-                {editing && (
-                    <Button size="sm" bg="var(--orange-500)" text="white" variant="outline" onClick={onCancel}>
+                <div className="mt-3 flex items-center gap-2">
+                    <Button
+                        bg="var(--green-600)"
+                        text="white"
+                        size="sm"
+                        onClick={handleSubmit}
+                        disabled={saving || !playerId || !awardName}
+                        className="text-xs font-semibold"
+                    >
+                        {saving ? 'Saving...' : editing ? 'Save Changes' : 'Add Award'}
+                    </Button>
+                    <Button bg="var(--orange-400)" text="white" size="sm" onClick={onCancel} className="text-xs">
                         Cancel
                     </Button>
-                )}
-            </div>
-        </div>
+                </div>
+            </CardContent>
+        </Card>
     )
 }
