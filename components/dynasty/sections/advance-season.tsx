@@ -13,6 +13,7 @@ import { PlayerService, type RosterPlayer } from '@/dal/features/players'
 import { TransferService, type Transfer } from '@/dal/features/transfers'
 import { RecruitService, type Recruit } from '@/dal/features/recruits'
 import { DraftedPlayerService, type DraftedPlayer } from '@/dal/features/drafted-players'
+import { AwardService, type Award } from '@/dal/features/awards'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { SidebarNav } from '@/components/ui/sidebar-nav'
@@ -24,6 +25,7 @@ import { CompactTransfers } from './advance-season/compact-transfers'
 import { CompactRecruits } from './advance-season/compact-recruits'
 import { CompactDraft } from './advance-season/compact-draft'
 import { CompactHonors } from './advance-season/compact-honors'
+import { RosterManagement } from './advance-season/roster-management'
 
 interface AdvanceSeasonProps {
     dynastyId: string
@@ -31,6 +33,7 @@ interface AdvanceSeasonProps {
 
 const navItems = [
     { name: 'Overview', key: 'overview' },
+    { name: 'Roster', key: 'roster' },
     { name: 'Transfers', key: 'transfers' },
     { name: 'Recruits', key: 'recruits' },
     { name: 'Draft', key: 'draft' },
@@ -46,6 +49,7 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
     const [transfers, setTransfers] = useState<Transfer[]>([])
     const [recruits, setRecruits] = useState<Recruit[]>([])
     const [draftedPlayers, setDraftedPlayers] = useState<DraftedPlayer[]>([])
+    const [awards, setAwards] = useState<Award[]>([])
     const [loading, setLoading] = useState(true)
     const [advancing, setAdvancing] = useState(false)
     const [activeTab, setActiveTab] = useState('overview')
@@ -79,12 +83,13 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                         nat_champ: yr.nat_champ || '',
                     })
 
-                    const [gameData, rosterData, transferData, recruitData, draftedData] = await Promise.all([
+                    const [gameData, rosterData, transferData, recruitData, draftedData, awardData] = await Promise.all([
                         GameService.getGames(dynastyId, yr.id),
                         PlayerService.getRoster(dynastyId, yr.id),
                         TransferService.getTransfers(dynastyId, yr.id),
                         RecruitService.getRecruits(dynastyId, yr.id),
                         DraftedPlayerService.getDraftedPlayers(dynastyId, yr.id),
+                        AwardService.getAwards(dynastyId, yr.id),
                     ])
 
                     setGames(gameData)
@@ -92,6 +97,7 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                     setTransfers(transferData)
                     setRecruits(recruitData)
                     setDraftedPlayers(draftedData)
+                    setAwards(awardData)
                 }
             } catch (err) {
                 console.error('Failed to load:', err)
@@ -258,6 +264,16 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
                 </div>
             )}
 
+            {activeTab === 'roster' && yearRecordId && (
+                <RosterManagement
+                    roster={roster}
+                    transfers={transfers}
+                    recruits={recruits}
+                    draftedPlayers={draftedPlayers}
+                    onRosterUpdate={setRoster}
+                />
+            )}
+
             {activeTab === 'transfers' && yearRecordId && (
                 <CompactTransfers
                     dynastyId={dynastyId}
@@ -290,8 +306,12 @@ export function AdvanceSeason({ dynastyId }: AdvanceSeasonProps) {
 
             {activeTab === 'honors' && yearRecordId && (
                 <CompactHonors
+                    dynastyId={dynastyId}
+                    yearRecordId={yearRecordId}
+                    year={dynasty.current_year}
                     roster={roster}
-                    onRosterUpdate={setRoster}
+                    awards={awards}
+                    onAwardsChange={setAwards}
                 />
             )}
         </div>

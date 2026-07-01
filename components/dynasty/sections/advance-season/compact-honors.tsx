@@ -1,98 +1,94 @@
+// components/dynasty/sections/advance-season/compact-honors.tsx
+
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Award, Plus, Trash2 } from 'lucide-react'
+import { Award as AwardIcon, Plus, Trash2 } from 'lucide-react'
 
-import { PlayerService, type RosterPlayer } from '@/dal/features/players'
-import { HONOR_CATEGORIES, type HonorKey } from '@/lib/honors-config'
+import { AwardService, type Award } from '@/dal/features/awards'
+import type { RosterPlayer } from '@/dal/features/players'
+import { predefinedAwards, teamAwards, teamDesignations } from '@/lib/award-config'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Modal } from '@/components/ui/modal'
 import { Select } from '@/components/ui/select'
 
 interface CompactHonorsProps {
+    dynastyId: string
+    yearRecordId: string
+    year: number
     roster: RosterPlayer[]
-    onRosterUpdate: (updated: RosterPlayer[]) => void
+    awards: Award[]
+    onAwardsChange: (awards: Award[]) => void
 }
 
-export function CompactHonors({ roster, onRosterUpdate }: CompactHonorsProps) {
+export function CompactHonors({ dynastyId, yearRecordId, year, roster, awards, onAwardsChange }: CompactHonorsProps) {
     const [selectedPlayerId, setSelectedPlayerId] = useState('')
-    const [selectedHonor, setSelectedHonor] = useState<HonorKey | ''>('')
+    const [selectedAward, setSelectedAward] = useState('')
+    const [selectedTeam, setSelectedTeam] = useState('')
     const [saving, setSaving] = useState(false)
-    const [removingKey, setRemovingKey] = useState<string | null>(null)
+    const [removingId, setRemovingId] = useState<string | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    const honorGroups = useMemo(() => {
-        const groups: Record<string, { player: RosterPlayer; seasonId: string }[]> = {}
-        for (const cat of HONOR_CATEGORIES) {
-            groups[cat.key] = []
-        }
-        for (const player of roster) {
-            for (const honor of player.season.honors) {
-                if (groups[honor]) {
-                    groups[honor].push({ player, seasonId: player.season.id })
-                }
-            }
-        }
-        return groups
-    }, [roster])
+    const showTeamSelect = teamAwards.includes(selectedAward)
 
-    const totalHonors = useMemo(
-        () => roster.reduce((sum, p) => sum + p.season.honors.length, 0),
-        [roster]
-    )
+    const groupedAwards = useMemo(() => {
+        const groups: Record<string, Award[]> = {}
+        for (const award of awards) {
+            const key = award.award_name + (award.team ? ` (${award.team})` : '')
+            if (!groups[key]) groups[key] = []
+            groups[key].push(award)
+        }
+        return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))
+    }, [awards])
 
     const closeModal = () => {
         setIsModalOpen(false)
         setSelectedPlayerId('')
-        setSelectedHonor('')
+        setSelectedAward('')
+        setSelectedTeam('')
     }
 
     const handleAdd = async () => {
-        if (saving || !selectedPlayerId || !selectedHonor) return
+        if (saving || !selectedPlayerId || !selectedAward) return
 
         const player = roster.find(p => p.id === selectedPlayerId)
-        if (!player || player.season.honors.includes(selectedHonor)) return
+        if (!player) return
 
         setSaving(true)
         try {
-            const newHonors = [...player.season.honors, selectedHonor]
-            await PlayerService.updatePlayerSeason(player.season.id, { honors: newHonors })
+            const created = await AwardService.createAward({
+                dynasty_id: dynastyId,
+                year_record_id: yearRecordId,
+                player_id: selectedPlayerId,
+                player_name: player.name,
+                award_name: selectedAward,
+                team: showTeamSelect && selectedTeam ? selectedTeam : null,
+                year,
+            })
 
-            const updated = roster.map(p =>
-                p.id === selectedPlayerId
-                    ? { ...p, season: { ...p.season, honors: newHonors } }
-                    : p
-            )
-            onRosterUpdate(updated)
-            closeModal()
+            if (created) {
+                onAwardsChange([...awards, created])
+                closeModal()
+            }
         } catch (err) {
-            console.error('Failed to add honor:', err)
+            console.error('Failed to add award:', err)
         } finally {
             setSaving(false)
         }
     }
 
-    const handleRemove = async (playerId: string, seasonId: string, honor: string) => {
-        const key = `${playerId}-${honor}`
-        setRemovingKey(key)
+    const handleRemove = async (id: string) => {
+        setRemovingId(id)
         try {
-            const player = roster.find(p => p.id === playerId)
-            if (!player) return
-
-            const newHonors = player.season.honors.filter(h => h !== honor)
-            await PlayerService.updatePlayerSeason(seasonId, { honors: newHonors })
-
-            const updated = roster.map(p =>
-                p.id === playerId
-                    ? { ...p, season: { ...p.season, honors: newHonors } }
-                    : p
-            )
-            onRosterUpdate(updated)
+            const success = await AwardService.deleteAward(id)
+            if (success) {
+                onAwardsChange(awards.filter(a => a.id !== id))
+            }
         } catch (err) {
-            console.error('Failed to remove honor:', err)
+            console.error('Failed to remove award:', err)
         } finally {
-            setRemovingKey(null)
+            setRemovingId(null)
         }
     }
 
@@ -102,9 +98,9 @@ export function CompactHonors({ roster, onRosterUpdate }: CompactHonorsProps) {
                 <div className="border-b border-primary/10 px-3 py-2">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                         <div>
-                            <h3 className="text-sm font-semibold text-text">Season Honors</h3>
+                            <h3 className="text-sm font-semibold text-text">Season Awards</h3>
                             <p className="text-[10px] text-text/55">
-                                {totalHonors} honor{totalHonors !== 1 ? 's' : ''} assigned
+                                {awards.length} award{awards.length !== 1 ? 's' : ''} assigned
                             </p>
                         </div>
                         <Button
@@ -114,55 +110,46 @@ export function CompactHonors({ roster, onRosterUpdate }: CompactHonorsProps) {
                             className="text-xs font-semibold"
                         >
                             <Plus className="h-3.5 w-3.5" />
-                            Add Honor
+                            Add Award
                         </Button>
                     </div>
                 </div>
 
                 <div className="divide-y divide-primary/10">
-                    {HONOR_CATEGORIES.map(cat => {
-                        const players = honorGroups[cat.key]
-                        if (players.length === 0) return null
-
-                        return (
-                            <div key={cat.key} className="px-3 py-2">
-                                <div className="mb-1.5 flex items-center gap-1.5">
-                                    <Award className="h-3 w-3 text-amber-500" />
-                                    <span className="text-[11px] font-semibold text-text/80">{cat.label}</span>
-                                    <span className="text-[10px] text-text/40">({players.length})</span>
-                                </div>
-                                <div className="space-y-1">
-                                    {players.map(({ player, seasonId }) => (
-                                        <div
-                                            key={`${player.id}-${cat.key}`}
-                                            className="flex items-center justify-between rounded-md px-2 py-1 hover:bg-primary/5"
-                                        >
-                                            <div className="flex items-center gap-2 text-xs">
-                                                <span className="font-medium text-text">{player.name}</span>
-                                                <span className="text-text/50">{player.position}</span>
-                                                {player.season.jersey_number && (
-                                                    <span className="text-text/40">#{player.season.jersey_number}</span>
-                                                )}
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemove(player.id, seasonId, cat.key)}
-                                                disabled={removingKey === `${player.id}-${cat.key}`}
-                                                className="rounded p-1 text-red-500 transition-colors hover:bg-red-50 disabled:opacity-50"
-                                                aria-label={`Remove ${cat.label} from ${player.name}`}
-                                            >
-                                                <Trash2 className="h-3 w-3" />
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
+                    {groupedAwards.map(([groupLabel, groupAwards]) => (
+                        <div key={groupLabel} className="px-3 py-2">
+                            <div className="mb-1.5 flex items-center gap-1.5">
+                                <AwardIcon className="h-3 w-3 text-amber-500" />
+                                <span className="text-[11px] font-semibold text-text/80">{groupLabel}</span>
+                                <span className="text-[10px] text-text/40">({groupAwards.length})</span>
                             </div>
-                        )
-                    })}
+                            <div className="space-y-1">
+                                {groupAwards.map((award) => (
+                                    <div
+                                        key={award.id}
+                                        className="flex items-center justify-between rounded-md px-2 py-1 hover:bg-primary/5"
+                                    >
+                                        <div className="flex items-center gap-2 text-xs">
+                                            <span className="font-medium text-text">{award.player_name}</span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemove(award.id)}
+                                            disabled={removingId === award.id}
+                                            className="rounded p-1 text-red-500 transition-colors hover:bg-red-50 disabled:opacity-50"
+                                            aria-label={`Remove ${award.award_name} from ${award.player_name}`}
+                                        >
+                                            <Trash2 className="h-3 w-3" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
 
-                    {totalHonors === 0 && (
+                    {awards.length === 0 && (
                         <div className="px-3 py-6 text-center text-xs text-text/50">
-                            No honors assigned yet.
+                            No awards assigned yet.
                         </div>
                     )}
                 </div>
@@ -171,7 +158,7 @@ export function CompactHonors({ roster, onRosterUpdate }: CompactHonorsProps) {
             <Modal
                 isOpen={isModalOpen}
                 onClose={closeModal}
-                title="Add Season Honor"
+                title="Add Season Award"
                 maxWidth="max-w-xl"
             >
                 <div className="space-y-4">
@@ -191,30 +178,43 @@ export function CompactHonors({ roster, onRosterUpdate }: CompactHonorsProps) {
                         </Select>
                     </div>
                     <div>
-                        <Label className="text-xs">Honor</Label>
+                        <Label className="text-xs">Award</Label>
                         <Select
-                            value={selectedHonor}
-                            onChange={(e) => setSelectedHonor(e.target.value as HonorKey | '')}
+                            value={selectedAward}
+                            onChange={(e) => { setSelectedAward(e.target.value); setSelectedTeam('') }}
                             className="mt-1 h-9 text-sm"
                         >
-                            <option value="">Select honor</option>
-                            {HONOR_CATEGORIES.map(cat => (
-                                <option key={cat.key} value={cat.key}>
-                                    {cat.label}
-                                </option>
+                            <option value="">Select award</option>
+                            {predefinedAwards.map(a => (
+                                <option key={a} value={a}>{a}</option>
                             ))}
                         </Select>
                     </div>
+                    {showTeamSelect && (
+                        <div>
+                            <Label className="text-xs">Team Designation</Label>
+                            <Select
+                                value={selectedTeam}
+                                onChange={(e) => setSelectedTeam(e.target.value)}
+                                className="mt-1 h-9 text-sm"
+                            >
+                                <option value="">—</option>
+                                {teamDesignations.map(t => (
+                                    <option key={t} value={t}>{t}</option>
+                                ))}
+                            </Select>
+                        </div>
+                    )}
                     <div className="flex items-center gap-2">
                         <Button
                             type="button"
                             variant="save"
                             size="sm"
                             onClick={handleAdd}
-                            disabled={saving || !selectedPlayerId || !selectedHonor}
+                            disabled={saving || !selectedPlayerId || !selectedAward}
                             className="text-xs font-semibold"
                         >
-                            {saving ? 'Adding...' : 'Add Honor'}
+                            {saving ? 'Adding...' : 'Add Award'}
                         </Button>
                         <Button type="button" variant="cancel" size="sm" onClick={closeModal} className="text-xs">
                             Cancel
@@ -225,3 +225,4 @@ export function CompactHonors({ roster, onRosterUpdate }: CompactHonorsProps) {
         </>
     )
 }
+
