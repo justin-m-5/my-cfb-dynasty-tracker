@@ -1,85 +1,162 @@
-// components/dynasty/sections/top25/ranking-row.tsx
+import { ArrowDown, ArrowUp, ChevronDown, ChevronUp, GripVertical, Minus } from 'lucide-react'
 
-import { ArrowUp, ArrowDown, Minus } from 'lucide-react'
-import { fbsTeams } from '@/lib/fbs-teams'
-import { LogoImage } from '@/components/ui/logo-image'
-import { getSchoolLogoCandidates, getTeamLogo } from '@/lib/logos'
-import { Select } from '@/components/ui/select'
 import type { RankedTeam } from '@/dal/features/top25'
+import type { FbsTeam } from '@/lib/fbs-teams'
+import { fbsTeams } from '@/lib/fbs-teams'
+import { getTeamLogo } from '@/lib/logos'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { LogoImage } from '@/components/ui/logo-image'
+import { TeamSearch } from './team-search'
 
 interface RankingRowProps {
+    index: number
     rank: number
     team: RankedTeam
     previousRankings: RankedTeam[]
-    unrankedTeams: { name: string; conference: string }[]
-    onTeamChange: (rank: number, name: string) => void
+    unrankedTeams: FbsTeam[]
+    columnStart: number
+    columnEnd: number
+    isDragging: boolean
+    isDropTarget: boolean
+    onTeamChange: (index: number, name: string) => void
+    onReorder: (fromIndex: number, toIndex: number) => void
+    onDragStart: (index: number) => void
+    onDragOver: (index: number) => void
+    onDragEnd: () => void
+    onDrop: (index: number) => void
 }
 
-export function RankingRow({ rank, team, previousRankings, unrankedTeams, onTeamChange }: RankingRowProps) {
-    const oppTeam = fbsTeams.find(t => t.name === team.name)
-    const logos = team.name ? Array.from(
-        new Set([
-            getTeamLogo(team.name),
-            ...getSchoolLogoCandidates(team.name, oppTeam?.nickName ?? null),
-        ].filter(Boolean))
-    ) : []
+export function RankingRow({
+    index,
+    rank,
+    team,
+    previousRankings,
+    unrankedTeams,
+    columnStart,
+    columnEnd,
+    isDragging,
+    isDropTarget,
+    onTeamChange,
+    onReorder,
+    onDragStart,
+    onDragOver,
+    onDragEnd,
+    onDrop,
+}: RankingRowProps) {
+    const currentTeam = fbsTeams.find(candidate => candidate.name === team.name)
+    const availableTeams = currentTeam ? [currentTeam, ...unrankedTeams] : unrankedTeams
+    const logo = team.name ? getTeamLogo(team.name) : ''
+    const canMoveUp = index > columnStart
+    const canMoveDown = index < columnEnd - 1
 
-    // Compute rank change from previous week
     const renderChange = () => {
         if (!team.name || previousRankings.length === 0) {
             return <Minus className="h-3.5 w-3.5 text-text/30" />
         }
-        const prevIdx = previousRankings.findIndex(t => t.name === team.name)
-        if (prevIdx === -1) {
+
+        const previousIndex = previousRankings.findIndex(previousTeam => previousTeam.name === team.name)
+        if (previousIndex === -1) {
             return <span className="text-[10px] font-bold text-green-600">NEW</span>
         }
-        const diff = prevIdx - (rank - 1)
+
+        const diff = previousIndex - (rank - 1)
         if (diff > 0) {
             return (
-                <span className="flex items-center text-xs text-green-600 font-semibold">
-                    <ArrowUp className="h-3 w-3" />{diff}
+                <span className="flex items-center text-xs font-semibold text-green-600">
+                    <ArrowUp className="h-3 w-3" />
+                    {diff}
                 </span>
             )
         }
+
         if (diff < 0) {
             return (
-                <span className="flex items-center text-xs text-red-500 font-semibold">
-                    <ArrowDown className="h-3 w-3" />{Math.abs(diff)}
+                <span className="flex items-center text-xs font-semibold text-red-500">
+                    <ArrowDown className="h-3 w-3" />
+                    {Math.abs(diff)}
                 </span>
             )
         }
+
         return <Minus className="h-3.5 w-3.5 text-text/30" />
     }
 
     return (
-        <div className="flex items-center gap-2 rounded px-2 py-1.5 border-b border-primary/10 last:border-b-0 hover:bg-primary/5 transition-colors">
-            {/* Rank */}
-            <span className="w-6 text-right text-sm font-bold text-text/80">{rank}</span>
+        <div
+            className={cn(
+                'relative flex items-start gap-2 rounded-lg border-b border-primary/10 px-2 py-2 transition-colors last:border-b-0 sm:items-center',
+                'hover:bg-primary/5',
+                isDragging && 'opacity-60',
+                isDropTarget && 'bg-primary/10 ring-1 ring-primary/20'
+            )}
+            onDragOver={(event) => {
+                event.preventDefault()
+                event.dataTransfer.dropEffect = 'move'
+                onDragOver(index)
+            }}
+            onDrop={(event) => {
+                event.preventDefault()
+                onDrop(index)
+            }}
+        >
+            <button
+                type="button"
+                draggable
+                aria-label={`Drag rank ${rank}`}
+                className="flex h-9 w-9 shrink-0 cursor-grab items-center justify-center rounded-md border border-primary/15 bg-background/80 text-text/50 transition-colors hover:text-text active:cursor-grabbing"
+                onDragStart={(event) => {
+                    event.dataTransfer.effectAllowed = 'move'
+                    event.dataTransfer.setData('text/plain', String(index))
+                    onDragStart(index)
+                }}
+                onDragEnd={onDragEnd}
+            >
+                <GripVertical className="h-4 w-4" />
+            </button>
 
-            {/* Logo */}
-            <div className="w-6 shrink-0">
-                {logos.length > 0 && <LogoImage candidates={logos} alt={team.name} size={20} />}
+            <span className="w-6 shrink-0 pt-2 text-right text-sm font-bold text-text/80 sm:pt-0">{rank}</span>
+
+            <div className="flex w-7 shrink-0 justify-center pt-1 sm:pt-0">
+                {logo ? <LogoImage candidates={[logo]} alt={team.name} size={24} /> : null}
             </div>
 
-            {/* Team Select */}
-            <Select
-                value={team.name || '__unranked__'}
-                onChange={(e) => onTeamChange(rank - 1, e.target.value === '__unranked__' ? '' : e.target.value)}
-                className="h-8 flex-1 text-base sm:text-xs"
-            >
-                <option value="__unranked__">— Unranked —</option>
-                {/* Show current team as option if selected */}
-                {team.name && (
-                    <option value={team.name}>{team.name}</option>
-                )}
-                {unrankedTeams.map(t => (
-                    <option key={t.name} value={t.name}>{t.name} ({t.conference})</option>
-                ))}
-            </Select>
+            <div className="min-w-0 flex-1">
+                <TeamSearch
+                    value={team.name}
+                    teams={availableTeams}
+                    onChange={(name) => onTeamChange(index, name)}
+                />
+            </div>
 
-            {/* Rank change */}
-            <div className="w-8 flex justify-center shrink-0">
-                {renderChange()}
+            <div className="flex shrink-0 flex-col items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center">
+                    {renderChange()}
+                </div>
+                <div className="flex gap-1 sm:hidden">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => canMoveUp && onReorder(index, index - 1)}
+                        disabled={!canMoveUp}
+                        className="h-8 w-8 border-primary/15 bg-background/80 text-text"
+                        aria-label={`Move rank ${rank} up`}
+                    >
+                        <ChevronUp className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => canMoveDown && onReorder(index, index + 1)}
+                        disabled={!canMoveDown}
+                        className="h-8 w-8 border-primary/15 bg-background/80 text-text"
+                        aria-label={`Move rank ${rank} down`}
+                    >
+                        <ChevronDown className="h-4 w-4" />
+                    </Button>
+                </div>
             </div>
         </div>
     )

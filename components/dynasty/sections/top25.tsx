@@ -16,6 +16,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RankingRow } from './top25/ranking-row'
 
 const EMPTY_RANKINGS: RankedTeam[] = Array.from({ length: 25 }, () => ({ name: '', record: '' }))
+const COLUMN_BREAKS = [
+    { start: 0, end: 10 },
+    { start: 10, end: 20 },
+    { start: 20, end: 25 },
+] as const
+
+function getColumnForIndex(index: number) {
+    return COLUMN_BREAKS.find(column => index >= column.start && index < column.end) ?? null
+}
 
 interface Top25Props {
     dynastyId: string
@@ -30,8 +39,9 @@ export function Top25({ dynastyId }: Top25Props) {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [saved, setSaved] = useState(false)
+    const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+    const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null)
 
-    // Init: load dynasty, year, last saved week
     useEffect(() => {
         const init = async () => {
             setLoading(true)
@@ -55,7 +65,6 @@ export function Top25({ dynastyId }: Top25Props) {
         init()
     }, [dynastyId])
 
-    // Load rankings when week changes
     useEffect(() => {
         if (!year) return
         const loadWeek = async () => {
@@ -63,8 +72,7 @@ export function Top25({ dynastyId }: Top25Props) {
             setSaved(false)
             try {
                 const rows = await Top25Service.getRankings(dynastyId, year, week)
-                
-                // Load previous week for comparison
+
                 let prevRows: typeof rows = []
                 if (week > 0) {
                     prevRows = await Top25Service.getRankings(dynastyId, year, week - 1)
@@ -73,7 +81,6 @@ export function Top25({ dynastyId }: Top25Props) {
                     setPreviousRankings([])
                 }
 
-                // If current week has rankings, use them
                 if (rows.length > 0) {
                     const mapped: RankedTeam[] = Array.from({ length: 25 }, (_, i) => {
                         const row = rows.find(r => r.rank === i + 1)
@@ -81,7 +88,6 @@ export function Top25({ dynastyId }: Top25Props) {
                     })
                     setRankings(mapped)
                 } else if (prevRows.length > 0) {
-                    // Auto-fill from last week if current week is empty
                     const mapped: RankedTeam[] = Array.from({ length: 25 }, (_, i) => {
                         const row = prevRows.find(r => r.rank === i + 1)
                         return { name: row?.team_name ?? '', record: row?.record ?? '' }
@@ -102,10 +108,69 @@ export function Top25({ dynastyId }: Top25Props) {
     const handleTeamChange = (index: number, name: string) => {
         setRankings(prev => {
             const copy = [...prev]
-            copy[index] = { ...copy[index], name }
+            const currentTeam = copy[index]
+            if (!currentTeam) return prev
+
+            copy[index] = {
+                ...currentTeam,
+                name,
+                record: currentTeam.name === name ? currentTeam.record : '',
+            }
             return copy
         })
         setSaved(false)
+    }
+
+    const handleReorder = (fromIndex: number, toIndex: number) => {
+        if (fromIndex === toIndex) return
+        const fromColumn = getColumnForIndex(fromIndex)
+        const toColumn = getColumnForIndex(toIndex)
+        if (!fromColumn || !toColumn || fromColumn.start !== toColumn.start) return
+
+        setRankings(prev => {
+            if (fromIndex < 0 || toIndex < 0 || fromIndex >= prev.length || toIndex >= prev.length) {
+                return prev
+            }
+
+            const next = [...prev]
+            const [movedTeam] = next.splice(fromIndex, 1)
+            if (!movedTeam) return prev
+            next.splice(toIndex, 0, movedTeam)
+            return next
+        })
+        setSaved(false)
+    }
+
+    const handleDragStart = (index: number) => {
+        setDraggedIndex(index)
+        setDropTargetIndex(index)
+    }
+
+    const handleDragOver = (index: number) => {
+        if (draggedIndex === null) return
+        const draggedColumn = getColumnForIndex(draggedIndex)
+        const targetColumn = getColumnForIndex(index)
+        if (!draggedColumn || !targetColumn || draggedColumn.start !== targetColumn.start) return
+        setDropTargetIndex(index)
+    }
+
+    const handleDragEnd = () => {
+        setDraggedIndex(null)
+        setDropTargetIndex(null)
+    }
+
+    const handleDrop = (index: number) => {
+        if (draggedIndex === null) return
+        const draggedColumn = getColumnForIndex(draggedIndex)
+        const targetColumn = getColumnForIndex(index)
+        if (!draggedColumn || !targetColumn || draggedColumn.start !== targetColumn.start) {
+            setDraggedIndex(null)
+            setDropTargetIndex(null)
+            return
+        }
+        handleReorder(draggedIndex, index)
+        setDraggedIndex(null)
+        setDropTargetIndex(null)
     }
 
     const handleSave = async () => {
@@ -121,15 +186,15 @@ export function Top25({ dynastyId }: Top25Props) {
         }
     }
 
-    // Teams not currently ranked (for dropdowns)
     const unrankedTeams = useMemo(() => {
         const rankedNames = new Set(rankings.map(t => t.name).filter(Boolean))
-        return fbsTeams.filter(t => !rankedNames.has(t.name)).map(t => ({ name: t.name, conference: t.conference })).sort((a, b) => a.name.localeCompare(b.name))
+        return fbsTeams
+            .filter(team => !rankedNames.has(team.name))
+            .sort((a, b) => a.name.localeCompare(b.name))
     }, [rankings])
 
-    // Week options: 0 (preseason) through 19 (natty)
-    const weekOptions = useMemo(() =>
-        Array.from({ length: MAX_RANKINGS_WEEK + 1 }, (_, i) => ({ value: i, label: getWeekDisplayName(i) })),
+    const weekOptions = useMemo(
+        () => Array.from({ length: MAX_RANKINGS_WEEK + 1 }, (_, i) => ({ value: i, label: getWeekDisplayName(i) })),
         []
     )
 
@@ -143,8 +208,8 @@ export function Top25({ dynastyId }: Top25Props) {
                 <CardHeader className="pb-2">
                     <div className="flex flex-col gap-3">
                         <CardTitle className="text-base">Top 25 Poll</CardTitle>
-                        
-                        <div className="flex items-center gap-3 flex-wrap">
+
+                        <div className="flex flex-wrap items-center gap-3">
                             <Select
                                 value={String(week)}
                                 onChange={(e) => setWeek(Number(e.target.value))}
@@ -154,9 +219,9 @@ export function Top25({ dynastyId }: Top25Props) {
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                                 ))}
                             </Select>
-                            
+
                             <div className="flex items-center gap-2">
-                                {saved && <span className="text-xs text-green-600 font-medium">Saved!</span>}
+                                {saved && <span className="text-xs font-medium text-green-600">Saved!</span>}
                                 <Button
                                     bg="var(--green-600)"
                                     text="white"
@@ -174,48 +239,36 @@ export function Top25({ dynastyId }: Top25Props) {
                 </CardHeader>
                 <CardContent>
                     {loading ? (
-                        <div className="text-sm text-text/60 py-4 text-center">Loading...</div>
+                        <div className="py-4 text-center text-sm text-text/60">Loading...</div>
                     ) : (
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {/* 1-10 */}
-                            <div className="rounded-lg border border-primary/15 p-2">
-                                {rankings.slice(0, 10).map((team, i) => (
-                                    <RankingRow
-                                        key={i}
-                                        rank={i + 1}
-                                        team={team}
-                                        previousRankings={previousRankings}
-                                        unrankedTeams={unrankedTeams}
-                                        onTeamChange={handleTeamChange}
-                                    />
-                                ))}
-                            </div>
-                            {/* 11-20 */}
-                            <div className="rounded-lg border border-primary/15 p-2">
-                                {rankings.slice(10, 20).map((team, i) => (
-                                    <RankingRow
-                                        key={i + 10}
-                                        rank={i + 11}
-                                        team={team}
-                                        previousRankings={previousRankings}
-                                        unrankedTeams={unrankedTeams}
-                                        onTeamChange={handleTeamChange}
-                                    />
-                                ))}
-                            </div>
-                            {/* 21-25 */}
-                            <div className="rounded-lg border border-primary/15 p-2">
-                                {rankings.slice(20, 25).map((team, i) => (
-                                    <RankingRow
-                                        key={i + 20}
-                                        rank={i + 21}
-                                        team={team}
-                                        previousRankings={previousRankings}
-                                        unrankedTeams={unrankedTeams}
-                                        onTeamChange={handleTeamChange}
-                                    />
-                                ))}
-                            </div>
+                            {COLUMN_BREAKS.map(({ start, end }) => (
+                                <div key={`${start}-${end}`} className="rounded-lg border border-primary/15 p-2">
+                                    {rankings.slice(start, end).map((team, offset) => {
+                                        const index = start + offset
+                                        return (
+                                            <RankingRow
+                                                key={index}
+                                                index={index}
+                                                rank={index + 1}
+                                                team={team}
+                                                previousRankings={previousRankings}
+                                                unrankedTeams={unrankedTeams}
+                                                columnStart={start}
+                                                columnEnd={end}
+                                                isDragging={draggedIndex === index}
+                                                isDropTarget={dropTargetIndex === index && draggedIndex !== index}
+                                                onTeamChange={handleTeamChange}
+                                                onReorder={handleReorder}
+                                                onDragStart={handleDragStart}
+                                                onDragOver={handleDragOver}
+                                                onDragEnd={handleDragEnd}
+                                                onDrop={handleDrop}
+                                            />
+                                        )
+                                    })}
+                                </div>
+                            ))}
                         </div>
                     )}
                 </CardContent>
