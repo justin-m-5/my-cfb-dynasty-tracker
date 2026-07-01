@@ -63,22 +63,32 @@ export function Top25({ dynastyId }: Top25Props) {
             setSaved(false)
             try {
                 const rows = await Top25Service.getRankings(dynastyId, year, week)
+                
+                // Load previous week for comparison
+                let prevRows: typeof rows = []
+                if (week > 0) {
+                    prevRows = await Top25Service.getRankings(dynastyId, year, week - 1)
+                    setPreviousRankings(prevRows.map(r => ({ name: r.team_name, record: r.record ?? '' })))
+                } else {
+                    setPreviousRankings([])
+                }
+
+                // If current week has rankings, use them
                 if (rows.length > 0) {
                     const mapped: RankedTeam[] = Array.from({ length: 25 }, (_, i) => {
                         const row = rows.find(r => r.rank === i + 1)
                         return { name: row?.team_name ?? '', record: row?.record ?? '' }
                     })
                     setRankings(mapped)
+                } else if (prevRows.length > 0) {
+                    // Auto-fill from last week if current week is empty
+                    const mapped: RankedTeam[] = Array.from({ length: 25 }, (_, i) => {
+                        const row = prevRows.find(r => r.rank === i + 1)
+                        return { name: row?.team_name ?? '', record: row?.record ?? '' }
+                    })
+                    setRankings(mapped)
                 } else {
                     setRankings([...EMPTY_RANKINGS])
-                }
-
-                // Load previous week for comparison
-                if (week > 0) {
-                    const prevRows = await Top25Service.getRankings(dynastyId, year, week - 1)
-                    setPreviousRankings(prevRows.map(r => ({ name: r.team_name, record: r.record ?? '' })))
-                } else {
-                    setPreviousRankings([])
                 }
             } catch (err) {
                 console.error('Failed to load week:', err)
