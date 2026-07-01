@@ -45,11 +45,11 @@ const LAST_NAMES = [
 const MAX_NAMES = 5
 
 export function PlayerNameGenerator() {
-    const [numNames, setNumNames] = useState(1)
+    const [numNames, setNumNames] = useState('1')
     const [generatedNames, setGeneratedNames] = useState<string[]>([])
 
     const generate = () => {
-        const count = Math.min(MAX_NAMES, Math.max(1, numNames))
+        const count = Math.min(MAX_NAMES, Math.max(1, Number(numNames) || 1))
         const names = Array.from({ length: count }, () => {
             const first = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)]
             const last = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]
@@ -67,7 +67,11 @@ export function PlayerNameGenerator() {
                     min={1}
                     max={MAX_NAMES}
                     value={numNames}
-                    onChange={(e) => setNumNames(Math.min(MAX_NAMES, Math.max(1, Number(e.target.value) || 1)))}
+                    onChange={(e) => setNumNames(e.target.value)}
+                    onBlur={() => {
+                        const n = Math.min(MAX_NAMES, Math.max(1, Number(numNames) || 1))
+                        setNumNames(String(n))
+                    }}
                     className="h-8 w-16"
                 />
             </div>
