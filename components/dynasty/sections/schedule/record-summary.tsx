@@ -57,16 +57,18 @@ export function RecordSummary({ dynasty, games }: RecordSummaryProps) {
             />
             {confRecord && (
                 <DetailCard
-                    label={dynasty.conference!}
+                    label={
+                        conferenceLogo ? '' : dynasty.conference!
+                    }
                     value={`${confRecord.wins}-${confRecord.losses}`}
                     color="var(--amber-600)"
                     icon={
                         conferenceLogo ? (
                             <Image
                                 src={conferenceLogo}
-                                alt=""
-                                width={12}
-                                height={12}
+                                alt={dynasty.conference!}
+                                width={16}
+                                height={16}
                                 className="rounded"
                                 unoptimized
                             />
