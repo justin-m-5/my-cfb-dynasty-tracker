@@ -33,6 +33,7 @@ export function Roster({ dynastyId }: RosterProps) {
         primary: 'var(--color-primary)',
         secondary: 'var(--color-secondary)',
     })
+    const [schoolName, setSchoolName] = useState('')
 
     useEffect(() => {
         const load = async () => {
@@ -44,6 +45,7 @@ export function Roster({ dynastyId }: RosterProps) {
                         primary: yr.primary_color ?? 'var(--color-primary)',
                         secondary: yr.secondary_color ?? 'var(--color-secondary)',
                     })
+                    setSchoolName(yr.school_name ?? '')
                     const roster = await PlayerService.getRoster(dynastyId, yr.id)
                     setPlayers(roster)
                 }
@@ -254,6 +256,7 @@ export function Roster({ dynastyId }: RosterProps) {
                     isOpen={!!selectedPlayer}
                     onClose={() => setSelectedPlayer(null)}
                     schoolColors={schoolColors}
+                    schoolName={schoolName}
                 />
             )}
         </div>

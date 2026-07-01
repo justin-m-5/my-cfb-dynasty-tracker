@@ -67,4 +67,5 @@ export interface PlayerCardProps {
     isOpen: boolean
     onClose: () => void
     schoolColors: SchoolColors
+    schoolName?: string
 }

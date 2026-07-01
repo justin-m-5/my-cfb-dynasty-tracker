@@ -25,7 +25,7 @@ const tabs: { key: PlayerCardTab; icon: LucideIcon }[] = [
     { key: 'Player Info', icon: User },
 ]
 
-export function PlayerCard({ playerId, dynastyId, isOpen, onClose, schoolColors }: PlayerCardProps) {
+export function PlayerCard({ playerId, dynastyId, isOpen, onClose, schoolColors, schoolName }: PlayerCardProps) {
     const [activeTab, setActiveTab] = useState<PlayerCardTab>('Career Stats')
     const [loading, setLoading] = useState(false)
     const [player, setPlayer] = useState<Player | null>(null)
@@ -135,6 +135,7 @@ export function PlayerCard({ playerId, dynastyId, isOpen, onClose, schoolColors 
                     player={player}
                     currentSeason={currentSeason}
                     schoolColors={schoolColors}
+                    schoolName={schoolName}
                     headerTextColor={headerTextColor}
                     traitColor={traitColor}
                     onClose={onClose}
