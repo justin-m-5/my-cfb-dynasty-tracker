@@ -1,9 +1,7 @@
-// components/dynasty/sections/game/player-stats-tab.tsx
-
 'use client'
 
 import { useState } from 'react'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 
 import type { RosterPlayer } from '@/dal/features/players'
 import { PlayerStatService, type PlayerStat } from '@/dal/features/player-stats'
@@ -11,7 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
+import { Modal } from '@/components/ui/modal'
 import {
     type StatCategory,
     statCategories,
@@ -57,6 +56,11 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
     const categoryStats = stats.filter(s => hasStatsInCategory(s, selectedCategory))
     const columns = displayColumns[selectedCategory]
     const inputFields = statCategories[selectedCategory]
+
+    const closeForm = () => {
+        setShowForm(false)
+        setEditingId(null)
+    }
 
     const openAddForm = () => {
         setEditingId(null)
@@ -104,8 +108,7 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
                 if (created) onStatsChange([...stats, created])
             }
 
-            setShowForm(false)
-            setEditingId(null)
+            closeForm()
         } catch (err) {
             console.error('Failed to save player stat:', err)
         } finally {
@@ -128,158 +131,160 @@ export function PlayerStatsTab({ gameId, roster, stats, onStatsChange }: PlayerS
     }
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center gap-3">
-                <Select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value as StatCategory)}
-                    className="h-9 w-44 text-sm"
-                >
-                    {Object.keys(statCategories).map((cat) => (
-                        <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                </Select>
+        <>
+            <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                    <Select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value as StatCategory)}
+                        className="h-9 w-44 text-sm"
+                    >
+                        {Object.keys(statCategories).map((cat) => (
+                            <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                    </Select>
 
-                <Button
-                    bg="var(--primary)"
-                    text="white"
-                    size="sm"
-                    onClick={openAddForm}
-                    className="font-semibold"
-                >
-                    <Plus className="mr-1 h-4 w-4" />
-                    Add Stats
-                </Button>
-            </div>
+                    <Button
+                        type="button"
+                        size="sm"
+                        onClick={openAddForm}
+                        className="text-xs font-semibold"
+                    >
+                        <Plus className="h-3.5 w-3.5" />
+                        Add Stats
+                    </Button>
+                </div>
 
-            {showForm && (
                 <Card>
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-base">
-                            {editingId ? 'Edit' : 'Add'} {selectedCategory} Stats
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div>
-                            <Label className="text-xs">Player</Label>
-                            <Select
-                                value={formPlayerId}
-                                onChange={(e) => setFormPlayerId(e.target.value)}
-                                disabled={!!editingId}
-                                className="mt-1 h-9 text-sm"
-                            >
-                                <option value="">Select Player</option>
-                                {roster.map((p) => (
-                                    <option key={p.id} value={p.id}>
-                                        {p.name} - {p.position} #{p.season.jersey_number ?? ''}
-                                    </option>
-                                ))}
-                            </Select>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                            {inputFields.map(({ label, field }) => (
-                                <div key={field}>
-                                    <Label className="text-xs">{label}</Label>
-                                    <Input
-                                        type="number"
-                                        value={formFields[field] ?? ''}
-                                        onChange={(e) =>
-                                            setFormFields(prev => ({
-                                                ...prev,
-                                                [field]: e.target.value === '' ? 0 : Number(e.target.value),
-                                            }))
-                                        }
-                                        className="mt-1 h-8"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="flex gap-2">
-                            <Button
-                                variant="save"
-                                size="sm"
-                                onClick={handleSave}
-                                disabled={saving || !formPlayerId}
-                                className="font-semibold"
-                            >
-                                {saving ? 'Saving...' : editingId ? 'Save Changes' : 'Add Stats'}
-                            </Button>
-                            <Button
-                                variant="cancel"
-                                size="sm"
-                                onClick={() => { setShowForm(false); setEditingId(null) }}
-                            >
-                                Cancel
-                            </Button>
+                    <CardContent className="p-0">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="border-b border-primary/20 bg-background/50">
+                                        <th className="px-3 py-2 text-left text-xs font-semibold text-text/60 whitespace-nowrap">Player</th>
+                                        {columns.map(col => (
+                                            <th key={col.field} className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">
+                                                {col.label}
+                                            </th>
+                                        ))}
+                                        <th className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {categoryStats.length > 0 ? (
+                                        categoryStats.map((stat) => (
+                                            <tr key={stat.id} className="border-b border-primary/10 hover:bg-primary/5">
+                                                <td className="px-3 py-2 font-medium text-text">
+                                                    {playerName(stat.player_id)}
+                                                </td>
+                                                {columns.map(col => (
+                                                    <td key={col.field} className="px-2 py-2 text-center text-text/80">
+                                                        {computeStatValue(stat as unknown as Record<string, unknown>, col.field)}
+                                                    </td>
+                                                ))}
+                                                <td className="px-2 py-2 text-center">
+                                                    <div className="flex items-center justify-center gap-1">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => openEditForm(stat)}
+                                                            className="rounded p-1 text-text/50 hover:bg-primary/10 hover:text-primary"
+                                                        >
+                                                            <Pencil className="h-3.5 w-3.5" />
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleDelete(stat.id)}
+                                                            className="rounded p-1 text-text/50 hover:bg-red-500/10 hover:text-red-600"
+                                                        >
+                                                            <Trash2 className="h-3.5 w-3.5" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td
+                                                colSpan={columns.length + 2}
+                                                className="px-3 py-6 text-center text-sm text-text/50"
+                                            >
+                                                No {selectedCategory.toLowerCase()} stats yet
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </CardContent>
                 </Card>
-            )}
+            </div>
 
-            <Card>
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b border-primary/20 bg-background/50">
-                                    <th className="px-3 py-2 text-left text-xs font-semibold text-text/60 whitespace-nowrap">Player</th>
-                                    {columns.map(col => (
-                                        <th key={col.field} className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">
-                                            {col.label}
-                                        </th>
-                                    ))}
-                                    <th className="px-2 py-2 text-center text-xs font-semibold text-text/60 whitespace-nowrap">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {categoryStats.length > 0 ? (
-                                    categoryStats.map((stat) => (
-                                        <tr key={stat.id} className="border-b border-primary/10 hover:bg-primary/5">
-                                            <td className="px-3 py-2 font-medium text-text">
-                                                {playerName(stat.player_id)}
-                                            </td>
-                                            {columns.map(col => (
-                                                <td key={col.field} className="px-2 py-2 text-center text-text/80">
-                                                    {computeStatValue(stat as unknown as Record<string, unknown>, col.field)}
-                                                </td>
-                                            ))}
-                                            <td className="px-2 py-2 text-center">
-                                                <div className="flex items-center justify-center gap-1">
-                                                    <button
-                                                        onClick={() => openEditForm(stat)}
-                                                        className="rounded p-1 text-text/50 hover:bg-primary/10 hover:text-primary"
-                                                    >
-                                                        <Pencil className="h-3.5 w-3.5" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(stat.id)}
-                                                        className="rounded p-1 text-text/50 hover:bg-red-500/10 hover:text-red-600"
-                                                    >
-                                                        <Trash2 className="h-3.5 w-3.5" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td
-                                            colSpan={columns.length + 2}
-                                            className="px-3 py-6 text-center text-sm text-text/50"
-                                        >
-                                            No {selectedCategory.toLowerCase()} stats yet
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+            <Modal
+                isOpen={showForm}
+                onClose={closeForm}
+                title={`Add/Edit ${selectedCategory} Stats`}
+                maxWidth="max-w-3xl"
+            >
+                <div className="space-y-4">
+                    <div>
+                        <Label className="text-xs">Player</Label>
+                        <Select
+                            value={formPlayerId}
+                            onChange={(e) => setFormPlayerId(e.target.value)}
+                            disabled={!!editingId}
+                            className="mt-1 h-9 text-sm"
+                        >
+                            <option value="">Select Player</option>
+                            {roster.map((p) => (
+                                <option key={p.id} value={p.id}>
+                                    {p.name} – {p.position} #{p.season.jersey_number ?? ''}
+                                </option>
+                            ))}
+                        </Select>
                     </div>
-                </CardContent>
-            </Card>
 
-            
-        </div>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                        {inputFields.map(({ label, field }) => (
+                            <div key={field}>
+                                <Label className="text-xs">{label}</Label>
+                                <Input
+                                    type="number"
+                                    value={formFields[field] ?? ''}
+                                    onChange={(e) =>
+                                        setFormFields(prev => ({
+                                            ...prev,
+                                            [field]: e.target.value === '' ? 0 : Number(e.target.value),
+                                        }))
+                                    }
+                                    className="mt-1 h-8"
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="flex gap-2">
+                        <Button
+                            type="button"
+                            variant="save"
+                            size="sm"
+                            onClick={handleSave}
+                            disabled={saving || !formPlayerId}
+                            className="text-xs font-semibold"
+                        >
+                            {saving ? 'Saving...' : editingId ? 'Save Changes' : 'Add Stats'}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="cancel"
+                            size="sm"
+                            onClick={closeForm}
+                            className="text-xs"
+                        >
+                            Cancel
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
+        </>
     )
 }
