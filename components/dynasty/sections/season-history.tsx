@@ -1,3 +1,5 @@
+// components/dynasty/sections/season-history.tsx
+
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
@@ -13,6 +15,7 @@ import { YearOverview } from './season-history/year-overview'
 import { YearSchedule } from './season-history/year-schedule'
 import { YearStats } from './season-history/year-stats'
 import { YearTop25 } from './season-history/year-top25'
+import { YearPickerHeader } from './season-history/year-picker-header'
 
 type HistoryTab = 'overview' | 'schedule' | 'top25' | 'stats' | 'awards'
 type YearSelection = 'all-time' | string
@@ -92,25 +95,15 @@ export function SeasonHistory({ dynastyId }: SeasonHistoryProps) {
     }
 
     return (
-        <div className="space-y-3 pt-10">
-            {/* Year picker */}
-            <div className="flex items-center gap-3">
-                <Select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value as YearSelection)}
-                    className="h-8 w-40 text-sm"
-                >
-                    <option value="all-time">All-Time</option>
-                    {yearRecords.map((record) => (
-                        <option key={record.id} value={record.id}>
-                            {record.year} — {record.school_name}
-                        </option>
-                    ))}
-                </Select>
-                <span className="text-xs text-text/50">
-                    {isAllTime ? `${yearRecords.length} season${yearRecords.length !== 1 ? 's' : ''}` : selectedYearRecord?.conference ?? ''}
-                </span>
-            </div>
+        <div className="space-y-5 pt-10">
+            {/* Year Picker Header with Stats */}
+            <YearPickerHeader
+                yearRecords={yearRecords}
+                selectedYear={selectedYear}
+                selectedYearRecord={selectedYearRecord}
+                isAllTime={isAllTime}
+                onYearChange={(year) => setSelectedYear(year as YearSelection)}
+            />
 
             {/* Tabs — vertical on mobile, horizontal on desktop */}
             <MiniTabNav
