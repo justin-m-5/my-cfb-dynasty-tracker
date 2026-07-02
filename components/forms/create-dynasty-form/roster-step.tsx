@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/form/input'
 import { Label } from '@/components/ui/form/label'
 import { Select } from '@/components/ui/form/select'
 import { FilterTabs } from '@/components/ui/layout/filter-tabs'
-import { recruitPositionGroups } from '@/lib/config/player-config'
+import { positionGroups } from '@/lib/config/player-config'
 import type { FbsTeam } from '@/lib/teams/fbs-teams'
 import type { RosterEntry, RosterPositionGroup } from './types'
 import {
@@ -49,29 +49,19 @@ export function RosterStep({
     onRemovePlayer,
     onUpdateEntry,
 }: RosterStepProps) {
-    const rosterGroupTabs = useMemo(
-        () => ROSTER_GROUP_KEYS.map((group) => ({ key: group, label: group })),
-        []
-    )
+    const rosterGroupTabs = useMemo(() => ROSTER_GROUP_KEYS.map((group) => ({ key: group, label: group })), [])
 
-    const positionOptions = useMemo(
-        () => (recruitPositionGroups[selectedGroup] ?? []).map((position) => ({
-            position,
-            count: rosterEntries.filter((entry) => entry.position === position && entry.name.trim()).length,
-        })),
-        [rosterEntries, selectedGroup]
-    )
+    const positionOptions = useMemo(() => (positionGroups[selectedGroup] ?? []).map((position) => ({
+        position,
+        count: rosterEntries.filter((entry) => entry.position === position && entry.name.trim()).length,
+    })), [rosterEntries, selectedGroup])
 
-    const selectedPositionEntries = useMemo(() => (
-        rosterEntries
-            .filter((entry) => entry.position === selectedPosition)
-            .sort((a, b) => {
-                const ratingDiff = (parseOptionalNumber(b.rating) ?? -1) - (parseOptionalNumber(a.rating) ?? -1)
-                if (ratingDiff !== 0) return ratingDiff
-
-                return a.name.localeCompare(b.name)
-            })
-    ), [rosterEntries, selectedPosition])
+    const selectedPositionEntries = useMemo(() => (rosterEntries.filter((entry) => entry.position === selectedPosition).sort((a, b) => {
+        const ratingDiff = (parseOptionalNumber(b.rating) ?? -1) - (parseOptionalNumber(a.rating) ?? -1)
+        if (ratingDiff !== 0) return ratingDiff
+        
+        return a.name.localeCompare(b.name)
+    })), [rosterEntries, selectedPosition])
 
     return (
         <div className="space-y-6">
@@ -103,42 +93,36 @@ export function RosterStep({
                 </div>
             </div>
 
-            <div className="space-y-3 rounded-xl border border-primary/10 bg-background/60 p-3">
-                <FilterTabs
-                    tabs={rosterGroupTabs}
-                    active={selectedGroup}
-                    onChange={(group) => {
-                        setSelectedGroup(group)
-                        setSelectedPosition(recruitPositionGroups[group][0] ?? '')
-                    }}
-                />
+            <FilterTabs
+                tabs={rosterGroupTabs}
+                active={selectedGroup}
+                onChange={(group) => {
+                    setSelectedGroup(group)
+                    setSelectedPosition(positionGroups[group][0] ?? '')
+                }}
+            />
 
-                <Select
-                    value={selectedPosition}
-                    onChange={(event) => setSelectedPosition(event.target.value)}
-                    className="h-9 text-sm"
-                    aria-label="Select roster position"
-                >
-                    {positionOptions.map((option) => (
-                        <option key={option.position} value={option.position}>
-                            {option.position} ({option.count} {option.count === 1 ? 'player' : 'players'})
-                        </option>
-                    ))}
-                </Select>
-            </div>
+            <Select
+                value={selectedPosition}
+                onChange={(event) => setSelectedPosition(event.target.value)}
+                className="h-9 text-sm"
+                aria-label="Select roster position"
+            >
+                {positionOptions.map((option) => (
+                    <option key={option.position} value={option.position}>
+                        {option.position} ({option.count} {option.count === 1 ? 'player' : 'players'})
+                    </option>
+                ))}
+            </Select>
 
-            <div className="grid gap-3 px-3 py-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3 py-3 md:grid-cols-2 xl:grid-cols-3">
                 {selectedPositionEntries.length === 0 ? (
                     <div className="rounded-xl border border-dashed border-primary/20 bg-background/40 px-4 py-10 text-center text-sm text-text/60 md:col-span-2 xl:col-span-3">
                         No {selectedPosition || 'selected'} players yet. Add one manually or import your school roster.
                     </div>
                 ) : (
                     selectedPositionEntries.map((entry) => {
-                        const details = [
-                            entry.position,
-                            entry.year || '—',
-                            entry.jerseyNumber ? `#${entry.jerseyNumber}` : null,
-                        ].filter(Boolean).join(' • ')
+                        const details = [entry.position, entry.year || '—', entry.jerseyNumber ? `#${entry.jerseyNumber}` : null ].filter(Boolean).join(' • ')
 
                         return (
                             <div key={entry.id} className="rounded-xl border border-primary/10 bg-background/70 p-3">
@@ -162,7 +146,7 @@ export function RosterStep({
                                             onClick={() => onRemovePlayer(entry.id)}
                                             aria-label={`Remove ${entry.name}`}
                                         >
-                                            ×
+                                            x
                                         </Button>
                                     </div>
                                 </div>

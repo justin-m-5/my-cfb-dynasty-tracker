@@ -1,9 +1,9 @@
 // components/forms/create-dynasty-form/types.ts
 
-import type { recruitPositionGroups } from '@/lib/config/player-config'
+import type { positionGroups } from '@/lib/config/player-config'
 
 export type WizardStep = 0 | 1 | 2
-export type RosterPositionGroup = keyof typeof recruitPositionGroups
+export type RosterPositionGroup = keyof typeof positionGroups
 
 export type RosterEntry = {
     id: string

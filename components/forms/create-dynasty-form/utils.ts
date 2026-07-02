@@ -1,15 +1,15 @@
 // components/forms/create-dynasty-form/utils.ts
 
-import { devTraitColors, devTraits, positions, recruitPositionGroups, years, type DevTrait } from '@/lib/config/player-config'
+import { devTraitColors, devTraits, positionGroups, positions, recruitPositionGroups, years, type DevTrait } from '@/lib/config/player-config'
 import { getSchoolLogoCandidates } from '@/lib/teams/logos'
 import type { FbsTeam } from '@/lib/teams/fbs-teams'
 import type { PlayerDraft, RosterEntry, RosterPositionGroup } from './types'
 
 export const INITIAL_YEAR = 2026
 export const INITIAL_SELECTED_GROUP: RosterPositionGroup = 'Offense'
-export const INITIAL_SELECTED_POSITION = recruitPositionGroups[INITIAL_SELECTED_GROUP][0] ?? positions[0]
+export const INITIAL_SELECTED_POSITION = positionGroups[INITIAL_SELECTED_GROUP][0] ?? positions[0]
 export const WIZARD_STEPS = ['Dynasty Info', 'Roster', 'Review'] as const
-export const ROSTER_GROUP_KEYS = Object.keys(recruitPositionGroups) as RosterPositionGroup[]
+export const ROSTER_GROUP_KEYS = Object.keys(positionGroups) as RosterPositionGroup[]
 export const ROSTER_YEAR_ORDER = ['FR', 'SO', 'JR', 'SR', 'FR (RS)', 'SO (RS)', 'JR (RS)', 'SR (RS)'] as const
 export const ROSTER_DEV_TRAITS = [...devTraits, 'X-Factor'] as const
 export const VALID_ROSTER_YEARS = new Set<string>(years)

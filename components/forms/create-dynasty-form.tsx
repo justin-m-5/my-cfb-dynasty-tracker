@@ -22,18 +22,8 @@ import { RosterStep } from './create-dynasty-form/roster-step'
 import { PlayerForm, type PlayerFormData } from './player-form'
 import { Modal } from '@/components/ui/layout/modal'
 import type { PreparedRosterEntry, RosterEntry, RosterPositionGroup, WizardStep } from './create-dynasty-form/types'
-import {
-    createBlankRosterEntry,
-    getErrorMessage,
-    getRosterGroupForPosition,
-    getTeamLogoCandidates,
-    INITIAL_SELECTED_GROUP,
-    INITIAL_SELECTED_POSITION,
-    INITIAL_YEAR,
-    parseOptionalNumber,
-    syncRedshirtYear,
-    WIZARD_STEPS,
-} from './create-dynasty-form/utils'
+import { createBlankRosterEntry, getErrorMessage, getRosterGroupForPosition, getTeamLogoCandidates, INITIAL_SELECTED_GROUP, 
+    INITIAL_SELECTED_POSITION, INITIAL_YEAR, parseOptionalNumber, syncRedshirtYear, WIZARD_STEPS } from './create-dynasty-form/utils'
 
 export function CreateDynastyForm() {
     const router = useRouter()
@@ -56,28 +46,10 @@ export function CreateDynastyForm() {
     const [isImporting, setIsImporting] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    const conferences = useMemo(
-        () => [...new Set(fbsTeams.map((team) => team.conference))].sort((a, b) => a.localeCompare(b)),
-        []
-    )
-
-    const teamsByConference = useMemo(
-        () => conferences.map((conf) => ({
-            conference: conf,
-            teams: fbsTeams.filter((team) => team.conference === conf).sort((a, b) => a.name.localeCompare(b.name)),
-        })),
-        [conferences]
-    )
-
-    const filteredTeams = useMemo(
-        () => teamsByConference.find((group) => group.conference === conference)?.teams ?? [],
-        [conference, teamsByConference]
-    )
-
-    const selectedTeam = useMemo(
-        () => filteredTeams.find((team) => team.id === teamId) ?? null,
-        [filteredTeams, teamId]
-    )
+    const conferences = useMemo(() => [...new Set(fbsTeams.map((team) => team.conference))].sort((a, b) => a.localeCompare(b)), [])
+    const teamsByConference = useMemo(() => conferences.map((conf) => ({ conference: conf, teams: fbsTeams.filter((team) => team.conference === conf).sort((a, b) => a.name.localeCompare(b.name))})), [conferences])
+    const filteredTeams = useMemo(() => teamsByConference.find((group) => group.conference === conference)?.teams ?? [], [conference, teamsByConference])
+    const selectedTeam = useMemo(() => filteredTeams.find((team) => team.id === teamId) ?? null, [filteredTeams, teamId])
 
     const conferenceLogo = conference ? conferenceLogoByName[conference] ?? null : null
     const schoolLogoCandidates = selectedTeam ? getTeamLogoCandidates(selectedTeam) : []
@@ -118,24 +90,20 @@ export function CreateDynastyForm() {
             grouped.set(key, existing)
         })
 
-        return Array.from(grouped.entries())
-            .sort(([a], [b]) => {
-                const aIndex = positions.indexOf(a as (typeof positions)[number])
-                const bIndex = positions.indexOf(b as (typeof positions)[number])
-                const safeA = aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex
-                const safeB = bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex
+        return Array.from(grouped.entries()).sort(([a], [b]) => {
+            const aIndex = positions.indexOf(a as (typeof positions)[number])
+            const bIndex = positions.indexOf(b as (typeof positions)[number])
+            const safeA = aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex
+            const safeB = bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex
 
-                return safeA - safeB || a.localeCompare(b)
-            })
-            .map(([position, players]) => ({
-                position,
-                players: [...players].sort((a, b) => a.name.localeCompare(b.name)),
-            }))
+            return safeA - safeB || a.localeCompare(b)
+        }).map(([position, players]) => ({
+            position,
+            players: [...players].sort((a, b) => a.name.localeCompare(b.name)),
+        }))
     }, [preparedRosterEntries])
 
-    const summarySchoolName = selectedTeam
-        ? [selectedTeam.name, selectedTeam.nickName].filter(Boolean).join(' ')
-        : 'No school selected'
+    const summarySchoolName = selectedTeam ? [selectedTeam.name, selectedTeam.nickName].filter(Boolean).join(' ') : 'No school selected'
     const summaryConferenceName = selectedTeam?.conference ?? conference
 
     const updateRosterEntry = (id: string, field: keyof Omit<RosterEntry, 'id'>, value: string) => {
@@ -193,9 +161,7 @@ export function CreateDynastyForm() {
             return
         }
 
-        const year = data.is_redshirted && data.year
-            ? syncRedshirtYear(data.year, true)
-            : data.year ?? ''
+        const year = data.is_redshirted && data.year ? syncRedshirtYear(data.year, true) : data.year ?? ''
 
         if (editingPlayerId) {
             setRosterEntries((currentEntries) => currentEntries.map((entry) => (
@@ -423,18 +389,14 @@ export function CreateDynastyForm() {
     return (
         <form onSubmit={handleSubmit}>
             <Card>
-                <CardContent className="space-y-6 p-8">
+                <CardContent className="space-y-6 py-6 p-2 mt-2">
                     <div className="flex items-center gap-2 overflow-x-auto pb-1">
                         {WIZARD_STEPS.map((stepLabel, index) => {
-                            const stepStatus = index === currentStep
-                                ? 'active'
-                                : index < currentStep
-                                    ? 'complete'
-                                    : 'upcoming'
+                            const stepStatus = index === currentStep ? 'active' : index < currentStep ? 'complete' : 'upcoming'
 
                             return (
-                                <div key={stepLabel} className="flex min-w-0 flex-1 items-center gap-2">
-                                    <div className="flex min-w-0 items-center gap-3">
+                                <div key={stepLabel} className="min-w-0 flex-1 items-center gap-2">
+                                    <div className="flex items-center justify-center gap-2 overflow-x-auto pb-1">
                                         <div
                                             className={[
                                                 'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors',
@@ -445,7 +407,7 @@ export function CreateDynastyForm() {
                                         >
                                             {index + 1}
                                         </div>
-                                        <div className="min-w-0">
+                                        <div className="min-w-0 hidden sm:*:">
                                             <p className="truncate text-xs text-text/60 sm:text-sm">{index + 1}. {stepLabel}</p>
                                         </div>
                                     </div>
