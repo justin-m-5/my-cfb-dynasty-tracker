@@ -156,7 +156,7 @@ export function PlayerCard({ playerId, dynastyId, isOpen, onClose, schoolColors,
                                         'flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-colors',
                                         isActive
                                             ? 'border-transparent shadow-sm'
-                                            : 'border-primary/10 bg-background text-text/70 hover:bg-primary/5 hover:text-text'
+                                            : 'border-primary/10 bg-background text-text/70 hover:bg-primary/5 hover:text-text cursor-pointer'
                                     )}
                                     style={isActive ? { backgroundColor: schoolColors.primary, color: headerTextColor } : undefined}
                                 >

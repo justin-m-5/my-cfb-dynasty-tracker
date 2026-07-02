@@ -29,7 +29,7 @@ export function FilterTabs<T extends string>({ tabs, active, onChange, className
                         className={cn(
                             'py-2 text-xs font-semibold transition-colors',
                             i > 0 && 'border-l border-primary/15',
-                            isActive ? 'bg-primary/10 text-primary' : 'text-text/60 hover:bg-primary/5 hover:text-text'
+                            isActive ? 'bg-primary/10 text-primary' : 'cursor-pointer text-text/60 hover:bg-primary/5 hover:text-text'
                         )}
                     >
                         {tab.label}

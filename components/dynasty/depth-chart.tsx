@@ -201,23 +201,21 @@ export function DepthChart({
             }
         })
 
-        const incomingTransfers = transfers
-            .filter((transfer) => transfer.transfer_direction === 'From')
-            .map((transfer) => ({
-                key: `transfer-${transfer.id}`,
-                kind: 'transfer' as const,
-                name: transfer.player_name,
-                position: transfer.position as Position,
-                year: 'TR',
-                rating: null,
-                devTrait: transfer.dev_trait,
-                avatarUrl: null,
-                jerseyNumber: null,
-                depthChartOrder: null,
-                status: 'TR In' as const,
-                detail: transfer.school ? `From ${transfer.school}` : 'Incoming transfer',
-                player: null,
-            }))
+        const incomingTransfers = transfers.filter((transfer) => transfer.transfer_direction === 'From').map((transfer) => ({
+            key: `transfer-${transfer.id}`,
+            kind: 'transfer' as const,
+            name: transfer.player_name,
+            position: transfer.position as Position,
+            year: 'TR',
+            rating: null,
+            devTrait: transfer.dev_trait,
+            avatarUrl: null,
+            jerseyNumber: null,
+            depthChartOrder: null,
+            status: 'TR In' as const,
+            detail: transfer.school ? `From ${transfer.school}` : 'Incoming transfer',
+            player: null,
+        }))
 
         const incomingRecruits = recruits.map((recruit) => ({
             key: `recruit-${recruit.id}`,
@@ -279,19 +277,11 @@ export function DepthChart({
     }, [items.length, positionCounts, selectedGroup, selectedPositionPreference])
 
     const selectedItems = useMemo(() => {
-        return items
-            .filter((item) => item.position === selectedPosition)
-            .sort(compareDepthChartItems)
+        return items.filter((item) => item.position === selectedPosition).sort(compareDepthChartItems)
     }, [items, selectedPosition])
 
-    const returningCount = useMemo(
-        () => items.filter((item) => item.kind === 'roster' && item.status === 'Returning').length,
-        [items]
-    )
-    const incomingCount = useMemo(
-        () => items.filter((item) => item.status === 'TR In' || item.status === 'FR In').length,
-        [items]
-    )
+    const returningCount = useMemo(() => items.filter((item) => item.kind === 'roster' && item.status === 'Returning').length, [items])
+    const incomingCount = useMemo(() => items.filter((item) => item.status === 'TR In' || item.status === 'FR In').length, [items])
     const projectedRosterCount = returningCount + incomingCount
     const hasProjectionContext = mode === 'advance-season' || transfers.length > 0 || recruits.length > 0 || draftedPlayers.length > 0
     const displayedRosterCount = hasProjectionContext ? projectedRosterCount : roster.length
@@ -326,13 +316,7 @@ export function DepthChart({
     }
 
     const updateRosterPlayer = (playerId: string, updater: (player: RosterPlayer) => RosterPlayer) => {
-        pushRosterUpdate(
-            roster.map((currentPlayer) => (
-                currentPlayer.id === playerId
-                    ? updater(currentPlayer)
-                    : currentPlayer
-            ))
-        )
+        pushRosterUpdate(roster.map((currentPlayer) => (currentPlayer.id === playerId ? updater(currentPlayer) : currentPlayer)))
     }
 
     const handlePositionChange = async (player: RosterPlayer, nextPosition: Position) => {
@@ -484,13 +468,9 @@ export function DepthChart({
                     const canToggleRedshirt = isRosterPlayer
                     const isClickable = mode === 'roster' && isRosterPlayer && Boolean(onPlayerClick)
                     const busyLabel = rosterPlayer ? busyLabels[rosterPlayer.id] : null
-                    const ratingValue = rosterPlayer
-                        ? (ratingDrafts[rosterPlayer.id] ?? (rosterPlayer.season.rating?.toString() ?? ''))
-                        : ''
+                    const ratingValue = rosterPlayer ? (ratingDrafts[rosterPlayer.id] ?? (rosterPlayer.season.rating?.toString() ?? '')) : ''
                     const showStatusBadge = mode === 'advance-season' || item.status !== 'Returning'
-                    const details = [item.position, item.year, item.jerseyNumber !== null ? `#${item.jerseyNumber}` : null]
-                        .filter(Boolean)
-                        .join(' • ')
+                    const details = [item.position, item.year, item.jerseyNumber !== null ? `#${item.jerseyNumber}` : null].filter(Boolean).join(' • ')
                     const allAmericanValue = rosterPlayer ? getSelectedHonor(rosterPlayer.season.honors ?? [], allAmericanKeys) : ''
                     const allConferenceValue = rosterPlayer ? getSelectedHonor(rosterPlayer.season.honors ?? [], allConferenceKeys) : ''
                     const cardClasses = `rounded-xl border border-primary/10 bg-background/70 p-3 text-left ${isClickable ? 'transition-colors hover:border-primary/25 hover:bg-primary/5' : ''}`
