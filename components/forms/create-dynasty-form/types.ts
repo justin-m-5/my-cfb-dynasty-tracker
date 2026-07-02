@@ -29,5 +29,4 @@ export type PreparedRosterEntry = {
     isRedshirted: boolean
 }
 
-export type RosterEntryField = keyof Omit<RosterEntry, 'id'>
 export type PlayerDraft = Omit<RosterEntry, 'id'>

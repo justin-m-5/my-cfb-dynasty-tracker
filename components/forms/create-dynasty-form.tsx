@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/display/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/layout/card'
 import { DynastyService } from '@/dal/features/dynasty'
 import { PlayerService } from '@/dal/features/players'
+import type { RosterPlayer } from '@/dal/features/players'
 import { RosterTemplateService, normalizeYear } from '@/dal/features/roster-templates'
 import { YearRecordService } from '@/dal/features/year-records'
 import { positions } from '@/lib/config/player-config'
@@ -14,14 +15,13 @@ import { conferenceLogoByName } from '@/lib/teams/logos'
 import { fbsTeams } from '@/lib/teams/fbs-teams'
 
 import { DynastyInfoStep } from './create-dynasty-form/dynasty-info-step'
-import { PlayerEditModal } from './create-dynasty-form/player-edit-modal'
 import { ReviewStep } from './create-dynasty-form/review-step'
 import { RosterStep } from './create-dynasty-form/roster-step'
-import type { PlayerDraft, PreparedRosterEntry, RosterEntry, RosterEntryField, RosterPositionGroup, WizardStep } from './create-dynasty-form/types'
+import { PlayerForm, type PlayerFormData } from './player-form'
+import { Modal } from '@/components/ui/layout/modal'
+import type { PreparedRosterEntry, RosterEntry, RosterPositionGroup, WizardStep } from './create-dynasty-form/types'
 import {
     createBlankRosterEntry,
-    createRosterEntryDraft,
-    clampNumberString,
     getErrorMessage,
     getRosterGroupForPosition,
     getTeamLogoCandidates,
@@ -49,7 +49,7 @@ export function CreateDynastyForm() {
     const [selectedPosition, setSelectedPosition] = useState<string>(INITIAL_SELECTED_POSITION)
     const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false)
     const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null)
-    const [playerDraft, setPlayerDraft] = useState<PlayerDraft>(() => createRosterEntryDraft({ position: INITIAL_SELECTED_POSITION }))
+    const [editingInitial, setEditingInitial] = useState<Partial<RosterPlayer> | undefined>(undefined)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isImporting, setIsImporting] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -142,29 +142,37 @@ export function CreateDynastyForm() {
         )))
     }
 
-    const updatePlayerDraft = <K extends RosterEntryField>(field: K, value: PlayerDraft[K]) => {
-        setPlayerDraft((currentDraft) => ({ ...currentDraft, [field]: value } as PlayerDraft))
-    }
-
     const openAddPlayerModal = () => {
         setEditingPlayerId(null)
-        setPlayerDraft(createRosterEntryDraft({ position: selectedPosition }))
+        setEditingInitial({
+            position: selectedPosition,
+        })
         setIsPlayerModalOpen(true)
         setError(null)
     }
 
     const openEditPlayerModal = (entry: RosterEntry) => {
         setEditingPlayerId(entry.id)
-        setPlayerDraft({
+        setEditingInitial({
+            id: entry.id,
             name: entry.name,
             position: entry.position,
-            rating: entry.rating,
-            year: entry.year,
-            jerseyNumber: entry.jerseyNumber,
-            devTrait: entry.devTrait,
-            height: entry.height,
-            weight: entry.weight,
-            isRedshirted: entry.isRedshirted,
+            height: entry.height || null,
+            weight: entry.weight ? Number(entry.weight) : null,
+            season: {
+                id: '',
+                player_id: '',
+                year_record_id: '',
+                dynasty_id: '',
+                year: entry.year || null,
+                rating: entry.rating ? Number(entry.rating) : null,
+                jersey_number: entry.jerseyNumber ? Number(entry.jerseyNumber) : null,
+                is_redshirted: entry.isRedshirted,
+                dev_trait: entry.devTrait || null,
+                notes: null,
+                honors: [],
+                depth_chart_order: null,
+            },
         })
         setIsPlayerModalOpen(true)
         setError(null)
@@ -172,45 +180,53 @@ export function CreateDynastyForm() {
 
     const closePlayerModal = () => {
         setEditingPlayerId(null)
-        setPlayerDraft(createRosterEntryDraft())
+        setEditingInitial(undefined)
         setIsPlayerModalOpen(false)
         setError(null)
     }
 
-    const savePlayerDraft = () => {
-        const trimmedName = playerDraft.name.trim()
-
-        if (!trimmedName) {
-            setError('Player name is required before saving.')
+    const handlePlayerFormSave = async (data: PlayerFormData) => {
+        if (!data.name.trim() || !data.position) {
+            setError('Name and position are required.')
             return
         }
 
-        if (!playerDraft.position) {
-            setError('Choose a position before saving the player.')
-            return
-        }
-
-        const normalizedEntry: PlayerDraft = {
-            ...playerDraft,
-            name: trimmedName,
-            rating: clampNumberString(playerDraft.rating, 0, 99),
-            jerseyNumber: clampNumberString(playerDraft.jerseyNumber, 0, 99),
-            height: playerDraft.height.trim(),
-            weight: playerDraft.weight.trim(),
-            year: syncRedshirtYear(playerDraft.year, playerDraft.isRedshirted),
-        }
+        const year = data.is_redshirted && data.year
+            ? syncRedshirtYear(data.year, true)
+            : data.year ?? ''
 
         if (editingPlayerId) {
             setRosterEntries((currentEntries) => currentEntries.map((entry) => (
-                entry.id === editingPlayerId ? { ...entry, ...normalizedEntry } : entry
+                entry.id === editingPlayerId ? {
+                    ...entry,
+                    name: data.name.trim(),
+                    position: data.position,
+                    height: data.height ?? '',
+                    weight: data.weight?.toString() ?? '',
+                    rating: data.rating?.toString() ?? '',
+                    year,
+                    jerseyNumber: data.jersey_number?.toString() ?? '',
+                    devTrait: data.dev_trait ?? 'Normal',
+                    isRedshirted: data.is_redshirted,
+                } : entry
             )))
         } else {
-            setRosterEntries((currentEntries) => [...currentEntries, createBlankRosterEntry(normalizedEntry)])
+            setRosterEntries((currentEntries) => [...currentEntries, createBlankRosterEntry({
+                name: data.name.trim(),
+                position: data.position,
+                height: data.height ?? '',
+                weight: data.weight?.toString() ?? '',
+                rating: data.rating?.toString() ?? '',
+                year,
+                jerseyNumber: data.jersey_number?.toString() ?? '',
+                devTrait: data.dev_trait ?? 'Normal',
+                isRedshirted: data.is_redshirted,
+            })])
         }
 
-        const nextGroup = getRosterGroupForPosition(normalizedEntry.position)
+        const nextGroup = getRosterGroupForPosition(data.position)
         setSelectedGroup(nextGroup)
-        setSelectedPosition(normalizedEntry.position)
+        setSelectedPosition(data.position)
         closePlayerModal()
     }
 
@@ -501,14 +517,19 @@ export function CreateDynastyForm() {
                         />
                     )}
 
-                    <PlayerEditModal
+                    <Modal
                         isOpen={isPlayerModalOpen}
-                        editingPlayerId={editingPlayerId}
-                        playerDraft={playerDraft}
-                        onUpdateDraft={updatePlayerDraft}
-                        onSave={savePlayerDraft}
                         onClose={closePlayerModal}
-                    />
+                        title={editingPlayerId ? 'Edit Player' : 'Add Player'}
+                        maxWidth="max-w-2xl"
+                    >
+                        <PlayerForm
+                            initial={editingInitial}
+                            onSave={handlePlayerFormSave}
+                            onCancel={closePlayerModal}
+                            saving={false}
+                        />
+                    </Modal>
 
                     {error && <p className="text-sm text-red-500">{error}</p>}
                 </CardContent>
