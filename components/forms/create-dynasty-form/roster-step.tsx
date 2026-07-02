@@ -1,5 +1,4 @@
-// components/forms/create-dynasty-form/roster-step.tsx
-
+import Image from 'next/image'
 import { useMemo } from 'react'
 
 import { Button } from '@/components/ui/display/button'
@@ -32,6 +31,7 @@ interface RosterStepProps {
     onEditPlayer: (entry: RosterEntry) => void
     onRemovePlayer: (id: string) => void
     onUpdateEntry: (id: string, field: keyof Omit<RosterEntry, 'id'>, value: string) => void
+    onSetPlayerImage: (id: string, file: File) => void
 }
 
 export function RosterStep({
@@ -48,6 +48,7 @@ export function RosterStep({
     onEditPlayer,
     onRemovePlayer,
     onUpdateEntry,
+    onSetPlayerImage,
 }: RosterStepProps) {
     const rosterGroupTabs = useMemo(() => ROSTER_GROUP_KEYS.map((group) => ({ key: group, label: group })), [])
 
@@ -124,12 +125,50 @@ export function RosterStep({
                     selectedPositionEntries.map((entry) => {
                         const details = [entry.position, entry.year || '—', entry.jerseyNumber ? `#${entry.jerseyNumber}` : null ].filter(Boolean).join(' • ')
 
+                        const initials = entry.name
+                            .split(' ')
+                            .map((w) => w[0])
+                            .slice(0, 2)
+                            .join('')
+                            .toUpperCase()
+
                         return (
                             <div key={entry.id} className="rounded-xl border border-primary/10 bg-background/70 p-3">
                                 <div className="flex items-start justify-between gap-3">
-                                    <div className="min-w-0">
-                                        <p className="truncate text-sm font-semibold text-text">{entry.name}</p>
-                                        <p className="text-[10px] text-text/55">{details}</p>
+                                    <div className="flex min-w-0 items-center gap-2.5">
+                                        <label
+                                            htmlFor={`avatar-${entry.id}`}
+                                            className="group relative flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-primary/10 text-xs font-bold text-primary transition-colors hover:bg-primary/20"
+                                        >
+                                            {entry.imagePreview ? (
+                                                <Image
+                                                    src={entry.imagePreview}
+                                                    alt={entry.name}
+                                                    fill
+                                                    className="object-cover"
+                                                    unoptimized
+                                                />
+                                            ) : (
+                                                initials || '?'
+                                            )}
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-[9px] font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+                                                {entry.imagePreview ? '✎' : '+'}
+                                            </div>
+                                        </label>
+                                        <input
+                                            id={`avatar-${entry.id}`}
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0]
+                                                if (file) onSetPlayerImage(entry.id, file)
+                                            }}
+                                        />
+                                        <div className="min-w-0">
+                                            <p className="truncate text-sm font-semibold text-text">{entry.name}</p>
+                                            <p className="text-[10px] text-text/55">{details}</p>
+                                        </div>
                                     </div>
                                     <div className="flex items-start gap-2">
                                         <div className="shrink-0 text-right">

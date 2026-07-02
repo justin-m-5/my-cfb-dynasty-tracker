@@ -112,6 +112,13 @@ export function CreateDynastyForm() {
         )))
     }
 
+    const setPlayerImage = (id: string, file: File) => {
+        const preview = URL.createObjectURL(file)
+        setRosterEntries((currentEntries) => currentEntries.map((entry) => (
+            entry.id === id ? { ...entry, imageFile: file, imagePreview: preview } : entry
+        )))
+    }
+
     const openAddPlayerModal = () => {
         setEditingPlayerId(null)
         setEditingInitial({
@@ -462,6 +469,7 @@ export function CreateDynastyForm() {
                             onEditPlayer={openEditPlayerModal}
                             onRemovePlayer={removeRosterEntry}
                             onUpdateEntry={updateRosterEntry}
+                            onSetPlayerImage={setPlayerImage}
                         />
                     )}
 

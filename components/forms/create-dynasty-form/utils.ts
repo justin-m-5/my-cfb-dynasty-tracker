@@ -36,6 +36,8 @@ export function createRosterEntryDraft(defaults: Partial<PlayerDraft> = {}): Pla
         height: '',
         weight: '',
         isRedshirted: false,
+        imageFile: null,
+        imagePreview: null,
         ...defaults,
     }
 }
