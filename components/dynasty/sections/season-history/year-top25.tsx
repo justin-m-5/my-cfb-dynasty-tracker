@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { Top25Service, type Top25Ranking } from '@/dal/features/top25'
 import type { YearRecord } from '@/dal/features/year-records'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { Select } from '@/components/ui/form/select'
 import { getWeekDisplayName } from '@/lib/game-utils'
 
 interface YearTop25Props {
@@ -16,20 +17,30 @@ interface YearTop25Props {
 
 export function YearTop25({ dynastyId, yearRecord }: YearTop25Props) {
     const [rankings, setRankings] = useState<Top25Ranking[]>([])
-    const [finalWeek, setFinalWeek] = useState<number | null>(null)
+    const [savedWeeks, setSavedWeeks] = useState<number[]>([])
+    const [selectedWeek, setSelectedWeek] = useState<number | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const load = async () => {
             setLoading(true)
             try {
-                const week = await Top25Service.getLastSavedWeek(dynastyId, yearRecord.year)
-                const poll = await Top25Service.getRankings(dynastyId, yearRecord.year, week)
-                setFinalWeek(poll.length > 0 ? week : null)
-                setRankings(poll)
+                const weeks = await Top25Service.getSavedWeeks(dynastyId, yearRecord.year)
+                setSavedWeeks(weeks)
+
+                if (weeks.length > 0) {
+                    const lastWeek = weeks[weeks.length - 1]
+                    setSelectedWeek(lastWeek)
+                    const poll = await Top25Service.getRankings(dynastyId, yearRecord.year, lastWeek)
+                    setRankings(poll)
+                } else {
+                    setSelectedWeek(null)
+                    setRankings([])
+                }
             } catch (error) {
-                console.error('Failed to load final top 25:', error)
-                setFinalWeek(null)
+                console.error('Failed to load top 25:', error)
+                setSavedWeeks([])
+                setSelectedWeek(null)
                 setRankings([])
             } finally {
                 setLoading(false)
@@ -39,12 +50,36 @@ export function YearTop25({ dynastyId, yearRecord }: YearTop25Props) {
         load()
     }, [dynastyId, yearRecord.year])
 
+    const handleWeekChange = async (week: number) => {
+        setSelectedWeek(week)
+        setLoading(true)
+        try {
+            const poll = await Top25Service.getRankings(dynastyId, yearRecord.year, week)
+            setRankings(poll)
+        } catch (error) {
+            console.error('Failed to load week rankings:', error)
+            setRankings([])
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <Card className="border-primary/15">
             <CardHeader className="pb-2">
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                    <CardTitle className="text-base">{yearRecord.year} Final Top 25</CardTitle>
-                    {finalWeek !== null && <span className="text-[10px] font-semibold uppercase tracking-wide text-text/50">{getWeekDisplayName(finalWeek)}</span>}
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <CardTitle className="text-base">{yearRecord.year} Top 25</CardTitle>
+                    {savedWeeks.length > 0 && (
+                        <Select
+                            value={String(selectedWeek ?? '')}
+                            onChange={(e) => handleWeekChange(Number(e.target.value))}
+                            className="h-8 w-40 text-xs"
+                        >
+                            {savedWeeks.map((week) => (
+                                <option key={week} value={week}>{getWeekDisplayName(week)}</option>
+                            ))}
+                        </Select>
+                    )}
                 </div>
             </CardHeader>
             <CardContent>

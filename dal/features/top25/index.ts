@@ -36,6 +36,14 @@ export const Top25Service = {
         return data[0].week
     },
 
+    async getSavedWeeks(dynastyId: string, year: number): Promise<number[]> {
+        const { data, error } = await supabase.from('top25_rankings').select('week').eq('dynasty_id', dynastyId).eq('year', year)
+
+        if (error || !data) return []
+        const weeks = [...new Set(data.map((row: { week: number }) => row.week))].sort((a, b) => a - b)
+        return weeks
+    },
+
     async saveRankings(dynastyId: string, year: number, week: number, rankings: RankedTeam[]): Promise<void> {
         // Delete existing rankings for this week
         const { error: delError } = await supabase.from('top25_rankings').delete().eq('dynasty_id', dynastyId).eq('year', year).eq('week', week)

@@ -87,7 +87,7 @@ export function RankingRow({
     return (
         <div
             className={cn(
-                'relative flex items-start gap-2 rounded-lg border-b border-primary/10 px-2 py-2 transition-colors last:border-b-0 sm:items-center',
+                'relative flex items-center gap-2 rounded-lg border-b border-primary/10 px-2 py-2 transition-colors last:border-b-0',
                 'hover:bg-primary/5',
                 isDragging && 'opacity-60',
                 isDropTarget && 'bg-primary/10 ring-1 ring-primary/20'
@@ -106,7 +106,7 @@ export function RankingRow({
                 type="button"
                 draggable
                 aria-label={`Drag rank ${rank}`}
-                className="flex h-9 w-9 shrink-0 cursor-grab items-center justify-center rounded-md border border-primary/15 bg-background/80 text-text/50 transition-colors hover:text-text active:cursor-grabbing"
+                className="hidden h-8 w-8 shrink-0 cursor-grab items-center justify-center rounded-md border border-primary/15 bg-background/80 text-text/50 transition-colors hover:text-text active:cursor-grabbing sm:flex"
                 onDragStart={(event) => {
                     event.dataTransfer.effectAllowed = 'move'
                     event.dataTransfer.setData('text/plain', String(index))
@@ -117,10 +117,10 @@ export function RankingRow({
                 <GripVertical className="h-4 w-4" />
             </button>
 
-            <span className="w-6 shrink-0 pt-2 text-right text-sm font-bold text-text/80 sm:pt-0">{rank}</span>
+            <span className="w-5 shrink-0 text-right text-xs font-bold text-text/80 sm:w-6 sm:text-sm">{rank}</span>
 
-            <div className="flex w-7 shrink-0 justify-center pt-1 sm:pt-0">
-                {logo ? <LogoImage candidates={[logo]} alt={team.name} size={24} /> : null}
+            <div className="flex w-5 shrink-0 justify-center sm:w-7">
+                {logo ? <LogoImage candidates={[logo]} alt={team.name} size={20} className="sm:h-6 sm:w-6" /> : null}
             </div>
 
             <div className="min-w-0 flex-1">
@@ -131,21 +131,21 @@ export function RankingRow({
                 />
             </div>
 
-            <div className="flex shrink-0 flex-col items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center">
+            <div className="flex shrink-0 items-center gap-1">
+                <div className="flex h-7 w-7 items-center justify-center">
                     {renderChange()}
                 </div>
-                <div className="flex gap-1 sm:hidden">
+                <div className="flex flex-col gap-0.5 sm:hidden">
                     <Button
                         type="button"
                         variant="outline"
                         size="icon"
                         onClick={() => canMoveUp && onReorder(index, index - 1)}
                         disabled={!canMoveUp}
-                        className="h-8 w-8 border-primary/15 bg-background/80 text-text"
+                        className="h-6 w-6 border-primary/15 bg-background/80 text-text"
                         aria-label={`Move rank ${rank} up`}
                     >
-                        <ChevronUp className="h-4 w-4" />
+                        <ChevronUp className="h-3 w-3" />
                     </Button>
                     <Button
                         type="button"
@@ -153,10 +153,10 @@ export function RankingRow({
                         size="icon"
                         onClick={() => canMoveDown && onReorder(index, index + 1)}
                         disabled={!canMoveDown}
-                        className="h-8 w-8 border-primary/15 bg-background/80 text-text"
+                        className="h-6 w-6 border-primary/15 bg-background/80 text-text"
                         aria-label={`Move rank ${rank} down`}
                     >
-                        <ChevronDown className="h-4 w-4" />
+                        <ChevronDown className="h-3 w-3" />
                     </Button>
                 </div>
             </div>
