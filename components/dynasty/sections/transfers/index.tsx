@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/display/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
 import { FilterTabs } from '@/components/ui/layout/filter-tabs'
 import { TransferList } from './transfer-list'
-import { TransferForm } from '../../../forms/transfer-form'
+import { TransferForm } from '@/components/forms/transfer-form'
 import { Modal } from '@/components/ui/layout/modal'
 
 interface TransfersProps {

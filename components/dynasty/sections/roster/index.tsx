@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/display/button'
 import { Modal } from '@/components/ui/layout/modal'
 import { DepthChart } from '@/components/dynasty/depth-chart'
 import { PlayerCard } from '@/components/dynasty/player-card'
-import { PlayerForm, type PlayerFormData } from '../../../forms/player-form'
+import { PlayerForm, type PlayerFormData } from '@/components/forms/player-form'
 
 interface RosterProps {
     dynastyId: string

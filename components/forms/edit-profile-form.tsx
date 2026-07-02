@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/display/button'
 import { Input } from '@/components/ui/form/input'
 import { Label } from '@/components/ui/form/label'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/layout/card'
-import { AvatarInput } from '../ui/form/avatar-input'
+import { AvatarInput } from '@/components/ui/form/avatar-input'
 
 export function EditProfileForm() {
     const { user, profile } = useContext(AuthContext)
