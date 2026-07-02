@@ -58,8 +58,8 @@ export const devTraits = ['Normal', 'Impact', 'Star', 'Elite'] as const
 export type DevTrait = (typeof devTraits)[number]
 
 export const devTraitColors: Record<DevTrait, string> = {
-    Elite: 'bg-purple-500/20 text-purple-600',
-    Star: 'bg-yellow-500/20 text-yellow-700',
-    Impact: 'bg-blue-500/20 text-blue-600',
-    Normal: 'bg-gray-500/15 text-text/60',
+    Elite: 'bg-purple-500/20 text-purple-600 dark:bg-purple-400/25 dark:text-purple-300',
+    Star: 'bg-yellow-500/20 text-yellow-700 dark:bg-yellow-400/25 dark:text-yellow-300',
+    Impact: 'bg-blue-500/20 text-blue-600 dark:bg-blue-400/25 dark:text-blue-300',
+    Normal: 'bg-gray-500/15 text-text/60 dark:bg-gray-400/20 dark:text-text/70',
 }

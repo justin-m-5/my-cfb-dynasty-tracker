@@ -125,12 +125,7 @@ export function RosterStep({
                     selectedPositionEntries.map((entry) => {
                         const details = [entry.position, entry.year || '—', entry.jerseyNumber ? `#${entry.jerseyNumber}` : null ].filter(Boolean).join(' • ')
 
-                        const initials = entry.name
-                            .split(' ')
-                            .map((w) => w[0])
-                            .slice(0, 2)
-                            .join('')
-                            .toUpperCase()
+                        const initials = entry.name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
 
                         return (
                             <div key={entry.id} className="rounded-xl border border-primary/10 bg-background/70 p-3">
