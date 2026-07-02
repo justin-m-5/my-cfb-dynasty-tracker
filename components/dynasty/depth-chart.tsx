@@ -243,19 +243,7 @@ export function DepthChart({
         }, {})
     }, [items])
 
-    const firstGroupWithPlayers = useMemo(
-        () => positionGroupKeys.find((group) => recruitPositionGroups[group].some((position) => (positionCounts[position] ?? 0) > 0)) ?? positionGroupKeys[0],
-        [positionCounts]
-    )
-
-    const selectedGroup = useMemo(() => {
-        const preferredHasPlayers = recruitPositionGroups[selectedGroupPreference].some((position) => (positionCounts[position] ?? 0) > 0)
-        if (preferredHasPlayers || !items.length) {
-            return selectedGroupPreference
-        }
-
-        return firstGroupWithPlayers
-    }, [firstGroupWithPlayers, items.length, positionCounts, selectedGroupPreference])
+    const selectedGroup = selectedGroupPreference
 
     const positionOptions = useMemo(() => {
         return recruitPositionGroups[selectedGroup].map((position) => ({
@@ -473,7 +461,7 @@ export function DepthChart({
                     const details = [item.position, item.year, item.jerseyNumber !== null ? `#${item.jerseyNumber}` : null].filter(Boolean).join(' • ')
                     const allAmericanValue = rosterPlayer ? getSelectedHonor(rosterPlayer.season.honors ?? [], allAmericanKeys) : ''
                     const allConferenceValue = rosterPlayer ? getSelectedHonor(rosterPlayer.season.honors ?? [], allConferenceKeys) : ''
-                    const cardClasses = `rounded-xl border border-primary/10 bg-background/70 p-3 text-left ${isClickable ? 'transition-colors hover:border-primary/25 hover:bg-primary/5' : ''}`
+                    const cardClasses = 'rounded-xl border border-primary/10 bg-background/70 p-3 text-left'
 
                     const redshirtButton = canToggleRedshirt && rosterPlayer ? (
                         <button
@@ -496,7 +484,17 @@ export function DepthChart({
                                 <div className="flex min-w-0 items-center gap-3">
                                     <PlayerAvatar src={item.avatarUrl} alt={item.name} size={36} />
                                     <div className="min-w-0">
-                                        <p className="truncate text-sm font-semibold text-text">{item.name}</p>
+                                        {isClickable && rosterPlayer ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => onPlayerClick?.(rosterPlayer)}
+                                                className="truncate text-sm font-semibold text-text underline-offset-2 hover:underline"
+                                            >
+                                                {item.name}
+                                            </button>
+                                        ) : (
+                                            <p className="truncate text-sm font-semibold text-text">{item.name}</p>
+                                        )}
                                         <p className="text-[10px] text-text/55">{details || item.detail || '—'}</p>
                                         {item.detail && item.kind !== 'roster' && (
                                             <p className="text-[10px] text-text/45">{item.detail}</p>
@@ -527,18 +525,7 @@ export function DepthChart({
 
                     return (
                         <div key={item.key} className={cardClasses}>
-                            {isClickable && rosterPlayer ? (
-                                <button
-                                    type="button"
-                                    onClick={() => onPlayerClick?.(rosterPlayer)}
-                                    disabled={Boolean(busyLabel)}
-                                    className="w-full text-left"
-                                >
-                                    {body}
-                                </button>
-                            ) : (
-                                body
-                            )}
+                            {body}
 
                             {mode === 'roster' && redshirtButton && (
                                 <div className="mt-3 flex items-center justify-between gap-2">
