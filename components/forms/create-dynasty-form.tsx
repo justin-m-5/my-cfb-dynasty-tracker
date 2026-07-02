@@ -632,7 +632,7 @@ export function CreateDynastyForm() {
                                 )}
                             </div>
 
-                            <div className="max-h-[32rem] space-y-3 overflow-y-auto pr-1">
+                            <div className="max-h-128 space-y-3 overflow-y-auto pr-1">
                                 <div className="sticky top-0 z-10 hidden grid-cols-[minmax(0,2fr)_110px_80px_120px_90px_130px_44px] gap-2 rounded-xl border border-primary/10 bg-background/95 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-text/60 backdrop-blur sm:grid">
                                     <span>Name</span>
                                     <span>Position</span>
@@ -833,7 +833,7 @@ export function CreateDynastyForm() {
                                             No roster players added. You can still create the dynasty now.
                                         </div>
                                     ) : (
-                                        <div className="max-h-[28rem] space-y-4 overflow-y-auto pr-1">
+                                        <div className="max-h-112 space-y-4 overflow-y-auto pr-1">
                                             {groupedRosterEntries.map((group) => (
                                                 <div key={group.position} className="space-y-2">
                                                     <div className="flex items-center justify-between gap-2">
