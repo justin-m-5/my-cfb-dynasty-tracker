@@ -208,7 +208,7 @@ export const fbsTeams: FbsTeam[] = [
         nickName: "Broncos",
         city: "Boise",
         state: "Idaho",
-        conference: "MWC",
+        conference: "Pac-12",
         stadium: "Albertsons Stadium",
         abbrev: "BSU",
         colors: {
@@ -389,7 +389,7 @@ export const fbsTeams: FbsTeam[] = [
         nickName: "Rams",
         city: "Fort Collins",
         state: "Colorado",
-        conference: "MWC",
+        conference: "Pac-12",
         stadium: "Canvas Stadium",
         abbrev: "CSU",
         colors: {
@@ -525,7 +525,7 @@ export const fbsTeams: FbsTeam[] = [
         nickName: "Bulldogs",
         city: "Fresno",
         state: "California",
-        conference: "MWC",
+        conference: "Pac-12",
         stadium: "Valley Children's Stadium",
         abbrev: "FRES",
         colors: {
@@ -827,7 +827,7 @@ export const fbsTeams: FbsTeam[] = [
         nickName: "Bulldogs",
         city: "Ruston",
         state: "Louisiana",
-        conference: "C-USA",
+        conference: "Sun Belt",
         stadium: "Joe Aillet Stadium",
         abbrev: "LT",
         colors: {
@@ -1171,6 +1171,21 @@ export const fbsTeams: FbsTeam[] = [
         logo: "/logos/North_Carolina_Tar_Heels_logo_300x300.png",
     },
     {
+        id: "ndsu",
+        name: "North Dakota State",
+        nickName: "Bison",
+        city: "Fargo",
+        state: "North Dakota",
+        conference: "MWC",
+        stadium: "Gate City Bank Field at the Fargodome",
+        abbrev: "NDSU",
+        colors: {
+            primary: "#006633",
+            secondary: "#FFC72C",
+        },
+        logo: "/logos/North_Dakota_State_Bison_logo_300x300.png",
+    },
+    {
         id: "unt",
         name: "North Texas",
         nickName: "Mean Green",
@@ -1191,7 +1206,7 @@ export const fbsTeams: FbsTeam[] = [
         nickName: "Huskies",
         city: "DeKalb",
         state: "Illinois",
-        conference: "MAC",
+        conference: "MWC",
         stadium: "Huskie Stadium",
         abbrev: "NIU",
         colors: {
@@ -1427,6 +1442,21 @@ export const fbsTeams: FbsTeam[] = [
         logo: "/logos/Rutgers_Scarlet_Knights_logo_300x300.png",
     },
     {
+        id: "sac",
+        name: "Sacramento State",
+        nickName: "Hornets",
+        city: "Sacramento",
+        state: "California",
+        conference: "MAC",
+        stadium: "Hornet Stadium",
+        abbrev: "SAC",
+        colors: {
+            primary: "#043927",
+            secondary: "#C4B581",
+        },
+        logo: "/logos/Sacramento_State_Hornets_logo_300x300.png",
+    },
+    {
         id: "sam",
         name: "Sam Houston",
         nickName: "Bearkats",
@@ -1447,7 +1477,7 @@ export const fbsTeams: FbsTeam[] = [
         nickName: "Aztecs",
         city: "San Diego",
         state: "California",
-        conference: "MWC",
+        conference: "Pac-12",
         stadium: "Snapdragon Stadium",
         abbrev: "SDSU",
         colors: {
@@ -1659,7 +1689,7 @@ export const fbsTeams: FbsTeam[] = [
         nickName: "Bobcats",
         city: "San Marcos",
         state: "Texas",
-        conference: "Sun Belt",
+        conference: "Pac-12",
         stadium: "Bobcat Stadium",
         abbrev: "TXST",
         colors: {
@@ -1813,7 +1843,7 @@ export const fbsTeams: FbsTeam[] = [
         nickName: "Minuteman",
         city: "Hadley",
         state: "Massachusetts",
-        conference: "Independents",
+        conference: "MAC",
         stadium: "Warren McGuirk Alumni Stadium",
         abbrev: "UMASS",
         colors: {
@@ -1859,7 +1889,7 @@ export const fbsTeams: FbsTeam[] = [
         nickName: "Miners",
         city: "El Paso",
         state: "Texas",
-        conference: "C-USA",
+        conference: "MWC",
         stadium: "Sun Bowl",
         abbrev: "UTEP",
         colors: {
@@ -1906,7 +1936,7 @@ export const fbsTeams: FbsTeam[] = [
         nickName: "Aggies",
         city: "Logan",
         state: "Utah",
-        conference: "MWC",
+        conference: "Pac-12",
         stadium: "Maverik Stadium",
         abbrev: "USU",
         colors: {
