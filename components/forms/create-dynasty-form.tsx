@@ -1,3 +1,5 @@
+// components/forms/create-dynasty-form.tsx
+
 'use client'
 
 import Image from 'next/image'
@@ -276,10 +278,7 @@ export function CreateDynastyForm() {
             })
     ), [rosterEntries, selectedPosition])
 
-    const summarySchoolName = selectedTeam
-
-        ? [selectedTeam.name, selectedTeam.nickName].filter(Boolean).join(' ')
-        : 'No school selected'
+    const summarySchoolName = selectedTeam ? [selectedTeam.name, selectedTeam.nickName].filter(Boolean).join(' ') : 'No school selected'
     const summaryConferenceName = selectedTeam?.conference ?? conference
 
     const updateRosterEntry = <K extends RosterEntryField>(id: string, field: K, value: PlayerDraft[K]) => {
@@ -552,14 +551,10 @@ export function CreateDynastyForm() {
     return (
         <form onSubmit={handleSubmit}>
             <Card>
-                <CardContent className="space-y-6 p-8">
+                <CardContent className="space-y-6 py-8">
                     <div className="flex items-center gap-2 overflow-x-auto pb-1">
                         {WIZARD_STEPS.map((stepLabel, index) => {
-                            const stepStatus = index === currentStep
-                                ? 'active'
-                                : index < currentStep
-                                    ? 'complete'
-                                    : 'upcoming'
+                            const stepStatus = index === currentStep ? 'active' : index < currentStep ? 'complete' : 'upcoming'
 
                             return (
                                 <div key={stepLabel} className="flex min-w-0 flex-1 items-center gap-2">

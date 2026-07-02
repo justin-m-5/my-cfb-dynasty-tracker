@@ -1,3 +1,5 @@
+// dal/features/roster-templates/index.ts
+
 import { supabase } from '@/supabase/client'
 
 export interface RosterTemplate {
@@ -42,12 +44,7 @@ export function normalizeYear(raw: string | null, redshirtStatus?: string | null
 
 export const RosterTemplateService = {
     async getBySchool(school: string): Promise<RosterTemplate[]> {
-        const { data, error } = await supabase
-            .from('roster_templates')
-            .select('*')
-            .ilike('school', school)
-            .order('position')
-            .order('name')
+        const { data, error } = await supabase.from('roster_templates').select('*').eq('school', school).order('position').order('name')
 
         if (error) {
             console.error('Get roster templates error:', error.message)
@@ -58,9 +55,7 @@ export const RosterTemplateService = {
     },
 
     async getAvailableSchools(): Promise<string[]> {
-        const { data, error } = await supabase
-            .from('roster_templates')
-            .select('school')
+        const { data, error } = await supabase.from('roster_templates').select('school')
 
         if (error) {
             console.error('Get available schools error:', error.message)
