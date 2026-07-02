@@ -11,16 +11,19 @@ import { Label } from '@/components/ui/form/label'
 import { PositionOptions } from '@/components/ui/form/position-options'
 import { Select } from '@/components/ui/form/select'
 import { Card, CardContent, CardFooter } from '@/components/ui/layout/card'
+import { FilterTabs } from '@/components/ui/layout/filter-tabs'
+import { Modal } from '@/components/ui/layout/modal'
 import { DynastyService } from '@/dal/features/dynasty'
 import { PlayerService } from '@/dal/features/players'
 import { RosterTemplateService, normalizeYear } from '@/dal/features/roster-templates'
 import { YearRecordService } from '@/dal/features/year-records'
-import { devTraits, positions, years } from '@/lib/config/player-config'
+import { devTraitColors, devTraits, positions, recruitPositionGroups, years, type DevTrait } from '@/lib/config/player-config'
 import { pipelinesByRegion } from '@/lib/config/pipelines'
 import { conferenceLogoByName, getSchoolLogoCandidates } from '@/lib/teams/logos'
 import { fbsTeams, type FbsTeam } from '@/lib/teams/fbs-teams'
 
 type WizardStep = 0 | 1 | 2
+type RosterPositionGroup = keyof typeof recruitPositionGroups
 
 type RosterEntry = {
     id: string
@@ -30,6 +33,9 @@ type RosterEntry = {
     year: string
     jerseyNumber: string
     devTrait: string
+    height: string
+    weight: string
+    isRedshirted: boolean
 }
 
 type PreparedRosterEntry = {
@@ -40,13 +46,21 @@ type PreparedRosterEntry = {
     year: string | null
     jerseyNumber: number | null
     devTrait: string | null
+    height: string | null
+    weight: number | null
+    isRedshirted: boolean
 }
 
+type PlayerDraft = Omit<RosterEntry, 'id'>
+type RosterEntryField = keyof PlayerDraft
+
 const INITIAL_YEAR = 2026
-const INITIAL_ROSTER_ROWS = 5
+const INITIAL_SELECTED_GROUP: RosterPositionGroup = 'Offense'
+const INITIAL_SELECTED_POSITION = recruitPositionGroups[INITIAL_SELECTED_GROUP][0] ?? positions[0]
 const WIZARD_STEPS = ['Dynasty Info', 'Roster', 'Review'] as const
+const ROSTER_GROUP_KEYS = Object.keys(recruitPositionGroups) as RosterPositionGroup[]
 const ROSTER_YEAR_ORDER = ['FR', 'SO', 'JR', 'SR', 'FR (RS)', 'SO (RS)', 'JR (RS)', 'SR (RS)'] as const
-const ROSTER_DEV_TRAITS = [...devTraits, 'X-Factor']
+const ROSTER_DEV_TRAITS = [...devTraits, 'X-Factor'] as const
 const VALID_ROSTER_YEARS = new Set<string>(years)
 
 let rosterEntryCounter = 0
@@ -60,22 +74,62 @@ function getTeamLogoCandidates(team: FbsTeam): string[] {
     )
 }
 
-function createBlankRosterEntry(): RosterEntry {
-    rosterEntryCounter += 1
-
+function createRosterEntryDraft(defaults: Partial<PlayerDraft> = {}): PlayerDraft {
     return {
-        id: `roster-entry-${rosterEntryCounter}`,
         name: '',
         position: '',
         rating: '',
         year: '',
         jerseyNumber: '',
         devTrait: 'Normal',
+        height: '',
+        weight: '',
+        isRedshirted: false,
+        ...defaults,
     }
 }
 
-function createBlankRosterEntries(count: number): RosterEntry[] {
-    return Array.from({ length: count }, () => createBlankRosterEntry())
+function createBlankRosterEntry(defaults: Partial<PlayerDraft> = {}): RosterEntry {
+    rosterEntryCounter += 1
+
+    return {
+        id: `roster-entry-${rosterEntryCounter}`,
+        ...createRosterEntryDraft(defaults),
+    }
+}
+
+function clampNumberString(value: string, min: number, max: number) {
+    const trimmed = value.trim()
+    if (!trimmed) return ''
+
+    const parsed = Number.parseInt(trimmed, 10)
+    if (!Number.isFinite(parsed)) return ''
+
+    return String(Math.max(min, Math.min(max, parsed)))
+}
+
+function getRosterGroupForPosition(position: string): RosterPositionGroup {
+    return ROSTER_GROUP_KEYS.find((group) => recruitPositionGroups[group].includes(position)) ?? 'Other'
+}
+
+function syncRedshirtYear(year: string, isRedshirted: boolean) {
+    if (!year) return ''
+
+    const baseYear = year.replace(' (RS)', '')
+    if (!isRedshirted) {
+        return baseYear
+    }
+
+    const redshirtYear = `${baseYear} (RS)`
+    return VALID_ROSTER_YEARS.has(redshirtYear) ? redshirtYear : year
+}
+
+function getTraitClasses(devTrait: string | null) {
+    if (!devTrait || devTrait === 'Normal') {
+        return 'bg-primary/5 text-text/55'
+    }
+
+    return devTraitColors[devTrait as DevTrait] ?? 'bg-primary/10 text-text/70'
 }
 
 function parseOptionalNumber(value: string): number | null {
@@ -110,12 +164,18 @@ export function CreateDynastyForm() {
     const [teamId, setTeamId] = useState('')
     const [almaMater, setAlmaMater] = useState('')
     const [pipeline, setPipeline] = useState('')
-    const [rosterEntries, setRosterEntries] = useState<RosterEntry[]>(() => createBlankRosterEntries(INITIAL_ROSTER_ROWS))
+    const [rosterEntries, setRosterEntries] = useState<RosterEntry[]>([])
+    const [selectedGroup, setSelectedGroup] = useState<RosterPositionGroup>(INITIAL_SELECTED_GROUP)
+    const [selectedPosition, setSelectedPosition] = useState<string>(INITIAL_SELECTED_POSITION)
+    const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false)
+    const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null)
+    const [playerDraft, setPlayerDraft] = useState<PlayerDraft>(() => createRosterEntryDraft({ position: INITIAL_SELECTED_POSITION }))
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isImporting, setIsImporting] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     const conferences = useMemo(
+
         () => [...new Set(fbsTeams.map((team) => team.conference))].sort((a, b) => a.localeCompare(b)),
         []
     )
@@ -157,6 +217,9 @@ export function CreateDynastyForm() {
                 year: entry.year || null,
                 jerseyNumber: parseOptionalNumber(entry.jerseyNumber),
                 devTrait: entry.devTrait || null,
+                height: entry.height.trim() || null,
+                weight: parseOptionalNumber(entry.weight),
+                isRedshirted: entry.isRedshirted,
             }]
         })
     }, [rosterEntries])
@@ -189,23 +252,120 @@ export function CreateDynastyForm() {
             }))
     }, [preparedRosterEntries])
 
+    const rosterGroupTabs = useMemo(
+        () => ROSTER_GROUP_KEYS.map((group) => ({ key: group, label: group })),
+        []
+    )
+
+    const positionOptions = useMemo(
+        () => (recruitPositionGroups[selectedGroup] ?? []).map((position) => ({
+            position,
+            count: rosterEntries.filter((entry) => entry.position === position && entry.name.trim()).length,
+        })),
+        [rosterEntries, selectedGroup]
+    )
+
+    const selectedPositionEntries = useMemo(() => (
+        rosterEntries
+            .filter((entry) => entry.position === selectedPosition)
+            .sort((a, b) => {
+                const ratingDiff = (parseOptionalNumber(b.rating) ?? -1) - (parseOptionalNumber(a.rating) ?? -1)
+                if (ratingDiff !== 0) return ratingDiff
+
+                return a.name.localeCompare(b.name)
+            })
+    ), [rosterEntries, selectedPosition])
+
     const summarySchoolName = selectedTeam
+
         ? [selectedTeam.name, selectedTeam.nickName].filter(Boolean).join(' ')
         : 'No school selected'
     const summaryConferenceName = selectedTeam?.conference ?? conference
 
-    const updateRosterEntry = (id: string, field: keyof Omit<RosterEntry, 'id'>, value: string) => {
+    const updateRosterEntry = <K extends RosterEntryField>(id: string, field: K, value: PlayerDraft[K]) => {
         setRosterEntries((currentEntries) => currentEntries.map((entry) => (
-            entry.id === id ? { ...entry, [field]: value } : entry
+            entry.id === id ? ({ ...entry, [field]: value } as RosterEntry) : entry
         )))
     }
 
-    const addRosterRows = (count: number) => {
-        setRosterEntries((currentEntries) => [...currentEntries, ...createBlankRosterEntries(count)])
+    const updatePlayerDraft = <K extends RosterEntryField>(field: K, value: PlayerDraft[K]) => {
+        setPlayerDraft((currentDraft) => ({ ...currentDraft, [field]: value } as PlayerDraft))
+    }
+
+    const openAddPlayerModal = () => {
+        setEditingPlayerId(null)
+        setPlayerDraft(createRosterEntryDraft({ position: selectedPosition }))
+        setIsPlayerModalOpen(true)
+        setError(null)
+    }
+
+    const openEditPlayerModal = (entry: RosterEntry) => {
+        setEditingPlayerId(entry.id)
+        setPlayerDraft({
+            name: entry.name,
+            position: entry.position,
+            rating: entry.rating,
+            year: entry.year,
+            jerseyNumber: entry.jerseyNumber,
+            devTrait: entry.devTrait,
+            height: entry.height,
+            weight: entry.weight,
+            isRedshirted: entry.isRedshirted,
+        })
+        setIsPlayerModalOpen(true)
+        setError(null)
+    }
+
+    const closePlayerModal = () => {
+        setEditingPlayerId(null)
+        setPlayerDraft(createRosterEntryDraft())
+        setIsPlayerModalOpen(false)
+        setError(null)
+    }
+
+    const savePlayerDraft = () => {
+        const trimmedName = playerDraft.name.trim()
+
+        if (!trimmedName) {
+            setError('Player name is required before saving.')
+            return
+        }
+
+        if (!playerDraft.position) {
+            setError('Choose a position before saving the player.')
+            return
+        }
+
+        const normalizedEntry: PlayerDraft = {
+            ...playerDraft,
+            name: trimmedName,
+            rating: clampNumberString(playerDraft.rating, 0, 99),
+            jerseyNumber: clampNumberString(playerDraft.jerseyNumber, 0, 99),
+            height: playerDraft.height.trim(),
+            weight: playerDraft.weight.trim(),
+            year: syncRedshirtYear(playerDraft.year, playerDraft.isRedshirted),
+        }
+
+        if (editingPlayerId) {
+            setRosterEntries((currentEntries) => currentEntries.map((entry) => (
+                entry.id === editingPlayerId ? { ...entry, ...normalizedEntry } : entry
+            )))
+        } else {
+            setRosterEntries((currentEntries) => [...currentEntries, createBlankRosterEntry(normalizedEntry)])
+        }
+
+        const nextGroup = getRosterGroupForPosition(normalizedEntry.position)
+        setSelectedGroup(nextGroup)
+        setSelectedPosition(normalizedEntry.position)
+        closePlayerModal()
     }
 
     const removeRosterEntry = (id: string) => {
         setRosterEntries((currentEntries) => currentEntries.filter((entry) => entry.id !== id))
+
+        if (editingPlayerId === id) {
+            closePlayerModal()
+        }
     }
 
     const importRosterFromTemplate = async () => {
@@ -222,19 +382,30 @@ export function CreateDynastyForm() {
             }
 
             const imported: RosterEntry[] = templates.map((template) => {
-                rosterEntryCounter += 1
-                return {
-                    id: `roster-entry-${rosterEntryCounter}`,
+                const normalizedYear = normalizeYear(template.year, template.redshirt_status) ?? ''
+                const isRedshirted = normalizedYear.includes('(RS)')
+                    || Boolean(template.redshirt_status?.toLowerCase().includes('redshirt'))
+
+                return createBlankRosterEntry({
                     name: template.name,
                     position: template.position,
                     rating: template.overall?.toString() ?? '',
-                    year: normalizeYear(template.year, template.redshirt_status) ?? '',
+                    year: normalizedYear,
                     jerseyNumber: '',
                     devTrait: template.dev_trait ?? 'Normal',
-                }
+                    height: template.height ?? '',
+                    weight: template.weight?.toString() ?? '',
+                    isRedshirted,
+                })
             })
 
             setRosterEntries(imported)
+
+            const firstImportedPosition = imported.find((entry) => entry.position)?.position
+            if (firstImportedPosition) {
+                setSelectedGroup(getRosterGroupForPosition(firstImportedPosition))
+                setSelectedPosition(firstImportedPosition)
+            }
         } catch (err) {
             console.error('Failed to import roster:', err)
             setError('Failed to load roster data. Try again or add players manually.')
@@ -244,6 +415,7 @@ export function CreateDynastyForm() {
     }
 
     const validateStepOne = () => {
+
         if (!dynastyName.trim() || !coachName.trim()) {
             setError('Dynasty name and coach name are required.')
             return false
@@ -328,6 +500,8 @@ export function CreateDynastyForm() {
                             dynasty_id: dynasty.id,
                             name: entry.name,
                             position: entry.position,
+                            height: entry.height,
+                            weight: entry.weight,
                         },
                         {
                             year_record_id: yr.id,
@@ -335,6 +509,7 @@ export function CreateDynastyForm() {
                             year: entry.year || null,
                             rating: entry.rating,
                             jersey_number: entry.jerseyNumber,
+                            is_redshirted: entry.isRedshirted,
                             dev_trait: entry.devTrait || null,
                         }
                     ).then((player) => {
@@ -600,165 +775,152 @@ export function CreateDynastyForm() {
 
                     {currentStep === 1 && (
                         <div className="space-y-6">
-                            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                                 <div>
                                     <h2 className="text-xl font-semibold text-text">Step 2 · Initial Roster Builder</h2>
-                                    <p className="text-sm text-text/70">Add as many starter rows as you want. Blank-name rows are ignored when you create the dynasty.</p>
+                                    <p className="text-sm text-text/70">Build your roster by position group, then fine-tune each player from the card view.</p>
                                 </div>
-                                <div className="text-sm font-medium text-text">
-                                    {namedRosterCount} players added
-                                </div>
-                            </div>
-
-                            <div className="flex flex-wrap gap-2">
-                                <Button type="button" variant="outline" size="sm" className="font-semibold" onClick={() => addRosterRows(5)}>
-                                    Add Row
-                                </Button>
-                                <Button type="button" variant="outline" size="sm" className="font-semibold" onClick={() => addRosterRows(10)}>
-                                    Add 10 Rows
-                                </Button>
-                                {selectedTeam && (
-                                    <Button
-                                        type="button"
-                                        bg="var(--primary)"
-                                        text="white"
-                                        size="sm"
-                                        className="font-semibold"
-                                        onClick={importRosterFromTemplate}
-                                        disabled={isImporting}
-                                    >
-                                        {isImporting ? 'Importing...' : `Import ${selectedTeam.name} Roster`}
+                                <div className="flex flex-wrap items-center gap-2">
+                                    {selectedTeam && (
+                                        <Button
+                                            type="button"
+                                            bg="var(--primary)"
+                                            text="white"
+                                            size="sm"
+                                            className="font-semibold"
+                                            onClick={importRosterFromTemplate}
+                                            disabled={isImporting}
+                                        >
+                                            {isImporting ? 'Importing...' : `Import ${selectedTeam.name} Roster`}
+                                        </Button>
+                                    )}
+                                    <Button type="button" variant="outline" size="sm" className="font-semibold" onClick={openAddPlayerModal}>
+                                        Add Player
                                     </Button>
-                                )}
+                                    <div className="rounded-md border border-primary/15 bg-background/70 px-3 py-2 text-sm font-medium text-text">
+                                        {namedRosterCount} player{namedRosterCount === 1 ? '' : 's'}
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="max-h-128 space-y-3 overflow-y-auto pr-1">
-                                <div className="sticky top-0 z-10 hidden grid-cols-[minmax(0,2fr)_110px_80px_120px_90px_130px_44px] gap-2 rounded-xl border border-primary/10 bg-background/95 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-text/60 backdrop-blur sm:grid">
-                                    <span>Name</span>
-                                    <span>Position</span>
-                                    <span>OVR</span>
-                                    <span>Year</span>
-                                    <span>Jersey #</span>
-                                    <span>Dev Trait</span>
-                                    <span className="text-right">Remove</span>
-                                </div>
+                            <div className="space-y-3 rounded-xl border border-primary/10 bg-background/60 p-3">
+                                <FilterTabs
+                                    tabs={rosterGroupTabs}
+                                    active={selectedGroup}
+                                    onChange={(group) => {
+                                        setSelectedGroup(group)
+                                        setSelectedPosition(recruitPositionGroups[group][0] ?? '')
+                                    }}
+                                />
 
-                                {rosterEntries.map((entry, index) => (
-                                    <div
-                                        key={entry.id}
-                                        className="rounded-xl border border-primary/15 bg-background/70 p-3 sm:grid sm:grid-cols-[minmax(0,2fr)_110px_80px_120px_90px_130px_44px] sm:items-end sm:gap-2 sm:rounded-none sm:border-x-0 sm:border-b-0 sm:border-t sm:bg-transparent sm:px-3 sm:py-3"
-                                    >
-                                        <div className="mb-3 flex items-center justify-between sm:hidden">
-                                            <p className="text-sm font-semibold text-text">Player {index + 1}</p>
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="sm"
-                                                className="h-8 w-8 px-0 text-text/70"
-                                                onClick={() => removeRosterEntry(entry.id)}
-                                                aria-label={`Remove player row ${index + 1}`}
-                                            >
-                                                ×
-                                            </Button>
-                                        </div>
+                                <Select
+                                    value={selectedPosition}
+                                    onChange={(event) => setSelectedPosition(event.target.value)}
+                                    className="h-9 text-sm"
+                                    aria-label="Select roster position"
+                                >
+                                    {positionOptions.map((option) => (
+                                        <option key={option.position} value={option.position}>
+                                            {option.position} ({option.count} {option.count === 1 ? 'player' : 'players'})
+                                        </option>
+                                    ))}
+                                </Select>
+                            </div>
 
-                                        <div className="grid gap-3 sm:contents">
-                                            <div className="space-y-1">
-                                                <Label htmlFor={`player-name-${entry.id}`} className="text-xs sm:hidden">Name *</Label>
-                                                <Input
-                                                    id={`player-name-${entry.id}`}
-                                                    value={entry.name}
-                                                    onChange={(event) => updateRosterEntry(entry.id, 'name', event.target.value)}
-                                                    placeholder="Player name"
-                                                    className="h-8 text-sm"
-                                                />
-                                            </div>
-
-                                            <div className="space-y-1">
-                                                <Label htmlFor={`player-position-${entry.id}`} className="text-xs sm:hidden">Position *</Label>
-                                                <Select
-                                                    id={`player-position-${entry.id}`}
-                                                    value={entry.position}
-                                                    onChange={(event) => updateRosterEntry(entry.id, 'position', event.target.value)}
-                                                    className="h-8 text-sm"
-                                                >
-                                                    <option value="">Select</option>
-                                                    <PositionOptions />
-                                                </Select>
-                                            </div>
-
-                                            <div className="space-y-1">
-                                                <Label htmlFor={`player-ovr-${entry.id}`} className="text-xs sm:hidden">OVR</Label>
-                                                <Input
-                                                    id={`player-ovr-${entry.id}`}
-                                                    type="number"
-                                                    min={0}
-                                                    max={99}
-                                                    value={entry.rating}
-                                                    onChange={(event) => updateRosterEntry(entry.id, 'rating', event.target.value)}
-                                                    className="h-8 text-sm"
-                                                    placeholder="0-99"
-                                                />
-                                            </div>
-
-                                            <div className="space-y-1">
-                                                <Label htmlFor={`player-year-${entry.id}`} className="text-xs sm:hidden">Year</Label>
-                                                <Select
-                                                    id={`player-year-${entry.id}`}
-                                                    value={entry.year}
-                                                    onChange={(event) => updateRosterEntry(entry.id, 'year', event.target.value)}
-                                                    className="h-8 text-sm"
-                                                >
-                                                    <option value="">Select</option>
-                                                    {ROSTER_YEAR_ORDER.filter((year) => VALID_ROSTER_YEARS.has(year)).map((year) => (
-                                                        <option key={year} value={year}>{year}</option>
-                                                    ))}
-                                                </Select>
-                                            </div>
-
-                                            <div className="space-y-1">
-                                                <Label htmlFor={`player-jersey-${entry.id}`} className="text-xs sm:hidden">Jersey #</Label>
-                                                <Input
-                                                    id={`player-jersey-${entry.id}`}
-                                                    type="number"
-                                                    min={0}
-                                                    max={99}
-                                                    value={entry.jerseyNumber}
-                                                    onChange={(event) => updateRosterEntry(entry.id, 'jerseyNumber', event.target.value)}
-                                                    className="h-8 text-sm"
-                                                    placeholder="#"
-                                                />
-                                            </div>
-
-                                            <div className="space-y-1">
-                                                <Label htmlFor={`player-dev-${entry.id}`} className="text-xs sm:hidden">Dev Trait</Label>
-                                                <Select
-                                                    id={`player-dev-${entry.id}`}
-                                                    value={entry.devTrait}
-                                                    onChange={(event) => updateRosterEntry(entry.id, 'devTrait', event.target.value)}
-                                                    className="h-8 text-sm"
-                                                >
-                                                    {ROSTER_DEV_TRAITS.map((trait) => (
-                                                        <option key={trait} value={trait}>{trait}</option>
-                                                    ))}
-                                                </Select>
-                                            </div>
-
-                                            <div className="hidden justify-end sm:flex">
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-8 w-8 px-0 text-text/70"
-                                                    onClick={() => removeRosterEntry(entry.id)}
-                                                    aria-label={`Remove player row ${index + 1}`}
-                                                >
-                                                    ×
-                                                </Button>
-                                            </div>
-                                        </div>
+                            <div className="grid gap-3 px-3 py-3 md:grid-cols-2 xl:grid-cols-3">
+                                {selectedPositionEntries.length === 0 ? (
+                                    <div className="rounded-xl border border-dashed border-primary/20 bg-background/40 px-4 py-10 text-center text-sm text-text/60 md:col-span-2 xl:col-span-3">
+                                        No {selectedPosition || 'selected'} players yet. Add one manually or import your school roster.
                                     </div>
-                                ))}
+                                ) : (
+                                    selectedPositionEntries.map((entry) => {
+                                        const details = [
+                                            entry.position,
+                                            entry.year || '—',
+                                            entry.jerseyNumber ? `#${entry.jerseyNumber}` : null,
+                                        ].filter(Boolean).join(' • ')
+
+                                        return (
+                                            <div key={entry.id} className="rounded-xl border border-primary/10 bg-background/70 p-3">
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="min-w-0">
+                                                        <p className="truncate text-sm font-semibold text-text">{entry.name}</p>
+                                                        <p className="text-[10px] text-text/55">{details}</p>
+                                                    </div>
+                                                    <div className="flex items-start gap-2">
+                                                        <div className="shrink-0 text-right">
+                                                            <p className="text-sm font-bold text-text">{entry.rating || '—'}</p>
+                                                            <span className={`inline-flex rounded-full px-2 py-1 text-[10px] font-semibold ${getTraitClasses(entry.devTrait)}`}>
+                                                                {entry.devTrait || 'Normal'}
+                                                            </span>
+                                                        </div>
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="h-7 w-7 px-0 text-text/60"
+                                                            onClick={() => removeRosterEntry(entry.id)}
+                                                            aria-label={`Remove ${entry.name}`}
+                                                        >
+                                                            ×
+                                                        </Button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                                                    <div className="space-y-1">
+                                                        <Label htmlFor={`player-ovr-${entry.id}`} className="text-xs">OVR</Label>
+                                                        <Input
+                                                            id={`player-ovr-${entry.id}`}
+                                                            type="number"
+                                                            min={0}
+                                                            max={99}
+                                                            value={entry.rating}
+                                                            onChange={(event) => updateRosterEntry(entry.id, 'rating', clampNumberString(event.target.value, 0, 99))}
+                                                            className="h-9 text-sm"
+                                                            placeholder="0-99"
+                                                        />
+                                                    </div>
+
+                                                    <div className="space-y-1">
+                                                        <Label htmlFor={`player-dev-${entry.id}`} className="text-xs">Dev Trait</Label>
+                                                        <Select
+                                                            id={`player-dev-${entry.id}`}
+                                                            value={entry.devTrait}
+                                                            onChange={(event) => updateRosterEntry(entry.id, 'devTrait', event.target.value)}
+                                                            className="h-9 text-sm"
+                                                        >
+                                                            {ROSTER_DEV_TRAITS.map((trait) => (
+                                                                <option key={trait} value={trait}>{trait}</option>
+                                                            ))}
+                                                        </Select>
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-3 flex items-center justify-between gap-3">
+                                                    <div className="flex flex-wrap items-center gap-2 text-[10px] text-text/50">
+                                                        {entry.height && <span>HT {entry.height}</span>}
+                                                        {entry.weight && <span>WT {entry.weight}</span>}
+                                                        {entry.isRedshirted && (
+                                                            <span className="inline-flex rounded-full bg-primary/5 px-2 py-1 font-semibold text-text/65">
+                                                                Redshirt
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="text-xs font-semibold"
+                                                        onClick={() => openEditPlayerModal(entry)}
+                                                    >
+                                                        Edit
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                )}
                             </div>
                         </div>
                     )}
@@ -858,6 +1020,163 @@ export function CreateDynastyForm() {
                             </div>
                         </div>
                     )}
+
+                    <Modal
+                        isOpen={isPlayerModalOpen}
+                        onClose={closePlayerModal}
+                        title={editingPlayerId ? `Edit ${playerDraft.name || 'Player'}` : 'Add Player'}
+                        maxWidth="max-w-2xl"
+                    >
+                        <div
+                            className="space-y-4"
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault()
+                                }
+                            }}
+                        >
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <div className="space-y-2 sm:col-span-2">
+                                    <Label htmlFor="roster-player-name">Name</Label>
+                                    <Input
+                                        id="roster-player-name"
+                                        value={playerDraft.name}
+                                        onChange={(event) => updatePlayerDraft('name', event.target.value)}
+                                        placeholder="Player name"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="roster-player-position">Position</Label>
+                                    <Select
+                                        id="roster-player-position"
+                                        value={playerDraft.position}
+                                        onChange={(event) => updatePlayerDraft('position', event.target.value)}
+                                    >
+                                        <option value="">Select position</option>
+                                        <PositionOptions />
+                                        <option value="ATH">ATH</option>
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="roster-player-year">Year</Label>
+                                    <Select
+                                        id="roster-player-year"
+                                        value={playerDraft.year}
+                                        onChange={(event) => {
+                                            const year = event.target.value
+                                            updatePlayerDraft('year', year)
+                                            updatePlayerDraft('isRedshirted', year.includes('(RS)'))
+                                        }}
+                                    >
+                                        <option value="">Select year</option>
+                                        {ROSTER_YEAR_ORDER.filter((year) => VALID_ROSTER_YEARS.has(year)).map((year) => (
+                                            <option key={year} value={year}>{year}</option>
+                                        ))}
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="roster-player-height">Height</Label>
+                                    <Input
+                                        id="roster-player-height"
+                                        value={playerDraft.height}
+                                        onChange={(event) => updatePlayerDraft('height', event.target.value)}
+                                        placeholder={`6'2"`}
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="roster-player-weight">Weight</Label>
+                                    <Input
+                                        id="roster-player-weight"
+                                        type="number"
+                                        min={100}
+                                        max={400}
+                                        value={playerDraft.weight}
+                                        onChange={(event) => updatePlayerDraft('weight', event.target.value)}
+                                        placeholder="lbs"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="roster-player-jersey">Jersey Number</Label>
+                                    <Input
+                                        id="roster-player-jersey"
+                                        type="number"
+                                        min={0}
+                                        max={99}
+                                        value={playerDraft.jerseyNumber}
+                                        onChange={(event) => updatePlayerDraft('jerseyNumber', clampNumberString(event.target.value, 0, 99))}
+                                        placeholder="0-99"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="roster-player-rating">OVR</Label>
+                                    <Input
+                                        id="roster-player-rating"
+                                        type="number"
+                                        min={0}
+                                        max={99}
+                                        value={playerDraft.rating}
+                                        onChange={(event) => updatePlayerDraft('rating', clampNumberString(event.target.value, 0, 99))}
+                                        placeholder="0-99"
+                                    />
+                                </div>
+
+                                <div className="space-y-2 sm:col-span-2">
+                                    <Label htmlFor="roster-player-dev-trait">Dev Trait</Label>
+                                    <Select
+                                        id="roster-player-dev-trait"
+                                        value={playerDraft.devTrait}
+                                        onChange={(event) => updatePlayerDraft('devTrait', event.target.value)}
+                                    >
+                                        {ROSTER_DEV_TRAITS.map((trait) => (
+                                            <option key={trait} value={trait}>{trait}</option>
+                                        ))}
+                                    </Select>
+                                </div>
+
+                                <div className="sm:col-span-2">
+                                    <div className="flex items-center justify-between rounded-lg border border-primary/10 bg-background/60 px-3 py-2">
+                                        <div>
+                                            <Label htmlFor="roster-player-redshirt" className="text-sm">Redshirt</Label>
+                                            <p className="text-xs text-text/55">Toggle whether this player starts the dynasty as redshirted.</p>
+                                        </div>
+                                        <input
+                                            id="roster-player-redshirt"
+                                            type="checkbox"
+                                            checked={playerDraft.isRedshirted}
+                                            onChange={(event) => {
+                                                const isRedshirted = event.target.checked
+                                                updatePlayerDraft('isRedshirted', isRedshirted)
+                                                updatePlayerDraft('year', syncRedshirtYear(playerDraft.year, isRedshirted))
+                                            }}
+                                            className="h-4 w-4 rounded border-primary/20 text-primary focus:ring-primary"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    type="button"
+                                    variant="save"
+                                    size="sm"
+                                    onClick={savePlayerDraft}
+                                    disabled={!playerDraft.name.trim() || !playerDraft.position}
+                                    className="text-xs font-semibold"
+                                >
+                                    {editingPlayerId ? 'Save Changes' : 'Add Player'}
+                                </Button>
+                                <Button type="button" variant="cancel" size="sm" onClick={closePlayerModal} className="text-xs">
+                                    Cancel
+                                </Button>
+                            </div>
+                        </div>
+                    </Modal>
 
                     {error && <p className="text-sm text-red-500">{error}</p>}
                 </CardContent>

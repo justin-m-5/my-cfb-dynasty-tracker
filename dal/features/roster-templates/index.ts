@@ -45,7 +45,7 @@ export const RosterTemplateService = {
         const { data, error } = await supabase
             .from('roster_templates')
             .select('*')
-            .eq('school', school)
+            .ilike('school', school)
             .order('position')
             .order('name')
 
