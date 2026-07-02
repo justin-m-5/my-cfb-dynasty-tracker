@@ -109,10 +109,10 @@ function parseRating(value: string) {
 
 function getTraitClasses(devTrait: string | null) {
     if (!devTrait || devTrait === 'Normal') {
-        return 'bg-primary/5 text-text/55'
+        return 'bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300'
     }
 
-    return devTraitColors[devTrait as DevTrait] ?? 'bg-primary/10 text-text/70'
+    return devTraitColors[devTrait as DevTrait] ?? 'bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300'
 }
 
 function compareDepthChartItems(a: DepthChartItem, b: DepthChartItem) {
