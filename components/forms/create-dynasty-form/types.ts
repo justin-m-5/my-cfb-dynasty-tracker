@@ -1,3 +1,5 @@
+// components/forms/create-dynasty-form/types.ts
+
 import type { recruitPositionGroups } from '@/lib/config/player-config'
 
 export type WizardStep = 0 | 1 | 2

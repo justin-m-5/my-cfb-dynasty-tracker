@@ -1,3 +1,5 @@
+// components/forms/create-dynasty-form/dynasty-info-step.tsx
+
 import Image from 'next/image'
 
 import { Input } from '@/components/ui/form/input'
