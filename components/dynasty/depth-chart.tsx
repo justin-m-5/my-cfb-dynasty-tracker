@@ -53,10 +53,11 @@ interface DepthChartProps {
 }
 
 const positionGroupKeys = Object.keys(recruitPositionGroups) as PositionGroupKey[]
-const groupTabs = positionGroupKeys.map((group) => ({
+const allGroupTabs = positionGroupKeys.map((group) => ({
     key: group,
     label: group === 'Other' ? 'ATH' : group,
 }))
+const rosterGroupTabs = allGroupTabs.filter((tab) => tab.key !== 'Other')
 
 const statusClasses: Record<PlayerStatus, string> = {
     Returning: 'bg-primary/10 text-text/70',
@@ -446,7 +447,7 @@ export function DepthChart({
 
                 <div className="mt-3 space-y-2">
                     <FilterTabs
-                        tabs={groupTabs}
+                        tabs={mode === 'roster' ? rosterGroupTabs : allGroupTabs}
                         active={selectedGroup}
                         onChange={(group) => {
                             setSelectedGroupPreference(group)
