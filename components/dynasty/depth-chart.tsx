@@ -1,19 +1,23 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { Shirt } from 'lucide-react'
 
-import type { DraftedPlayer } from '@/dal/features/drafted-players'
-import { PlayerService, type RosterPlayer } from '@/dal/features/players'
-import type { Recruit } from '@/dal/features/recruits'
-import type { Transfer } from '@/dal/features/transfers'
 import { Button } from '@/components/ui/display/button'
 import { FilterTabs } from '@/components/ui/layout/filter-tabs'
 import { Input } from '@/components/ui/form/input'
 import { PlayerAvatar } from '@/components/ui/display/player-avatar'
 import { Select } from '@/components/ui/form/select'
-import { devTraitColors, positions, recruitPositionGroups, type DevTrait } from '@/lib/config/player-config'
+import { devTraitColors, positions, recruitPositionGroups, type DevTrait, type Position } from '@/lib/config/player-config'
+import { HONOR_CATEGORIES, type HonorKey } from '@/lib/config/honors-config'
+import { PlayerService, type RosterPlayer } from '@/dal/features/players'
+import type { DraftedPlayer } from '@/dal/features/drafted-players'
+import type { Recruit } from '@/dal/features/recruits'
+import type { Transfer } from '@/dal/features/transfers'
 
 type PositionGroupKey = keyof typeof recruitPositionGroups
+
+export type DepthChartMode = 'roster' | 'advance-season'
 
 type PlayerStatus = 'Returning' | 'Graduating' | 'Transfer Out' | 'Draft' | 'TR In' | 'FR In'
 
@@ -21,7 +25,7 @@ type DepthChartItem = {
     key: string
     kind: 'roster' | 'transfer' | 'recruit'
     name: string
-    position: string
+    position: Position
     year: string
     rating: number | null
     devTrait: string | null
@@ -35,12 +39,13 @@ type DepthChartItem = {
 
 interface DepthChartProps {
     roster: RosterPlayer[]
-    editable?: boolean
+    mode: DepthChartMode
     transfers?: Transfer[]
     recruits?: Recruit[]
     draftedPlayers?: DraftedPlayer[]
     onRosterUpdate?: (updated: RosterPlayer[]) => void
     onTransferOut?: (player: RosterPlayer) => void
+    onCut?: (player: RosterPlayer) => void
     onPlayerClick?: (player: RosterPlayer) => void
     schoolName?: string
 }
@@ -59,6 +64,30 @@ const statusClasses: Record<PlayerStatus, string> = {
     'TR In': 'bg-green-500/15 text-green-700',
     'FR In': 'bg-green-500/15 text-green-700',
 }
+
+const allAmericanKeys = HONOR_CATEGORIES
+    .filter((category) => ['all-american-1st', 'all-american-2nd', 'freshman-all-american'].includes(category.key))
+    .map((category) => category.key) as HonorKey[]
+
+const allConferenceKeys = HONOR_CATEGORIES
+    .filter((category) => ['all-conference-1st', 'all-conference-2nd', 'freshman-all-conference'].includes(category.key))
+    .map((category) => category.key) as HonorKey[]
+
+const honorLabelMap = Object.fromEntries(HONOR_CATEGORIES.map((category) => [category.key, category.label])) as Record<HonorKey, string>
+
+const allAmericanOptions: Array<{ value: '' | HonorKey, label: string }> = [
+    { value: '', label: 'None' },
+    { value: 'all-american-1st', label: '1st Team' },
+    { value: 'all-american-2nd', label: '2nd Team' },
+    { value: 'freshman-all-american', label: 'Freshman' },
+]
+
+const allConferenceOptions: Array<{ value: '' | HonorKey, label: string }> = [
+    { value: '', label: 'None' },
+    { value: 'all-conference-1st', label: '1st Team' },
+    { value: 'all-conference-2nd', label: '2nd Team' },
+    { value: 'freshman-all-conference', label: 'Freshman' },
+]
 
 function normalizeName(value: string) {
     return value.trim().toLowerCase()
@@ -100,19 +129,34 @@ function compareDepthChartItems(a: DepthChartItem, b: DepthChartItem) {
     return a.name.localeCompare(b.name)
 }
 
+function getSelectedHonor(honors: string[], keys: HonorKey[]) {
+    return keys.find((key) => honors.includes(key)) ?? ''
+}
+
+function buildUpdatedHonors(honors: string[], keysToReplace: HonorKey[], nextValue: '' | HonorKey) {
+    const nextHonors = honors.filter((honor) => !keysToReplace.includes(honor as HonorKey))
+
+    if (nextValue) {
+        nextHonors.push(nextValue)
+    }
+
+    return nextHonors
+}
+
 export function DepthChart({
     roster,
-    editable = false,
+    mode,
     transfers = [],
     recruits = [],
     draftedPlayers = [],
     onRosterUpdate,
     onTransferOut,
+    onCut,
     onPlayerClick,
     schoolName,
 }: DepthChartProps) {
     const [selectedGroupPreference, setSelectedGroupPreference] = useState<PositionGroupKey>(positionGroupKeys[0] ?? 'Offense')
-    const [selectedPositionPreference, setSelectedPositionPreference] = useState<string>(recruitPositionGroups[positionGroupKeys[0] ?? 'Offense'][0])
+    const [selectedPositionPreference, setSelectedPositionPreference] = useState<Position>(recruitPositionGroups[positionGroupKeys[0] ?? 'Offense'][0] as Position)
     const [ratingDrafts, setRatingDrafts] = useState<Record<string, string>>({})
     const [busyLabels, setBusyLabels] = useState<Record<string, string>>({})
 
@@ -142,7 +186,7 @@ export function DepthChart({
                 key: `roster-${player.id}`,
                 kind: 'roster' as const,
                 name: player.name,
-                position: player.position,
+                position: player.position as Position,
                 year: player.season.year ?? '—',
                 rating: player.season.rating,
                 devTrait: player.season.dev_trait,
@@ -160,7 +204,7 @@ export function DepthChart({
                 key: `transfer-${transfer.id}`,
                 kind: 'transfer' as const,
                 name: transfer.player_name,
-                position: transfer.position,
+                position: transfer.position as Position,
                 year: 'TR',
                 rating: null,
                 devTrait: transfer.dev_trait,
@@ -176,7 +220,7 @@ export function DepthChart({
             key: `recruit-${recruit.id}`,
             kind: 'recruit' as const,
             name: recruit.name,
-            position: recruit.position,
+            position: recruit.position as Position,
             year: 'FR',
             rating: null,
             devTrait: recruit.dev_trait,
@@ -214,13 +258,13 @@ export function DepthChart({
 
     const positionOptions = useMemo(() => {
         return recruitPositionGroups[selectedGroup].map((position) => ({
-            position,
+            position: position as Position,
             count: positionCounts[position] ?? 0,
         }))
     }, [positionCounts, selectedGroup])
 
     const selectedPosition = useMemo(() => {
-        const groupPositions = recruitPositionGroups[selectedGroup]
+        const groupPositions = recruitPositionGroups[selectedGroup] as readonly Position[]
         if (groupPositions.includes(selectedPositionPreference)) {
             const selectedHasPlayers = (positionCounts[selectedPositionPreference] ?? 0) > 0
             if (selectedHasPlayers || !items.length) {
@@ -246,7 +290,7 @@ export function DepthChart({
         [items]
     )
     const projectedRosterCount = returningCount + incomingCount
-    const hasProjectionContext = editable || transfers.length > 0 || recruits.length > 0 || draftedPlayers.length > 0
+    const hasProjectionContext = mode === 'advance-season' || transfers.length > 0 || recruits.length > 0 || draftedPlayers.length > 0
     const displayedRosterCount = hasProjectionContext ? projectedRosterCount : roster.length
     const overCapBy = displayedRosterCount - 85
 
@@ -278,19 +322,26 @@ export function DepthChart({
         onRosterUpdate?.(updated)
     }
 
-    const handlePositionChange = async (player: RosterPlayer, nextPosition: string) => {
+    const updateRosterPlayer = (playerId: string, updater: (player: RosterPlayer) => RosterPlayer) => {
+        pushRosterUpdate(
+            roster.map((currentPlayer) => (
+                currentPlayer.id === playerId
+                    ? updater(currentPlayer)
+                    : currentPlayer
+            ))
+        )
+    }
+
+    const handlePositionChange = async (player: RosterPlayer, nextPosition: Position) => {
         if (player.position === nextPosition || busyLabels[player.id]) return
 
         updateBusyLabel(player.id, 'Saving...')
         try {
             await PlayerService.updatePlayer(player.id, { position: nextPosition })
-            pushRosterUpdate(
-                roster.map((currentPlayer) => (
-                    currentPlayer.id === player.id
-                        ? { ...currentPlayer, position: nextPosition }
-                        : currentPlayer
-                ))
-            )
+            updateRosterPlayer(player.id, (currentPlayer) => ({
+                ...currentPlayer,
+                position: nextPosition,
+            }))
         } catch (err) {
             console.error('Failed to update player position:', err)
         } finally {
@@ -315,13 +366,10 @@ export function DepthChart({
         updateBusyLabel(player.id, 'Saving...')
         try {
             await PlayerService.updatePlayerSeason(player.season.id, { rating: nextRating })
-            pushRosterUpdate(
-                roster.map((currentPlayer) => (
-                    currentPlayer.id === player.id
-                        ? { ...currentPlayer, season: { ...currentPlayer.season, rating: nextRating } }
-                        : currentPlayer
-                ))
-            )
+            updateRosterPlayer(player.id, (currentPlayer) => ({
+                ...currentPlayer,
+                season: { ...currentPlayer.season, rating: nextRating },
+            }))
         } catch (err) {
             console.error('Failed to update player rating:', err)
         } finally {
@@ -330,17 +378,44 @@ export function DepthChart({
         }
     }
 
-    const handleCutPlayer = async (player: RosterPlayer) => {
+    const handleHonorChange = async (player: RosterPlayer, honorType: 'all-american' | 'all-conference', nextValue: '' | HonorKey) => {
         if (busyLabels[player.id]) return
-        if (!window.confirm(`Cut ${player.name} from the roster?`)) return
 
-        updateBusyLabel(player.id, 'Cutting...')
+        const keysToReplace = honorType === 'all-american' ? allAmericanKeys : allConferenceKeys
+        const currentSelection = getSelectedHonor(player.season.honors ?? [], keysToReplace)
+
+        if (currentSelection === nextValue) return
+
+        const nextHonors = buildUpdatedHonors(player.season.honors ?? [], keysToReplace, nextValue)
+
+        updateBusyLabel(player.id, 'Saving...')
         try {
-            await PlayerService.deletePlayer(player.id)
-            pushRosterUpdate(roster.filter((currentPlayer) => currentPlayer.id !== player.id))
-            clearRatingDraft(player.id)
+            await PlayerService.updatePlayerSeason(player.season.id, { honors: nextHonors })
+            updateRosterPlayer(player.id, (currentPlayer) => ({
+                ...currentPlayer,
+                season: { ...currentPlayer.season, honors: nextHonors },
+            }))
         } catch (err) {
-            console.error('Failed to cut player:', err)
+            console.error('Failed to update player honors:', err)
+        } finally {
+            updateBusyLabel(player.id, null)
+        }
+    }
+
+    const handleRedshirtToggle = async (player: RosterPlayer) => {
+        if (busyLabels[player.id]) return
+
+        const nextValue = !player.season.is_redshirted
+
+        updateBusyLabel(player.id, 'Saving...')
+        try {
+            await PlayerService.updatePlayerSeason(player.season.id, { is_redshirted: nextValue })
+            updateRosterPlayer(player.id, (currentPlayer) => ({
+                ...currentPlayer,
+                season: { ...currentPlayer.season, is_redshirted: nextValue },
+            }))
+        } catch (err) {
+            console.error('Failed to toggle redshirt:', err)
         } finally {
             updateBusyLabel(player.id, null)
         }
@@ -373,14 +448,14 @@ export function DepthChart({
                         active={selectedGroup}
                         onChange={(group) => {
                             setSelectedGroupPreference(group)
-                            setSelectedPositionPreference(recruitPositionGroups[group][0])
+                            setSelectedPositionPreference(recruitPositionGroups[group][0] as Position)
                         }}
                     />
 
                     <Select
                         value={selectedPosition}
-                        onChange={(event) => setSelectedPositionPreference(event.target.value)}
-                        className="h-9 text-base sm:text-sm"
+                        onChange={(event) => setSelectedPositionPreference(event.target.value as Position)}
+                        className="h-9 text-sm"
                         aria-label="Select depth chart position"
                     >
                         {positionOptions.map((option) => (
@@ -390,9 +465,9 @@ export function DepthChart({
                         ))}
                     </Select>
 
-                    {editable && (
+                    {mode === 'advance-season' && (
                         <p className="text-[10px] text-text/45">
-                            Position changes save instantly. OVR changes save when the field loses focus.
+                            Redshirts, honors, position changes, and OVR edits save from this view.
                         </p>
                     )}
                 </div>
@@ -401,19 +476,38 @@ export function DepthChart({
             <div className="grid gap-3 px-3 py-3 md:grid-cols-2 xl:grid-cols-3">
                 {selectedItems.length > 0 ? selectedItems.map((item) => {
                     const rosterPlayer = item.player
-                    const isEditablePlayer = editable && item.kind === 'roster' && rosterPlayer !== null && item.status === 'Returning'
+                    const isRosterPlayer = item.kind === 'roster' && rosterPlayer !== null
+                    const canEditPlayer = mode === 'advance-season' && isRosterPlayer && item.status === 'Returning'
+                    const canToggleRedshirt = isRosterPlayer
+                    const isClickable = mode === 'roster' && isRosterPlayer && Boolean(onPlayerClick)
                     const busyLabel = rosterPlayer ? busyLabels[rosterPlayer.id] : null
                     const ratingValue = rosterPlayer
                         ? (ratingDrafts[rosterPlayer.id] ?? (rosterPlayer.season.rating?.toString() ?? ''))
                         : ''
-                    const showStatusBadge = editable || item.status !== 'Returning'
-                    const isClickable = !editable && item.kind === 'roster' && rosterPlayer !== null && onPlayerClick
+                    const showStatusBadge = mode === 'advance-season' || item.status !== 'Returning'
                     const details = [item.position, item.year, item.jerseyNumber !== null ? `#${item.jerseyNumber}` : null]
                         .filter(Boolean)
                         .join(' • ')
-                    const cardClasses = `rounded-xl border border-primary/10 bg-background/70 p-3 text-left transition-colors ${isClickable ? 'cursor-pointer hover:border-primary/25 hover:bg-primary/5' : ''}`
+                    const allAmericanValue = rosterPlayer ? getSelectedHonor(rosterPlayer.season.honors ?? [], allAmericanKeys) : ''
+                    const allConferenceValue = rosterPlayer ? getSelectedHonor(rosterPlayer.season.honors ?? [], allConferenceKeys) : ''
+                    const cardClasses = `rounded-xl border border-primary/10 bg-background/70 p-3 text-left ${isClickable ? 'transition-colors hover:border-primary/25 hover:bg-primary/5' : ''}`
 
-                    const content = (
+                    const redshirtButton = canToggleRedshirt && rosterPlayer ? (
+                        <button
+                            type="button"
+                            onClick={() => handleRedshirtToggle(rosterPlayer)}
+                            disabled={Boolean(busyLabel)}
+                            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-primary/15 px-2.5 text-[11px] font-medium text-text/70 transition-colors hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-50"
+                            title={rosterPlayer.season.is_redshirted ? 'Remove redshirt' : 'Redshirt player'}
+                            aria-label={rosterPlayer.season.is_redshirted ? `Remove redshirt for ${item.name}` : `Redshirt ${item.name}`}
+                            aria-pressed={rosterPlayer.season.is_redshirted}
+                        >
+                            <Shirt className={`h-3.5 w-3.5 ${rosterPlayer.season.is_redshirted ? 'text-red-500' : 'text-text/35'}`} />
+                            <span>Redshirt</span>
+                        </button>
+                    ) : null
+
+                    const body = (
                         <>
                             <div className="flex items-start justify-between gap-3">
                                 <div className="flex min-w-0 items-center gap-3">
@@ -441,93 +535,151 @@ export function DepthChart({
                                     </span>
                                 )}
                                 {busyLabel && <span className="text-[10px] text-text/45">{busyLabel}</span>}
+                                {mode === 'roster' && rosterPlayer?.season.is_redshirted && !redshirtButton && (
+                                    <Shirt className="h-3.5 w-3.5 text-red-500" />
+                                )}
                             </div>
+                        </>
+                    )
 
-                            {isEditablePlayer && rosterPlayer && (
-                                <div className="mt-3 grid gap-2 sm:grid-cols-[92px_minmax(0,1fr)]">
-                                    <div>
-                                        <p className="mb-1 text-[10px] text-text/45">OVR</p>
-                                        <Input
-                                            type="number"
-                                            min={0}
-                                            max={99}
-                                            value={ratingValue}
-                                            onChange={(event) => setRatingDrafts((current) => ({
-                                                ...current,
-                                                [rosterPlayer.id]: event.target.value,
-                                            }))}
-                                            onBlur={(event) => handleRatingCommit(rosterPlayer, event.target.value)}
-                                            onKeyDown={(event) => {
-                                                if (event.key === 'Enter') {
-                                                    event.currentTarget.blur()
-                                                }
-                                            }}
-                                            disabled={Boolean(busyLabel)}
-                                            className="h-8 text-base sm:text-xs"
-                                            aria-label={`Change overall rating for ${item.name}`}
-                                        />
+                    return (
+                        <div key={item.key} className={cardClasses}>
+                            {isClickable && rosterPlayer ? (
+                                <button
+                                    type="button"
+                                    onClick={() => onPlayerClick?.(rosterPlayer)}
+                                    disabled={Boolean(busyLabel)}
+                                    className="w-full text-left"
+                                >
+                                    {body}
+                                </button>
+                            ) : (
+                                body
+                            )}
+
+                            {mode === 'roster' && redshirtButton && (
+                                <div className="mt-3 flex items-center justify-between gap-2">
+                                    {redshirtButton}
+                                    {rosterPlayer?.season.is_redshirted && (
+                                        <span className="text-[10px] text-red-500">Redshirted</span>
+                                    )}
+                                </div>
+                            )}
+
+                            {mode === 'advance-season' && canEditPlayer && rosterPlayer && (
+                                <>
+                                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                                        <div className="grid gap-1">
+                                            <label className="text-[10px] text-text/45">AA:</label>
+                                            <Select
+                                                value={allAmericanValue}
+                                                onChange={(event) => handleHonorChange(rosterPlayer, 'all-american', event.target.value as '' | HonorKey)}
+                                                disabled={Boolean(busyLabel)}
+                                                className="h-7 px-2 text-[11px]"
+                                                title={allAmericanValue ? honorLabelMap[allAmericanValue as HonorKey] : 'None'}
+                                                aria-label={`All-American honors for ${item.name}`}
+                                            >
+                                                {allAmericanOptions.map((option) => (
+                                                    <option key={option.value || 'none'} value={option.value}>
+                                                        {option.label}
+                                                    </option>
+                                                ))}
+                                            </Select>
+                                        </div>
+                                        <div className="grid gap-1">
+                                            <label className="text-[10px] text-text/45">AC:</label>
+                                            <Select
+                                                value={allConferenceValue}
+                                                onChange={(event) => handleHonorChange(rosterPlayer, 'all-conference', event.target.value as '' | HonorKey)}
+                                                disabled={Boolean(busyLabel)}
+                                                className="h-7 px-2 text-[11px]"
+                                                title={allConferenceValue ? honorLabelMap[allConferenceValue as HonorKey] : 'None'}
+                                                aria-label={`All-Conference honors for ${item.name}`}
+                                            >
+                                                {allConferenceOptions.map((option) => (
+                                                    <option key={option.value || 'none'} value={option.value}>
+                                                        {option.label}
+                                                    </option>
+                                                ))}
+                                            </Select>
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <p className="mb-1 text-[10px] text-text/45">Position</p>
-                                        <Select
-                                            value={rosterPlayer.position}
-                                            onChange={(event) => handlePositionChange(rosterPlayer, event.target.value)}
-                                            disabled={Boolean(busyLabel)}
-                                            className="h-8 text-base sm:text-xs"
-                                            aria-label={`Change position for ${item.name}`}
-                                        >
-                                            {positions.map((position) => (
-                                                <option key={position} value={position}>
-                                                    {position}
-                                                </option>
-                                            ))}
-                                        </Select>
-                                    </div>
-
-                                    <div className="sm:col-span-2 flex flex-wrap items-center gap-2">
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => onTransferOut?.(rosterPlayer)}
-                                            disabled={Boolean(busyLabel) || !onTransferOut}
-                                            className="h-8 px-3 text-[10px] font-semibold"
-                                        >
-                                            Transfer
-                                        </Button>
+                                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                                        {redshirtButton}
+                                        {item.status !== 'TR In' && (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => onTransferOut?.(rosterPlayer)}
+                                                disabled={Boolean(busyLabel) || !onTransferOut}
+                                                className="h-8 px-3 text-[10px] font-semibold"
+                                            >
+                                                Transfer Out
+                                            </Button>
+                                        )}
                                         <Button
                                             type="button"
                                             variant="delete"
                                             size="sm"
-                                            onClick={() => handleCutPlayer(rosterPlayer)}
-                                            disabled={Boolean(busyLabel)}
+                                            onClick={() => onCut?.(rosterPlayer)}
+                                            disabled={Boolean(busyLabel) || !onCut}
                                             className="h-8 px-3 text-[10px] font-semibold"
                                         >
                                             Cut
                                         </Button>
                                     </div>
+
+                                    <div className="mt-3 grid gap-2 sm:grid-cols-[72px_minmax(0,1fr)]">
+                                        <div>
+                                            <p className="mb-1 text-[10px] text-text/45">OVR</p>
+                                            <Input
+                                                type="number"
+                                                min={0}
+                                                max={99}
+                                                value={ratingValue}
+                                                onChange={(event) => setRatingDrafts((current) => ({
+                                                    ...current,
+                                                    [rosterPlayer.id]: event.target.value,
+                                                }))}
+                                                onBlur={(event) => handleRatingCommit(rosterPlayer, event.target.value)}
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter') {
+                                                        event.currentTarget.blur()
+                                                    }
+                                                }}
+                                                disabled={Boolean(busyLabel)}
+                                                className="h-7 px-2 text-[11px]"
+                                                aria-label={`Change overall rating for ${item.name}`}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <p className="mb-1 text-[10px] text-text/45">Position</p>
+                                            <Select
+                                                value={rosterPlayer.position}
+                                                onChange={(event) => handlePositionChange(rosterPlayer, event.target.value as Position)}
+                                                disabled={Boolean(busyLabel)}
+                                                className="h-7 px-2 text-[11px]"
+                                                aria-label={`Change position for ${item.name}`}
+                                            >
+                                                {positions.map((position) => (
+                                                    <option key={position} value={position}>
+                                                        {position}
+                                                    </option>
+                                                ))}
+                                            </Select>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {mode === 'advance-season' && !canEditPlayer && redshirtButton && (
+                                <div className="mt-3 flex items-center gap-2">
+                                    {redshirtButton}
                                 </div>
                             )}
-                        </>
-                    )
-
-                    if (isClickable && rosterPlayer) {
-                        return (
-                            <button
-                                key={item.key}
-                                type="button"
-                                className={cardClasses}
-                                onClick={() => onPlayerClick(rosterPlayer)}
-                            >
-                                {content}
-                            </button>
-                        )
-                    }
-
-                    return (
-                        <div key={item.key} className={cardClasses}>
-                            {content}
                         </div>
                     )
                 }) : (

@@ -22,6 +22,11 @@ interface RosterManagementProps {
     onTransfersUpdate: (updated: Transfer[]) => void
 }
 
+type PendingRosterAction = {
+    player: RosterPlayer
+    type: 'transfer' | 'cut'
+}
+
 export function RosterManagement({
     roster,
     transfers,
@@ -32,7 +37,7 @@ export function RosterManagement({
     onRosterUpdate,
     onTransfersUpdate,
 }: RosterManagementProps) {
-    const [transferModalPlayer, setTransferModalPlayer] = useState<RosterPlayer | null>(null)
+    const [pendingAction, setPendingAction] = useState<PendingRosterAction | null>(null)
     const [saving, setSaving] = useState(false)
 
     const handleTransferSave = async (form: Partial<Transfer>) => {
@@ -52,7 +57,7 @@ export function RosterManagement({
             })
             if (created) {
                 onTransfersUpdate([...transfers, created])
-                setTransferModalPlayer(null)
+                setPendingAction(null)
             }
         } catch (err) {
             console.error('Failed to create transfer:', err)
@@ -65,32 +70,33 @@ export function RosterManagement({
         <>
             <DepthChart
                 roster={roster}
-                editable
+                mode="advance-season"
                 transfers={transfers}
                 recruits={recruits}
                 draftedPlayers={draftedPlayers}
                 onRosterUpdate={onRosterUpdate}
-                onTransferOut={setTransferModalPlayer}
+                onTransferOut={(player) => setPendingAction({ player, type: 'transfer' })}
+                onCut={(player) => setPendingAction({ player, type: 'cut' })}
             />
 
             <Modal
-                isOpen={!!transferModalPlayer}
-                onClose={() => setTransferModalPlayer(null)}
-                title={`Transfer Out: ${transferModalPlayer?.name ?? ''}`}
+                isOpen={!!pendingAction}
+                onClose={() => setPendingAction(null)}
+                title={`${pendingAction?.type === 'cut' ? 'Cut Player' : 'Transfer Out'}: ${pendingAction?.player.name ?? ''}`}
                 maxWidth="max-w-xl"
             >
-                {transferModalPlayer && (
+                {pendingAction && (
                     <TransferForm
                         initial={{
-                            player_name: transferModalPlayer.name,
-                            position: transferModalPlayer.position,
+                            player_name: pendingAction.player.name,
+                            position: pendingAction.player.position,
                             transfer_direction: 'To',
-                            height: transferModalPlayer.height,
-                            weight: transferModalPlayer.weight,
-                            dev_trait: transferModalPlayer.season.dev_trait ?? 'Normal',
+                            height: pendingAction.player.height,
+                            weight: pendingAction.player.weight,
+                            dev_trait: pendingAction.player.season.dev_trait ?? 'Normal',
                         }}
                         onSave={handleTransferSave}
-                        onCancel={() => setTransferModalPlayer(null)}
+                        onCancel={() => setPendingAction(null)}
                         saving={saving}
                         embedded
                     />

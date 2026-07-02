@@ -1,18 +1,15 @@
-// components/dynasty/sections/roster.tsx
-
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 
 import { YearRecordService } from '@/dal/features/year-records'
 import { PlayerService, type RosterPlayer } from '@/dal/features/players'
 import { uploadPlayerImage, deletePlayerImage } from '@/lib/upload-player-image'
 import { Button } from '@/components/ui/display/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/layout/card'
+import { Modal } from '@/components/ui/layout/modal'
+import { DepthChart } from '@/components/dynasty/depth-chart'
 import { PlayerCard } from '@/components/dynasty/player-card'
-import { RosterFilters } from './roster-filters'
-import { RosterList } from './roster-list'
 import { PlayerForm, type PlayerFormData } from '../../../forms/player-form'
 
 interface RosterProps {
@@ -27,8 +24,6 @@ export function Roster({ dynastyId }: RosterProps) {
     const [showForm, setShowForm] = useState(false)
     const [editing, setEditing] = useState<RosterPlayer | null>(null)
     const [selectedPlayer, setSelectedPlayer] = useState<RosterPlayer | null>(null)
-    const [search, setSearch] = useState('')
-    const [posFilter, setPosFilter] = useState('ALL')
     const [schoolColors, setSchoolColors] = useState({
         primary: 'var(--color-primary)',
         secondary: 'var(--color-secondary)',
@@ -58,20 +53,11 @@ export function Roster({ dynastyId }: RosterProps) {
         load()
     }, [dynastyId])
 
-    const filtered = useMemo(() => {
-        return players.filter(p => {
-            const matchSearch = !search || p.name.toLowerCase().includes(search.toLowerCase())
-            const matchPos = posFilter === 'ALL' || p.position === posFilter
-            return matchSearch && matchPos
-        })
-    }, [players, search, posFilter])
-
     const handleSave = async (form: PlayerFormData) => {
         if (!yearRecordId) return
         setSaving(true)
         try {
             if (editing?.id) {
-                // Handle image
                 let avatarUrl = editing.avatar_url
                 if (form.removeImage && editing.avatar_url) {
                     await deletePlayerImage(dynastyId, editing.id, editing.avatar_url)
@@ -81,7 +67,6 @@ export function Roster({ dynastyId }: RosterProps) {
                     avatarUrl = await uploadPlayerImage(form.imageFile, dynastyId, editing.id)
                 }
 
-                // Update identity
                 await PlayerService.updatePlayer(editing.id, {
                     name: form.name,
                     position: form.position,
@@ -89,7 +74,6 @@ export function Roster({ dynastyId }: RosterProps) {
                     weight: form.weight,
                     avatar_url: avatarUrl,
                 })
-                // Update season
                 await PlayerService.updatePlayerSeason(editing.season.id, {
                     year: form.year,
                     rating: form.rating,
@@ -138,7 +122,6 @@ export function Roster({ dynastyId }: RosterProps) {
                     }
                 )
                 if (created) {
-                    // Upload image after player is created (need the ID)
                     if (form.imageFile) {
                         const avatarUrl = await uploadPlayerImage(form.imageFile, dynastyId, created.id)
                         if (avatarUrl) {
@@ -158,39 +141,8 @@ export function Roster({ dynastyId }: RosterProps) {
         }
     }
 
-    const handleDelete = async (id: string) => {
-        try {
-            await PlayerService.deletePlayer(id)
-            setPlayers(prev => prev.filter(p => p.id !== id))
-            setSelectedPlayer(prev => prev?.id === id ? null : prev)
-        } catch (err) {
-            console.error('Failed to delete player:', err)
-        }
-    }
-
-    const handleToggleRedshirt = async (player: RosterPlayer) => {
-        const updated = !player.season.is_redshirted
-        try {
-            await PlayerService.updatePlayerSeason(player.season.id, { is_redshirted: updated })
-            const updatedPlayer = {
-                ...player,
-                season: { ...player.season, is_redshirted: updated },
-            }
-            setPlayers(prev => prev.map(p => p.id === player.id ? updatedPlayer : p))
-            setSelectedPlayer(prev => prev?.id === player.id ? updatedPlayer : prev)
-        } catch (err) {
-            console.error('Failed to toggle redshirt:', err)
-        }
-    }
-
-    const handleEdit = (player: RosterPlayer) => {
-        setEditing(player)
-        setShowForm(true)
-    }
-
-    const handleCancel = () => {
-        setShowForm(false)
-        setEditing(null)
+    const handlePlayerClick = (player: RosterPlayer) => {
+        setSelectedPlayer(player)
     }
 
     if (loading) {
@@ -199,55 +151,41 @@ export function Roster({ dynastyId }: RosterProps) {
 
     return (
         <div className="space-y-4 pt-10">
-            {showForm && (
+            <div className="flex items-center justify-end">
+                <Button
+                    bg="var(--primary)"
+                    text="white"
+                    size="sm"
+                    onClick={() => { setEditing(null); setShowForm(true) }}
+                    className="flex items-center gap-1 text-xs font-semibold"
+                >
+                    <Plus className="h-3.5 w-3.5" />
+                    Add Player
+                </Button>
+            </div>
+
+            <DepthChart
+                roster={players}
+                mode="roster"
+                onRosterUpdate={setPlayers}
+                onPlayerClick={handlePlayerClick}
+                schoolName={schoolName}
+            />
+
+            <Modal
+                isOpen={showForm}
+                onClose={() => { setShowForm(false); setEditing(null) }}
+                title={editing ? `Edit ${editing.name}` : 'Add Player'}
+                maxWidth="max-w-2xl"
+            >
                 <PlayerForm
                     key={editing?.id ?? 'new'}
                     initial={editing ?? undefined}
                     onSave={handleSave}
-                    onCancel={handleCancel}
+                    onCancel={() => { setShowForm(false); setEditing(null) }}
                     saving={saving}
                 />
-            )}
-
-            <Card>
-                <CardHeader className="pb-2">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <CardTitle className="text-base">
-                            Roster ({players.length})
-                        </CardTitle>
-                        {!showForm && (
-                            <Button
-                                bg="var(--primary)"
-                                text="white"
-                                size="sm"
-                                onClick={() => { setEditing(null); setShowForm(true) }}
-                                className="flex items-center gap-1 text-xs font-semibold"
-                            >
-                                <Plus className="h-3.5 w-3.5" />
-                                Add Player
-                            </Button>
-                        )}
-                    </div>
-                    <div className="mt-2">
-                        <RosterFilters
-                            search={search}
-                            onSearchChange={setSearch}
-                            posFilter={posFilter}
-                            onPosFilterChange={setPosFilter}
-                        />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <RosterList
-                        players={filtered}
-                        totalCount={players.length}
-                        onSelect={setSelectedPlayer}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                        onToggleRedshirt={handleToggleRedshirt}
-                    />
-                </CardContent>
-            </Card>
+            </Modal>
 
             {selectedPlayer && (
                 <PlayerCard
