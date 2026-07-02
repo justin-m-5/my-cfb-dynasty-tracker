@@ -219,7 +219,6 @@ const ALL_FLAT_FIELDS = new Set<FlatStatField>([
 ])
 
 // Dynamic table access for split stat tables
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function statsTable(table: string) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (supabase as any).from(table)
@@ -979,8 +978,8 @@ export const PlayerStatService: {
 
     async upsertStat(stat: Omit<PlayerStat, 'id'> & { id?: string }): Promise<PlayerStat | null> {
         try {
-            const { id: _unusedId, ...statWithoutId } = stat
-            void _unusedId
+            const { player_id, game_id, ...fields } = stat
+            const statWithoutId = { player_id, game_id, ...fields }
             const payloads = buildPayloadsForFullStat(statWithoutId)
             const hasPayloads = Object.values(payloads).some(Boolean)
 
