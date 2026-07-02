@@ -16,6 +16,8 @@ export type RosterEntry = {
     height: string
     weight: string
     isRedshirted: boolean
+    imageFile: File | null
+    imagePreview: string | null
 }
 
 export type PreparedRosterEntry = {

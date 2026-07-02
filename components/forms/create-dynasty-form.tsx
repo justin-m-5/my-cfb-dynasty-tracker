@@ -144,6 +144,13 @@ export function CreateDynastyForm() {
         )))
     }
 
+    const setPlayerImage = (id: string, file: File) => {
+        const preview = URL.createObjectURL(file)
+        setRosterEntries((currentEntries) => currentEntries.map((entry) => (
+            entry.id === id ? { ...entry, imageFile: file, imagePreview: preview } : entry
+        )))
+    }
+
     const openAddPlayerModal = () => {
         setEditingPlayerId(null)
         setEditingInitial({
@@ -424,7 +431,7 @@ export function CreateDynastyForm() {
         <form onSubmit={handleSubmit}>
             <Card>
                 <CardContent className="space-y-6 p-8">
-                    <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                    <div className="flex items-center justify-center gap-2 overflow-x-auto pb-1">
                         {WIZARD_STEPS.map((stepLabel, index) => {
                             const stepStatus = index === currentStep
                                 ? 'active'
@@ -500,6 +507,7 @@ export function CreateDynastyForm() {
                             onEditPlayer={openEditPlayerModal}
                             onRemovePlayer={removeRosterEntry}
                             onUpdateEntry={updateRosterEntry}
+                            onSetPlayerImage={setPlayerImage}
                         />
                     )}
 
