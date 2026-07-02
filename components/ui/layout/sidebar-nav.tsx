@@ -37,7 +37,7 @@ export function SidebarNav({ items, active, onChange }: SidebarNavProps) {
             {/* Toggle button — always visible */}
             <button
                 onClick={() => setOpen(!open)}
-                className="fixed top-20 right-4 z-40 flex cursor-pointer items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-zinc-700 shadow-md transition-all hover:bg-zinc-50 hover:shadow-lg active:scale-95 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+                className="fixed top-20 right-4 z-40 flex cursor-pointer items-center gap-1.5 rounded-lg border border-zinc-300 bg-white p-3 text-xs font-semibold text-zinc-700 shadow-md transition-all hover:bg-zinc-50 hover:shadow-lg active:scale-95 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
             >
                 {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
                 {!open && <span>{activeLabel}</span>}

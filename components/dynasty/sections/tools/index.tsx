@@ -10,7 +10,7 @@ import { PlayerNameGenerator } from './player-name-generator'
 export function Tools() {
     return (
         <div className="space-y-4 pt-14">
-            <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-4">
                 <Card>
                     <CardHeader className="pb-3">
                         <CardTitle className="text-sm">Recruiting Predictor</CardTitle>
