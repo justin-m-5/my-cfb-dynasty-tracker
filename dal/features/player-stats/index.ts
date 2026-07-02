@@ -218,8 +218,11 @@ const ALL_FLAT_FIELDS = new Set<FlatStatField>([
     ...RETURN_FIELDS,
 ])
 
+// Dynamic table access for split stat tables
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function statsTable(table: string) {
-    return (supabase.from as (table: string) => any)(table)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (supabase as any).from(table)
 }
 
 function numberValue(value: unknown): number {
