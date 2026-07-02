@@ -110,7 +110,7 @@ export function Transfers({ dynastyId }: TransfersProps) {
     }
 
     return (
-        <div className="space-y-4 pt-10">
+        <div className="space-y-4 pt-14">
             <Modal
                 isOpen={showForm}
                 onClose={handleCancel}

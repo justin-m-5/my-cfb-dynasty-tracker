@@ -87,7 +87,7 @@ export function Schedule({ dynastyId }: ScheduleProps) {
     }
 
     return (
-        <div className="space-y-5 pt-10">
+        <div className="space-y-5 pt-14">
             <RecordSummary dynasty={dynasty} games={games} />
 
             <Card>

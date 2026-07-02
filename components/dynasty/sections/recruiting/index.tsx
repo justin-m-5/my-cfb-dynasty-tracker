@@ -99,7 +99,7 @@ export function Recruiting({ dynastyId }: RecruitingProps) {
     }
 
     return (
-        <div className="space-y-4 pt-10">
+        <div className="space-y-4 pt-14">
             {showForm && (
                 <RecruitForm
                     initial={editing ?? undefined}

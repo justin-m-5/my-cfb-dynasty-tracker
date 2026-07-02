@@ -231,15 +231,15 @@ export function SocialMedia({ dynastyId }: SocialMediaProps) {
     }, [posts, filter])
 
     if (loading) {
-        return <div className="pt-10 text-sm text-text/60">Loading social feed...</div>
+        return <div className="pt-14 text-sm text-text/60">Loading social feed...</div>
     }
 
     if (!dynasty) {
-        return <div className="pt-10 text-sm text-red-500">Dynasty not found.</div>
+        return <div className="pt-14 text-sm text-red-500">Dynasty not found.</div>
     }
 
     return (
-        <div className="space-y-4 pt-10">
+        <div className="space-y-4 pt-14">
             <Card>
                 <CardHeader className="pb-4">
                     <CardTitle className="text-center text-xl">Social Media Hub</CardTitle>

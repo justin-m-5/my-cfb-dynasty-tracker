@@ -94,7 +94,7 @@ export function SeasonHistory({ dynastyId }: SeasonHistoryProps) {
     }
 
     return (
-        <div className="space-y-5 pt-10">
+        <div className="space-y-5 pt-14">
             {/* Year Picker Header with Stats */}
             <YearPickerHeader
                 yearRecords={yearRecords}

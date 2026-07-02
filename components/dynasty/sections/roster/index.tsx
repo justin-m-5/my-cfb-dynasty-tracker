@@ -152,7 +152,7 @@ export function Roster({ dynastyId }: RosterProps) {
     }
 
     return (
-        <div className="space-y-4 pt-10">
+        <div className="space-y-4 pt-14">
             <div className="flex items-center justify-end">
                 <Button
                     bg="var(--primary)"

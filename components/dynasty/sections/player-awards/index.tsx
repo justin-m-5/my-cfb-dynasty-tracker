@@ -107,7 +107,7 @@ export function PlayerAwards({ dynastyId }: PlayerAwardsProps) {
     }
 
     return (
-        <div className="space-y-4 pt-10">
+        <div className="space-y-4 pt-14">
             {showForm && (
                 <AwardForm
                     key={editing?.id ?? 'new'}
