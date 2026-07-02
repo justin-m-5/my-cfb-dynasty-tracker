@@ -1,3 +1,5 @@
+// dal/features/player-stats/index.ts
+
 import { supabase } from '@/supabase/client'
 
 export interface PlayerStat {

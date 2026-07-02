@@ -9,7 +9,7 @@ import { DynastyService } from '@/dal/features/dynasty'
 import { PlayerService } from '@/dal/features/players'
 import { RosterTemplateService, normalizeYear } from '@/dal/features/roster-templates'
 import { YearRecordService } from '@/dal/features/year-records'
-import { positions, recruitPositionGroups } from '@/lib/config/player-config'
+import { positions } from '@/lib/config/player-config'
 import { conferenceLogoByName } from '@/lib/teams/logos'
 import { fbsTeams } from '@/lib/teams/fbs-teams'
 
