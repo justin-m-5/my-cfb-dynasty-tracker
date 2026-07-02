@@ -13,6 +13,7 @@ import { Select } from '@/components/ui/form/select'
 import { Card, CardContent, CardFooter } from '@/components/ui/layout/card'
 import { DynastyService } from '@/dal/features/dynasty'
 import { PlayerService } from '@/dal/features/players'
+import { RosterTemplateService, normalizeYear } from '@/dal/features/roster-templates'
 import { YearRecordService } from '@/dal/features/year-records'
 import { devTraits, positions, years } from '@/lib/config/player-config'
 import { pipelinesByRegion } from '@/lib/config/pipelines'
@@ -111,6 +112,7 @@ export function CreateDynastyForm() {
     const [pipeline, setPipeline] = useState('')
     const [rosterEntries, setRosterEntries] = useState<RosterEntry[]>(() => createBlankRosterEntries(INITIAL_ROSTER_ROWS))
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isImporting, setIsImporting] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     const conferences = useMemo(
@@ -204,6 +206,41 @@ export function CreateDynastyForm() {
 
     const removeRosterEntry = (id: string) => {
         setRosterEntries((currentEntries) => currentEntries.filter((entry) => entry.id !== id))
+    }
+
+    const importRosterFromTemplate = async () => {
+        if (!selectedTeam) return
+
+        setIsImporting(true)
+        setError(null)
+        try {
+            const templates = await RosterTemplateService.getBySchool(selectedTeam.name)
+
+            if (templates.length === 0) {
+                setError(`No roster data found for ${selectedTeam.name}. You can add players manually.`)
+                return
+            }
+
+            const imported: RosterEntry[] = templates.map((template) => {
+                rosterEntryCounter += 1
+                return {
+                    id: `roster-entry-${rosterEntryCounter}`,
+                    name: template.name,
+                    position: template.position,
+                    rating: template.overall?.toString() ?? '',
+                    year: normalizeYear(template.year, template.redshirt_status) ?? '',
+                    jerseyNumber: '',
+                    devTrait: template.dev_trait ?? 'Normal',
+                }
+            })
+
+            setRosterEntries(imported)
+        } catch (err) {
+            console.error('Failed to import roster:', err)
+            setError('Failed to load roster data. Try again or add players manually.')
+        } finally {
+            setIsImporting(false)
+        }
     }
 
     const validateStepOne = () => {
@@ -580,6 +617,19 @@ export function CreateDynastyForm() {
                                 <Button type="button" variant="outline" size="sm" className="font-semibold" onClick={() => addRosterRows(10)}>
                                     Add 10 Rows
                                 </Button>
+                                {selectedTeam && (
+                                    <Button
+                                        type="button"
+                                        bg="var(--primary)"
+                                        text="white"
+                                        size="sm"
+                                        className="font-semibold"
+                                        onClick={importRosterFromTemplate}
+                                        disabled={isImporting}
+                                    >
+                                        {isImporting ? 'Importing...' : `Import ${selectedTeam.name} Roster`}
+                                    </Button>
+                                )}
                             </div>
 
                             <div className="max-h-[32rem] space-y-3 overflow-y-auto pr-1">
