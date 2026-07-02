@@ -979,7 +979,8 @@ export const PlayerStatService: {
 
     async upsertStat(stat: Omit<PlayerStat, 'id'> & { id?: string }): Promise<PlayerStat | null> {
         try {
-            const { id: _id, ...statWithoutId } = stat
+            const { id: _unusedId, ...statWithoutId } = stat
+            void _unusedId
             const payloads = buildPayloadsForFullStat(statWithoutId)
             const hasPayloads = Object.values(payloads).some(Boolean)
 
