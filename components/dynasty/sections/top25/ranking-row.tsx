@@ -87,7 +87,7 @@ export function RankingRow({
     return (
         <div
             className={cn(
-                'relative flex items-center gap-2 rounded-lg border-b border-primary/10 px-2 py-2 transition-colors last:border-b-0',
+                'relative flex items-center gap-2 rounded-lg border-b border-primary/10 py-2 transition-colors last:border-b-0',
                 'hover:bg-primary/5',
                 isDragging && 'opacity-60',
                 isDropTarget && 'bg-primary/10 ring-1 ring-primary/20'
@@ -106,7 +106,7 @@ export function RankingRow({
                 type="button"
                 draggable
                 aria-label={`Drag rank ${rank}`}
-                className="hidden h-8 w-8 shrink-0 cursor-grab items-center justify-center rounded-md border border-primary/15 bg-background/80 text-text/50 transition-colors hover:text-text active:cursor-grabbing sm:flex"
+                className="h-8 w-8 shrink-0 cursor-grab items-center justify-center rounded-md border border-primary/15 bg-background/80 text-text/50 transition-colors hover:text-text active:cursor-grabbing flex"
                 onDragStart={(event) => {
                     event.dataTransfer.effectAllowed = 'move'
                     event.dataTransfer.setData('text/plain', String(index))
